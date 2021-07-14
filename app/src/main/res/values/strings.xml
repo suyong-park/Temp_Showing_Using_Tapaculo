@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Sensoring Temperature</string>
+    <string name="api_secret">API SECRET</string>
+    <string name="api_key">API KEY</string>
+    <string name="sensor">SENSOR ID</string>
+    <string name="sensoring_btn">SENSORING START</string>
+</resources>
