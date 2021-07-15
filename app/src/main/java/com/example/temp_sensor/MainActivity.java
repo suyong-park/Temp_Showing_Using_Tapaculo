@@ -17,6 +17,9 @@ public class MainActivity extends AppCompatActivity {
 
         TextView temp_value = (TextView) findViewById(R.id.value_temp);
 
+
+
+
         temp_value.setText("36.5");
     }
 }
