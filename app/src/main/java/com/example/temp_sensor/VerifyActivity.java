@@ -12,8 +12,6 @@ import android.widget.LinearLayout;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -48,24 +46,33 @@ public class VerifyActivity extends AppCompatActivity {
                 }
 
                 Connect_Tapaculo tapaculo = Request.getRetrofit().create(Connect_Tapaculo.class);
-                Call<List<GetValues>> call = tapaculo.getValues(api_key_str, api_secret_str, sensor_str);
-                call.enqueue(new Callback<List<GetValues>>() {
+                Call<GetValues> call = tapaculo.getValues(api_key_str, api_secret_str, sensor_str);
+                call.enqueue(new Callback<GetValues>() {
                     @Override
-                    public void onResponse(Call<List<GetValues>> call, Response<List<GetValues>> response) {
+                    public void onResponse(Call<GetValues> call, Response<GetValues> response) {
 
-                        List<GetValues> result = response.body();
-                        System.out.println(result);
+                        GetValues result = response.body();
+                        Rows[] rows = result.getRows();
 
+                        System.out.println("테스트 시작합니다 !!!! ");
+                        System.out.println("DATATYPE CHECK : " + rows.getClass().getName()); // [Lcom.example.temp_sensor.Rows;@1f50444
+                        System.out.println("여기 rows LENGTH : " + rows.length);
+                        System.out.println("여기 rows[0].getValue() : " + rows[0].getValue());
+                        System.out.println("여기 rows[1].getValue() : " + rows[1].getValue());
+                        System.out.println("여기 result.getRows() : " + result.getRows()); // 값 실질적으로 받아옴
+
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        intent.putExtra("Rows", rows);
+
+                        startActivity(intent);
                     }
 
                     @Override
-                    public void onFailure(Call<List<GetValues>> call, Throwable t) {
-                        System.out.println("Failure!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                    public void onFailure(Call<GetValues> call, Throwable t) {
+                        System.out.println("Fail Communication");
+                        Snackbar.make(layout, "Communication Fail.", Snackbar.LENGTH_SHORT).show();
                     }
                 });
-
-                Intent intent = new Intent(VerifyActivity.this, MainActivity.class);
-                startActivity(intent);
             }
         });
 

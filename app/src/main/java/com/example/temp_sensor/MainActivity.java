@@ -2,6 +2,7 @@ package com.example.temp_sensor;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -17,9 +18,6 @@ public class MainActivity extends AppCompatActivity {
 
         TextView temp_value = (TextView) findViewById(R.id.value_temp);
 
-
-
-
-        temp_value.setText("36.5");
+        Intent intent = getIntent();
     }
 }

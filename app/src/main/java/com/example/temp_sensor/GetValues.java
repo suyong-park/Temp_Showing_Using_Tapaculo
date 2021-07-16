@@ -3,10 +3,12 @@ package com.example.temp_sensor;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class GetValues {
+import java.io.Serializable;
 
-    @SerializedName("count")
-    @Expose
+public class GetValues implements Serializable {
+
+    @SerializedName("count") // GSON Annotation. JSON으로 serialize될 때 매칭하는 이름을 명시적으로 지정함. 이 때 문자열 값은 실제 JSON 속성값이어야 함.
+    @Expose // object 중 해당 값이 null 인 경우, 자동으로 해당 object는 무시하고 JSON을 만들게 됨.
     private String count;
 
     @SerializedName("rows")

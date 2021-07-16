@@ -3,7 +3,10 @@ package com.example.temp_sensor;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Rows {
+import java.io.Serializable;
+
+public class Rows implements Serializable {
+    // 객체값을 intent 로 전달해 주기 위한 Serializable 인터페이스를 상속받음.
 
     @SerializedName("sensor_id")
     @Expose
