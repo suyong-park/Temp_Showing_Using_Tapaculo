@@ -2,46 +2,51 @@ package com.example.temp_sensor;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
 
-public class Rows implements Serializable {
-    // 객체값을 intent 로 전달해 주기 위한 Serializable 인터페이스를 상속받음.
-
-    @SerializedName("sensor_id")
+public class Sensors implements Serializable {
+    @SerializedName("sensor_mac")
     @Expose
-    private String sensor_id;
+    private String sensor_mac;
 
-    @SerializedName("value")
+    @SerializedName("channels")
     @Expose
-    private String value;
-
-    @SerializedName("timestamp")
-    @Expose
-    private String timestamp;
-
-    @SerializedName("last_update")
-    @Expose
-    private String last_update;
-
-    @SerializedName("battery")
-    @Expose
-    private String battery;
+    private Channels[] channels;
 
     @SerializedName("lqi")
     @Expose
     private String lqi;
 
+    @SerializedName("last_update")
+    @Expose
+    private String last_update;
+
     @SerializedName("sensor_model")
     @Expose
     private String sensor_model;
 
-    public String getSensor_id () {
-        return sensor_id;
+    @SerializedName("battery")
+    @Expose
+    private String battery;
+
+    @SerializedName("timestamp")
+    @Expose
+    private String timestamp;
+
+    public String getSensor_mac () {
+        return sensor_mac;
     }
 
-    public void setSensor_id (String sensor_id) {
-        this.sensor_id = sensor_id;
+    public void setSensor_mac (String sensor_mac) {
+        this.sensor_mac = sensor_mac;
+    }
+
+    public Channels[] getChannels () {
+        return channels;
+    }
+
+    public void setChannels (Channels[] channels) {
+        this.channels = channels;
     }
 
     public String getLqi () {
@@ -76,14 +81,6 @@ public class Rows implements Serializable {
         this.battery = battery;
     }
 
-    public String getValue () {
-        return value;
-    }
-
-    public void setValue (String value) {
-        this.value = value;
-    }
-
     public String getTimestamp () {
         return timestamp;
     }
@@ -94,7 +91,7 @@ public class Rows implements Serializable {
 
     @Override
     public String toString() {
-        return "ClassPojo [sensor_id = "+sensor_id+", lqi = "+lqi+", last_update = "+last_update+", sensor_model = "+sensor_model+", battery = "+battery+", value = "+value+", timestamp = "+timestamp+"]";
+        return "ClassPojo [sensor_mac = "+sensor_mac+", channels = "+channels+", lqi = "+lqi+", last_update = "+last_update+", sensor_model = "+sensor_model+", battery = "+battery+", timestamp = "+timestamp+"]";
     }
 }
 

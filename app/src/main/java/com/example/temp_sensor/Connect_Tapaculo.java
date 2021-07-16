@@ -1,7 +1,5 @@
 package com.example.temp_sensor;
 
-import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -14,10 +12,10 @@ public interface Connect_Tapaculo {
     // 접속하고자 하는 Base_URL. 여기까지는 고정된 주소여야 함. GET, POST하기 위한 방식에서 추가적으로 가변적인 주소를 제공하면 됨. 아래와 같음.
 
     @FormUrlEncoded // 인자를 url-encoded 형태로 보낼 때 사용함. key=value&key=value와 같은 형태임.
-    @POST("channel/get_values") // POST 방식의 통신
-    Call<GetValues> getValues (
+    @POST("device/get_info") // POST 방식의 통신
+    Call<GetInfo> getInfo (
             @Field("api_key") String api_key,
             @Field("api_secret") String api_secret,
-            @Field("sensors") String sensors
+            @Field("MAC") String mac
     );
 }

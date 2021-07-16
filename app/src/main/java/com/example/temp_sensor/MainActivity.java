@@ -5,7 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,8 +17,14 @@ public class MainActivity extends AppCompatActivity {
 
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 
-        TextView temp_value = (TextView) findViewById(R.id.value_temp);
-
         Intent intent = getIntent();
+        ArrayList<Channels> getChannelList = (ArrayList<Channels>) intent.getSerializableExtra("Channels");
+
+        for(int i = 0; i < getChannelList.size(); i++) {
+
+            System.out.println(i + "번째 값 : " + getChannelList.get(i).getCh_value());
+
+
+        }
     }
 }

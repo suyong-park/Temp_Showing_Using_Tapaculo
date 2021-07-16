@@ -1,5 +1,6 @@
 package com.example.temp_sensor;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -10,7 +11,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,10 +30,10 @@ public class VerifyActivity extends AppCompatActivity {
 
         EditText api_key = (EditText) findViewById(R.id.api_key_enter);
         EditText api_secret = (EditText) findViewById(R.id.api_secret_enter);
-        EditText sensor = (EditText) findViewById(R.id.sensor_id_enter);
+        EditText MAC = (EditText) findViewById(R.id.MAC_enter);
         Button button = (Button) findViewById(R.id.start_btn);
 
-        LinearLayout layout = (LinearLayout) findViewById(R.id.linear_layout);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.linear_verify);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -38,44 +41,65 @@ public class VerifyActivity extends AppCompatActivity {
 
                 String api_key_str = api_key.getText().toString();
                 String api_secret_str = api_secret.getText().toString();
-                String sensor_str = sensor.getText().toString();
+                String mac_str = MAC.getText().toString();
 
-                if(api_key_str.isEmpty() || api_secret_str.isEmpty() || sensor_str.isEmpty()) {
-                    Snackbar.make(layout, "Please Enter Information.", Snackbar.LENGTH_SHORT).show();
+                AlertDialog.Builder builder = new MaterialAlertDialogBuilder(VerifyActivity.this);
+
+                if(api_key_str.isEmpty() || api_secret_str.isEmpty() || mac_str.isEmpty()) {
+                    builder.setTitle("Enter all of Information.")
+                            .setMessage("Please enter your Information")
+                            .setPositiveButton(getResources().getString(R.string.positive_alert), null)
+                            .show();
                     return;
                 }
 
                 Connect_Tapaculo tapaculo = Request.getRetrofit().create(Connect_Tapaculo.class);
-                Call<GetValues> call = tapaculo.getValues(api_key_str, api_secret_str, sensor_str);
-                call.enqueue(new Callback<GetValues>() {
+                Call<GetInfo> call = tapaculo.getInfo(api_key_str, api_secret_str, mac_str);
+                call.enqueue(new Callback<GetInfo>() {
                     @Override
-                    public void onResponse(Call<GetValues> call, Response<GetValues> response) {
+                    public void onResponse(Call<GetInfo> call, Response<GetInfo> response) {
 
-                        GetValues result = response.body();
-                        Rows[] rows = result.getRows();
+                        GetInfo result = response.body();
 
-                        System.out.println("테스트 시작합니다 !!!! ");
-                        System.out.println("DATATYPE CHECK : " + rows.getClass().getName()); // [Lcom.example.temp_sensor.Rows;@1f50444
-                        System.out.println("여기 rows LENGTH : " + rows.length);
-                        System.out.println("여기 rows[0].getValue() : " + rows[0].getValue());
-                        System.out.println("여기 rows[1].getValue() : " + rows[1].getValue());
-                        System.out.println("여기 result.getRows() : " + result.getRows()); // 값 실질적으로 받아옴
+                        if(result == null) {
+                            builder.setTitle("Fail")
+                                    .setMessage("Status Fail. Please Recheck your value.")
+                                    .setPositiveButton(getResources().getString(R.string.positive_alert), null)
+                                    .show();
+                            return;
+                        }
 
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        intent.putExtra("Rows", rows);
+                        if(result.getStatus().equals("true")) {
 
-                        startActivity(intent);
+                            Sensors[] sensors = result.getSensors();
+                            Channels[] channels;
+
+                            ArrayList<Channels> arrayChannels = new ArrayList<>();
+                            ArrayList<Sensors> arraySensors = new ArrayList<>();
+
+                            for(int i = 0; i < sensors.length; i++) {
+                                channels = sensors[i].getChannels();
+                                arraySensors.add(sensors[i]);
+                                arrayChannels.add(channels[i]);
+                            }
+
+                            Intent intent = new Intent(VerifyActivity.this, MainActivity.class);
+                            intent.putExtra("Channels", arrayChannels);
+                            startActivity(intent);
+                        }
                     }
 
                     @Override
-                    public void onFailure(Call<GetValues> call, Throwable t) {
-                        System.out.println("Fail Communication");
-                        Snackbar.make(layout, "Communication Fail.", Snackbar.LENGTH_SHORT).show();
+                    public void onFailure(Call<GetInfo> call, Throwable t) {
+                        builder.setTitle("Fail")
+                                .setMessage("Communication Fail. Check internet.")
+                                .setPositiveButton(getResources().getString(R.string.positive_alert), null)
+                                .show();
+                        return;
                     }
                 });
             }
         });
-
     }
 
 }

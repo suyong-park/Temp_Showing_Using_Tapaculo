@@ -4,7 +4,8 @@
     <string name="api_secret_enter">API SECRET</string>
     <string name="api_key">api_key</string>
     <string name="api_key_enter">API KEY</string>
-    <string name="sensors">sensors</string>
-    <string name="sensors_enter">SENSORS</string>
+    <string name="MAC">MAC</string>
+    <string name="MAC_enter">MAC</string>
     <string name="sensoring_btn">SENSORING START</string>
+    <string name="positive_alert">CONFIRM</string>
 </resources>
