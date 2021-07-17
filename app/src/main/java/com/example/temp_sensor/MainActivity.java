@@ -31,6 +31,21 @@ public class MainActivity extends AppCompatActivity {
         Intent get_intent = getIntent();
         ArrayList<Channels[]> getChannelList = (ArrayList<Channels[]>) get_intent.getSerializableExtra("Channels");
 
+        TextView device_info = (TextView) findViewById(R.id.device_location);
+        device_info.setText(PreferenceManager.getString(MainActivity.this, "device_info"));
+
+        int showing_sensor_num = PreferenceManager.getInt(MainActivity.this, "sensor_num");
+
+        if(showing_sensor_num == 0 || showing_sensor_num == -1) { // 센서를 몇 개 보여줄지 아직 세팅하지 않은 경우
+
+        }
+        else if(showing_sensor_num == 1) { // 센서를 1개 보여주기로 결정한 경우
+            // TODO : 센서값을 몇 개를 볼지 그에 대한 액션을 정의. --> visual 속성을 정의
+        }
+        else if(showing_sensor_num == 2) { // 센서를 2개 보여주기로 결정한 경우
+
+        }
+
         TextView data_1 = (TextView) findViewById(R.id.show_data_1);
         TextView data_2 = (TextView) findViewById(R.id.show_data_2);
 
@@ -39,9 +54,9 @@ public class MainActivity extends AppCompatActivity {
                 if(j >= 2)
                     break;
                 else if(j == 0)
-                    data_1.setText(getChannelList.get(i)[j].getCh_value());
+                    data_1.setText(getChannelList.get(i)[j].getCh_value() + getChannelList.get(i)[j].getCh_unit());
                 else if(j == 1)
-                    data_2.setText(getChannelList.get(i)[j].getCh_value());
+                    data_2.setText(getChannelList.get(i)[j].getCh_value() + getChannelList.get(i)[j].getCh_unit());
             }
 
         Button setting_btn = (Button) findViewById(R.id.setting_btn);

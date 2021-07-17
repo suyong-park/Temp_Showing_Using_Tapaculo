@@ -13,4 +13,7 @@
     <string name="show_one">1개 센서값만 보기</string>
     <string name="show_two">2개 센서값 보기</string>
     <string name="show_sensor_setting">화면 센서값 설정</string>
+    <string name="device_info">디바이스 위치</string>
+    <string name="device_info_enter">DEVICE INFORMATION</string>
+    <string name="setting">SETTING</string>
 </resources>
