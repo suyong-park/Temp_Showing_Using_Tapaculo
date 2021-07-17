@@ -86,6 +86,7 @@ public class SettingActivity extends AppCompatActivity {
                                 finish();
                             }
                         })
+                        .setCancelable(false)
                         .show();
             }
         });

@@ -9,7 +9,6 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -74,6 +73,7 @@ public class VerifyActivity extends AppCompatActivity {
                     builder.setTitle("Enter all of Information.")
                             .setMessage("Please enter your Information")
                             .setPositiveButton(getResources().getString(R.string.positive_alert), null)
+                            .setCancelable(false)
                             .show();
                     return;
                 }

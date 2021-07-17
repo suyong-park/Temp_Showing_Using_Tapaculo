@@ -8,21 +8,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -61,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 while(true) {
                     try {
-                        System.out.println("반복됩니다.");
                         Call<GetInfo> call = tapaculo.getInfo(api_key_str, api_secret_str, mac_str);
                         call.enqueue(new Callback<GetInfo>() {
 
@@ -78,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
                                                     finish();
                                                 }
                                             })
+                                            .setCancelable(false)
                                             .show();
                                     return;
                                 }
@@ -118,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                                                 finish();
                                             }
                                         })
+                                        .setCancelable(false)
                                         .show();
                                 return;
                             }
@@ -125,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
 
                         int splrate = PreferenceManager.getInt(MainActivity.this, "refresh_value");
 
-                        System.out.println("반복 시간 : " + splrate + "초 입니다.");
                         Thread.sleep(splrate * 1000); // splrate을 기준으로 센서값 표현하는 페이지 새로고침
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -184,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setTitle("경고")
                 .setMessage("나가려면 관리자 인증번호 4자리를 입력하세요.")
                 .setView(container)
+                .setCancelable(false)
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
