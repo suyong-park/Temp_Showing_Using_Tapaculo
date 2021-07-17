@@ -25,17 +25,21 @@ public class VerifyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.verify);
 
+        //PreferenceManager.clear(VerifyActivity.this); // 테스트 목적의 코드 라인
+
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 
         EditText api_key = (EditText) findViewById(R.id.api_key_enter);
         EditText api_secret = (EditText) findViewById(R.id.api_secret_enter);
         EditText MAC = (EditText) findViewById(R.id.MAC_enter);
+        EditText admin = (EditText) findViewById(R.id.admin_enter);
         Button button = (Button) findViewById(R.id.start_btn);
 
         if(PreferenceManager.getBoolean(VerifyActivity.this, "is_first_connect")) { // 최초 접속이 아닌 경우
             api_key.setText(PreferenceManager.getString(VerifyActivity.this, "api_key_str"));
             api_secret.setText(PreferenceManager.getString(VerifyActivity.this, "api_secret_str"));
             MAC.setText(PreferenceManager.getString(VerifyActivity.this, "mac_str"));
+            admin.setText(String.valueOf(PreferenceManager.getInt(VerifyActivity.this, "admin_value")));
         }
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -45,6 +49,7 @@ public class VerifyActivity extends AppCompatActivity {
                 String api_key_str = api_key.getText().toString();
                 String api_secret_str = api_secret.getText().toString();
                 String mac_str = MAC.getText().toString();
+                int admin_value = Integer.parseInt(admin.getText().toString());
 
                 AlertDialog.Builder builder = new MaterialAlertDialogBuilder(VerifyActivity.this);
 
@@ -80,6 +85,7 @@ public class VerifyActivity extends AppCompatActivity {
                             PreferenceManager.setString(VerifyActivity.this, "api_key_str", api_key_str);
                             PreferenceManager.setString(VerifyActivity.this, "api_secret_str", api_secret_str);
                             PreferenceManager.setString(VerifyActivity.this, "mac_str", mac_str);
+                            PreferenceManager.setInt(VerifyActivity.this, "admin_value", admin_value);
                             PreferenceManager.setBoolean(VerifyActivity.this, "is_first_connect", true);
 
                             ArrayList<Channels[]> arrayChannels = new ArrayList<>();

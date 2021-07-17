@@ -6,6 +6,8 @@
     <string name="api_key_enter">API KEY</string>
     <string name="MAC">MAC</string>
     <string name="MAC_enter">MAC</string>
+    <string name="admin">관리자 인증번호 4자리</string>
+    <string name="admin_enter">ADMIN</string>
     <string name="sensoring_btn">SENSORING START</string>
     <string name="positive_alert">CONFIRM</string>
     <string name="show_one">1개 센서값만 보기</string>
