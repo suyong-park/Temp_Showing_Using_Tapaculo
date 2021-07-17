@@ -31,6 +31,7 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.Temp_Censor">
         <activity android:name="com.example.temp_sensor.MainActivity"></activity>
+        <activity android:name="com.example.temp_sensor.SettingActivity"></activity>
         <activity android:name="com.example.temp_sensor.VerifyActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

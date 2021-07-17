@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -33,7 +32,11 @@ public class VerifyActivity extends AppCompatActivity {
         EditText MAC = (EditText) findViewById(R.id.MAC_enter);
         Button button = (Button) findViewById(R.id.start_btn);
 
-        LinearLayout layout = (LinearLayout) findViewById(R.id.linear_verify);
+        if(PreferenceManager.getBoolean(VerifyActivity.this, "is_first_connect")) { // 최초 접속이 아닌 경우
+            api_key.setText(PreferenceManager.getString(VerifyActivity.this, "api_key_str"));
+            api_secret.setText(PreferenceManager.getString(VerifyActivity.this, "api_secret_str"));
+            MAC.setText(PreferenceManager.getString(VerifyActivity.this, "mac_str"));
+        }
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,13 +77,18 @@ public class VerifyActivity extends AppCompatActivity {
                             Sensors[] sensors = result.getSensors();
                             Channels[] channels;
 
-                            ArrayList<Channels> arrayChannels = new ArrayList<>();
+                            PreferenceManager.setString(VerifyActivity.this, "api_key_str", api_key_str);
+                            PreferenceManager.setString(VerifyActivity.this, "api_secret_str", api_secret_str);
+                            PreferenceManager.setString(VerifyActivity.this, "mac_str", mac_str);
+                            PreferenceManager.setBoolean(VerifyActivity.this, "is_first_connect", true);
+
+                            ArrayList<Channels[]> arrayChannels = new ArrayList<>();
                             ArrayList<Sensors> arraySensors = new ArrayList<>();
 
                             for(int i = 0; i < sensors.length; i++) {
                                 channels = sensors[i].getChannels();
                                 arraySensors.add(sensors[i]);
-                                arrayChannels.add(channels[i]);
+                                arrayChannels.add(channels);
                             }
 
                             Intent intent = new Intent(VerifyActivity.this, MainActivity.class);

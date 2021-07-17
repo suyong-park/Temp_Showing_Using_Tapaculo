@@ -8,4 +8,7 @@
     <string name="MAC_enter">MAC</string>
     <string name="sensoring_btn">SENSORING START</string>
     <string name="positive_alert">CONFIRM</string>
+    <string name="show_one">1개 센서값만 보기</string>
+    <string name="show_two">2개 센서값 보기</string>
+    <string name="show_sensor_setting">화면 센서값 설정</string>
 </resources>
