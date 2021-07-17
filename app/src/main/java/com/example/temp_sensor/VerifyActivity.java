@@ -35,6 +35,7 @@ public class VerifyActivity extends AppCompatActivity {
         EditText api_secret = (EditText) findViewById(R.id.api_secret_enter);
         EditText MAC = (EditText) findViewById(R.id.MAC_enter);
         EditText admin = (EditText) findViewById(R.id.admin_enter);
+        EditText refresh = (EditText) findViewById(R.id.refresh_enter);
         Button button = (Button) findViewById(R.id.start_btn);
 
         View view = (View) findViewById(R.id.linear_verify);
@@ -54,6 +55,7 @@ public class VerifyActivity extends AppCompatActivity {
             api_secret.setText(PreferenceManager.getString(verifyActivity, "api_secret_str"));
             MAC.setText(PreferenceManager.getString(verifyActivity, "mac_str"));
             admin.setText(String.valueOf(PreferenceManager.getInt(verifyActivity, "admin_value")));
+            refresh.setText(String.valueOf(PreferenceManager.getInt(verifyActivity, "refresh_value")));
         }
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -63,11 +65,12 @@ public class VerifyActivity extends AppCompatActivity {
                 String api_key_str = api_key.getText().toString();
                 String api_secret_str = api_secret.getText().toString();
                 String mac_str = MAC.getText().toString();
+                int refresh_value = Integer.parseInt(refresh.getText().toString());
                 int admin_value = Integer.parseInt(admin.getText().toString());
 
                 AlertDialog.Builder builder = new MaterialAlertDialogBuilder(verifyActivity);
 
-                if(api_key_str.isEmpty() || api_secret_str.isEmpty() || mac_str.isEmpty()) {
+                if(api_key_str.isEmpty() || api_secret_str.isEmpty() || mac_str.isEmpty() || String.valueOf(admin_value).isEmpty() || String.valueOf(refresh_value).isEmpty()) {
                     builder.setTitle("Enter all of Information.")
                             .setMessage("Please enter your Information")
                             .setPositiveButton(getResources().getString(R.string.positive_alert), null)
@@ -79,6 +82,7 @@ public class VerifyActivity extends AppCompatActivity {
                 PreferenceManager.setString(verifyActivity, "api_secret_str", api_secret_str);
                 PreferenceManager.setString(verifyActivity, "mac_str", mac_str);
                 PreferenceManager.setInt(verifyActivity, "admin_value", admin_value);
+                PreferenceManager.setInt(verifyActivity, "refresh_value", refresh_value);
                 PreferenceManager.setBoolean(verifyActivity, "is_first_connect", true);
 
                 Intent intent = new Intent(verifyActivity, MainActivity.class);

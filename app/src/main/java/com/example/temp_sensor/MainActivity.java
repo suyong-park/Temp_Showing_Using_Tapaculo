@@ -3,6 +3,7 @@ package com.example.temp_sensor;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -29,15 +30,19 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    int device_splrate = 1000;
-
     ArrayList<Channels[]> arrayChannels = new ArrayList<>();
     ArrayList<Sensors> arraySensors = new ArrayList<>();
+
+    TextView device_info;
+
+    public static Context CONTEXT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        CONTEXT = this;
 
         // 센서에 따라 화면을 변동시킴
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
@@ -47,75 +52,88 @@ public class MainActivity extends AppCompatActivity {
         String mac_str = PreferenceManager.getString(MainActivity.this, "mac_str");
 
         Connect_Tapaculo tapaculo = Request.getRetrofit().create(Connect_Tapaculo.class);
-
-
-        Call<GetInfo> call = tapaculo.getInfo(api_key_str, api_secret_str, mac_str);
         AlertDialog.Builder builder = new MaterialAlertDialogBuilder(MainActivity.this);
 
-        call.enqueue(new Callback<GetInfo>() {
+        device_info = (TextView) findViewById(R.id.device_location);
 
+        new Thread(new Runnable() {
             @Override
-            public void onResponse(Call<GetInfo> call, Response<GetInfo> response) {
+            public void run() {
+                while(true) {
+                    try {
+                        System.out.println("반복됩니다.");
+                        Call<GetInfo> call = tapaculo.getInfo(api_key_str, api_secret_str, mac_str);
+                        call.enqueue(new Callback<GetInfo>() {
 
-                GetInfo result = response.body();
-                if(result == null) {
-                    builder.setTitle("Fail")
-                            .setMessage("Status Fail. Please Recheck your value.")
-                            .setPositiveButton(getResources().getString(R.string.positive_alert), new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    finish();
-                                }
-                            })
-                            .show();
-                    return;
-                }
-
-                if(result.getStatus().equals("true")) {
-
-                    Sensors[] sensors = result.getSensors();
-                    Channels[] channels;
-                    device_splrate = Integer.parseInt(result.getDevice_splrate());
-
-                    for(int i = 0; i < sensors.length; i++) {
-                        channels = sensors[i].getChannels();
-                        arraySensors.add(sensors[i]);
-                        arrayChannels.add(channels);
-                    }
-
-                    TextView data_1 = (TextView) findViewById(R.id.show_data_1);
-                    TextView data_2 = (TextView) findViewById(R.id.show_data_2);
-
-                    for (int i = 0; i < arrayChannels.size(); i++)
-                        for (int j = 0; j < arrayChannels.get(i).length; j++) {
-                            if (j >= 2)
-                                break;
-                            else if (j == 0)
-                                data_1.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
-                            else if (j == 1)
-                                data_2.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
-                        }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GetInfo> call, Throwable t) {
-                builder.setTitle("Fail")
-                        .setMessage("Communication Fail. Check internet.")
-                        .setPositiveButton(getResources().getString(R.string.positive_alert), new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                finish();
+                            public void onResponse(Call<GetInfo> call, Response<GetInfo> response) {
+
+                                GetInfo result = response.body();
+                                if (result == null) {
+                                    builder.setTitle("Fail")
+                                            .setMessage("Status Fail. Please Recheck your value.")
+                                            .setPositiveButton(getResources().getString(R.string.positive_alert), new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    finish();
+                                                }
+                                            })
+                                            .show();
+                                    return;
+                                }
+
+                                if (result.getStatus().equals("true")) {
+
+                                    Sensors[] sensors = result.getSensors();
+                                    Channels[] channels;
+
+                                    for (int i = 0; i < sensors.length; i++) {
+                                        channels = sensors[i].getChannels();
+                                        arraySensors.add(sensors[i]);
+                                        arrayChannels.add(channels);
+                                    }
+
+                                    TextView data_1 = (TextView) findViewById(R.id.show_data_1);
+                                    TextView data_2 = (TextView) findViewById(R.id.show_data_2);
+
+                                    for (int i = 0; i < arrayChannels.size(); i++)
+                                        for (int j = 0; j < arrayChannels.get(i).length; j++) {
+                                            if (j >= 2)
+                                                break;
+                                            else if (j == 0)
+                                                data_1.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
+                                            else if (j == 1)
+                                                data_2.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
+                                        }
+                                }
                             }
-                        })
-                        .show();
-                return;
+
+                            @Override
+                            public void onFailure(Call<GetInfo> call, Throwable t) {
+                                builder.setTitle("Fail")
+                                        .setMessage("Communication Fail. Check internet.")
+                                        .setPositiveButton(getResources().getString(R.string.positive_alert), new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                finish();
+                                            }
+                                        })
+                                        .show();
+                                return;
+                            }
+                        });
+
+                        int splrate = PreferenceManager.getInt(MainActivity.this, "refresh_value");
+
+                        System.out.println("반복 시간 : " + splrate + "초 입니다.");
+                        Thread.sleep(splrate * 1000); // splrate을 기준으로 센서값 표현하는 페이지 새로고침
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-        });
+        }).start();
 
-// splrate을 기준으로 센서값 표현하는 페이지 새로고침
-
-        TextView device_info = (TextView) findViewById(R.id.device_location);
         device_info.setText(PreferenceManager.getString(MainActivity.this, "device_info"));
 
         int showing_sensor_num = PreferenceManager.getInt(MainActivity.this, "sensor_num");
@@ -138,6 +156,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        device_info.setText(PreferenceManager.getString(MainActivity.this, "device_info"));
     }
 
     @Override

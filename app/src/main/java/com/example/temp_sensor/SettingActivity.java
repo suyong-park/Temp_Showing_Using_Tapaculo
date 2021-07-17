@@ -1,6 +1,7 @@
 package com.example.temp_sensor;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -10,8 +11,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 public class SettingActivity extends AppCompatActivity {
@@ -30,7 +33,7 @@ public class SettingActivity extends AppCompatActivity {
         EditText device_info = (EditText) findViewById(R.id.device_enter);
         Button setting_btn = (Button) findViewById(R.id.setting_finish_btn);
 
-        device_info.setText(PreferenceManager.getString(SettingActivity.this, "device_info"));
+        device_info.setText(PreferenceManager.getString(settingActivity, "device_info"));
 
         View view = (View) findViewById(R.id.setting_layout);
         view.setOnTouchListener(new View.OnTouchListener() {
@@ -45,6 +48,8 @@ public class SettingActivity extends AppCompatActivity {
         });
 
         LinearLayout setting_layout = (LinearLayout) findViewById(R.id.setting_layout);
+        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(settingActivity);
+
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int check_id) {
@@ -69,11 +74,19 @@ public class SettingActivity extends AppCompatActivity {
         setting_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PreferenceManager.setInt(SettingActivity.this, "sensor_num", id);
-                PreferenceManager.setString(SettingActivity.this, "device_info", device_info.getText().toString());
+                PreferenceManager.setInt(settingActivity, "sensor_num", id);
+                PreferenceManager.setString(settingActivity, "device_info", device_info.getText().toString());
 
-                Snackbar.make(setting_layout, "설정이 완료됐습니다.", Snackbar.LENGTH_LONG).show();
-                finish();
+                builder.setTitle("설정")
+                        .setMessage("설정이 완료되었습니다.")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ((MainActivity)MainActivity.CONTEXT).onResume();
+                                finish();
+                            }
+                        })
+                        .show();
             }
         });
     }
