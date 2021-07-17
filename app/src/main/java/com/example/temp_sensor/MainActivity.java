@@ -7,29 +7,113 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
+
+    int device_splrate = 1000;
+
+    ArrayList<Channels[]> arrayChannels = new ArrayList<>();
+    ArrayList<Sensors> arraySensors = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // 센서에 따라 화면을 변동시킴
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 
-        Intent get_intent = getIntent();
-        ArrayList<Channels[]> getChannelList = (ArrayList<Channels[]>) get_intent.getSerializableExtra("Channels");
+        String api_key_str = PreferenceManager.getString(MainActivity.this, "api_key_str");
+        String api_secret_str = PreferenceManager.getString(MainActivity.this, "api_secret_str");
+        String mac_str = PreferenceManager.getString(MainActivity.this, "mac_str");
+
+        Connect_Tapaculo tapaculo = Request.getRetrofit().create(Connect_Tapaculo.class);
+
+
+        Call<GetInfo> call = tapaculo.getInfo(api_key_str, api_secret_str, mac_str);
+        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(MainActivity.this);
+
+        call.enqueue(new Callback<GetInfo>() {
+
+            @Override
+            public void onResponse(Call<GetInfo> call, Response<GetInfo> response) {
+
+                GetInfo result = response.body();
+                if(result == null) {
+                    builder.setTitle("Fail")
+                            .setMessage("Status Fail. Please Recheck your value.")
+                            .setPositiveButton(getResources().getString(R.string.positive_alert), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    finish();
+                                }
+                            })
+                            .show();
+                    return;
+                }
+
+                if(result.getStatus().equals("true")) {
+
+                    Sensors[] sensors = result.getSensors();
+                    Channels[] channels;
+                    device_splrate = Integer.parseInt(result.getDevice_splrate());
+
+                    for(int i = 0; i < sensors.length; i++) {
+                        channels = sensors[i].getChannels();
+                        arraySensors.add(sensors[i]);
+                        arrayChannels.add(channels);
+                    }
+
+                    TextView data_1 = (TextView) findViewById(R.id.show_data_1);
+                    TextView data_2 = (TextView) findViewById(R.id.show_data_2);
+
+                    for (int i = 0; i < arrayChannels.size(); i++)
+                        for (int j = 0; j < arrayChannels.get(i).length; j++) {
+                            if (j >= 2)
+                                break;
+                            else if (j == 0)
+                                data_1.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
+                            else if (j == 1)
+                                data_2.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
+                        }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetInfo> call, Throwable t) {
+                builder.setTitle("Fail")
+                        .setMessage("Communication Fail. Check internet.")
+                        .setPositiveButton(getResources().getString(R.string.positive_alert), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                finish();
+                            }
+                        })
+                        .show();
+                return;
+            }
+        });
+
+// splrate을 기준으로 센서값 표현하는 페이지 새로고침
 
         TextView device_info = (TextView) findViewById(R.id.device_location);
         device_info.setText(PreferenceManager.getString(MainActivity.this, "device_info"));
@@ -45,19 +129,6 @@ public class MainActivity extends AppCompatActivity {
         else if(showing_sensor_num == 2) { // 센서를 2개 보여주기로 결정한 경우
 
         }
-
-        TextView data_1 = (TextView) findViewById(R.id.show_data_1);
-        TextView data_2 = (TextView) findViewById(R.id.show_data_2);
-
-        for(int i = 0; i < getChannelList.size(); i++)
-            for(int j = 0; j < getChannelList.get(i).length; j++) {
-                if(j >= 2)
-                    break;
-                else if(j == 0)
-                    data_1.setText(getChannelList.get(i)[j].getCh_value() + getChannelList.get(i)[j].getCh_unit());
-                else if(j == 1)
-                    data_2.setText(getChannelList.get(i)[j].getCh_value() + getChannelList.get(i)[j].getCh_unit());
-            }
 
         Button setting_btn = (Button) findViewById(R.id.setting_btn);
         setting_btn.setOnClickListener(new View.OnClickListener() {
@@ -114,6 +185,5 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("취소", null)
                 .show();
-
     }
 }

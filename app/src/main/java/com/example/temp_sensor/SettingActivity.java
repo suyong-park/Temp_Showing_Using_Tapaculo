@@ -1,7 +1,10 @@
 package com.example.temp_sensor;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -14,15 +17,32 @@ import com.google.android.material.snackbar.Snackbar;
 public class SettingActivity extends AppCompatActivity {
 
     int id = 0;
+    SettingActivity settingActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setting);
 
+        settingActivity = SettingActivity.this;
+
         RadioGroup radioGroup = (RadioGroup) findViewById(R.id.show_group);
         EditText device_info = (EditText) findViewById(R.id.device_enter);
         Button setting_btn = (Button) findViewById(R.id.setting_finish_btn);
+
+        device_info.setText(PreferenceManager.getString(SettingActivity.this, "device_info"));
+
+        View view = (View) findViewById(R.id.setting_layout);
+        view.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                    downKeyboard();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         LinearLayout setting_layout = (LinearLayout) findViewById(R.id.setting_layout);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -56,5 +76,14 @@ public class SettingActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    public void downKeyboard() {
+
+        InputMethodManager inputManager = (InputMethodManager) settingActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        View focusedView = settingActivity.getCurrentFocus();
+
+        if (focusedView != null)
+            inputManager.hideSoftInputFromWindow(focusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 }
