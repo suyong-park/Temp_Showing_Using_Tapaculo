@@ -2,18 +2,26 @@ package com.example.temp_sensor;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class VerifyActivity extends AppCompatActivity {
 
@@ -26,7 +34,7 @@ public class VerifyActivity extends AppCompatActivity {
 
         verifyActivity = VerifyActivity.this;
 
-        //PreferenceManager.clear(VerifyActivity.this); // 테스트 목적의 코드 라인
+        PreferenceManager.clear(VerifyActivity.this); // 테스트 목적의 코드 라인
 
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 
@@ -36,6 +44,16 @@ public class VerifyActivity extends AppCompatActivity {
         EditText admin = (EditText) findViewById(R.id.admin_enter);
         EditText refresh = (EditText) findViewById(R.id.refresh_enter);
         Button button = (Button) findViewById(R.id.start_btn);
+        Button tapaculo = (Button) findViewById(R.id.tapaculo_btn);
+
+        tapaculo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent_tapaculo = new Intent(Intent.ACTION_VIEW);
+                intent_tapaculo.setData(Uri.parse("https://s2.dev.tapaculo365.com/"));
+                startActivity(intent_tapaculo);
+            }
+        });
 
         View view = (View) findViewById(R.id.linear_verify);
         view.setOnTouchListener(new View.OnTouchListener() {
@@ -64,12 +82,12 @@ public class VerifyActivity extends AppCompatActivity {
                 String api_key_str = api_key.getText().toString();
                 String api_secret_str = api_secret.getText().toString();
                 String mac_str = MAC.getText().toString();
-                int refresh_value = Integer.parseInt(refresh.getText().toString());
-                int admin_value = Integer.parseInt(admin.getText().toString());
+                String refresh_value_str = refresh.getText().toString();
+                String admin_value_str = admin.getText().toString();
 
                 AlertDialog.Builder builder = new MaterialAlertDialogBuilder(verifyActivity);
 
-                if(api_key_str.isEmpty() || api_secret_str.isEmpty() || mac_str.isEmpty() || String.valueOf(admin_value).isEmpty() || String.valueOf(refresh_value).isEmpty()) {
+                if(api_key_str.isEmpty() || api_secret_str.isEmpty() || mac_str.isEmpty() || admin_value_str.isEmpty() || refresh_value_str.isEmpty()) {
                     builder.setTitle("Enter all of Information.")
                             .setMessage("Please enter your Information")
                             .setPositiveButton(getResources().getString(R.string.positive_alert), null)
@@ -78,15 +96,54 @@ public class VerifyActivity extends AppCompatActivity {
                     return;
                 }
 
-                PreferenceManager.setString(verifyActivity, "api_key_str", api_key_str);
-                PreferenceManager.setString(verifyActivity, "api_secret_str", api_secret_str);
-                PreferenceManager.setString(verifyActivity, "mac_str", mac_str);
-                PreferenceManager.setInt(verifyActivity, "admin_value", admin_value);
-                PreferenceManager.setInt(verifyActivity, "refresh_value", refresh_value);
-                PreferenceManager.setBoolean(verifyActivity, "is_first_connect", true);
+                Connect_Tapaculo tapaculo = Request.getRetrofit().create(Connect_Tapaculo.class);
+                Call<GetInfo> call = tapaculo.getInfo(api_key_str, api_secret_str, mac_str);
+                call.enqueue(new Callback<GetInfo>() {
 
-                Intent intent = new Intent(verifyActivity, MainActivity.class);
-                startActivity(intent);
+                    @Override
+                    public void onResponse(Call<GetInfo> call, Response<GetInfo> response) {
+
+                        GetInfo result = response.body();
+                        if (result == null) {
+                            builder.setTitle("Fail")
+                                    .setMessage("Status Fail. Please Recheck your value.")
+                                    .setPositiveButton(getResources().getString(R.string.positive_alert), null)
+                                    .setCancelable(false)
+                                    .show();
+                            return;
+                        }
+
+                        if (result.getStatus().equals("true")) {
+                            int refresh_value = Integer.parseInt(refresh_value_str);
+                            int admin_value = Integer.parseInt(admin_value_str);
+
+                            PreferenceManager.setString(verifyActivity, "api_key_str", api_key_str);
+                            PreferenceManager.setString(verifyActivity, "api_secret_str", api_secret_str);
+                            PreferenceManager.setString(verifyActivity, "mac_str", mac_str);
+                            PreferenceManager.setInt(verifyActivity, "admin_value", admin_value);
+                            PreferenceManager.setInt(verifyActivity, "refresh_value", refresh_value);
+                            PreferenceManager.setBoolean(verifyActivity, "is_first_connect", true);
+
+                            Intent intent = new Intent(verifyActivity, MainActivity.class);
+                            startActivity(intent);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<GetInfo> call, Throwable t) {
+                        builder.setTitle("Fail")
+                                .setMessage("Communication Fail. Check internet.")
+                                .setPositiveButton(getResources().getString(R.string.positive_alert), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        finish();
+                                    }
+                                })
+                                .setCancelable(false)
+                                .show();
+                        return;
+                    }
+                });
             }
         });
     }

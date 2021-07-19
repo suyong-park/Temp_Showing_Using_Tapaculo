@@ -2,6 +2,7 @@ package com.example.temp_sensor;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         device_info = (TextView) findViewById(R.id.device_location);
 
         new Thread(new Runnable() {
+
             @Override
             public void run() {
                 while(true) {
@@ -64,19 +66,6 @@ public class MainActivity extends AppCompatActivity {
                             public void onResponse(Call<GetInfo> call, Response<GetInfo> response) {
 
                                 GetInfo result = response.body();
-                                if (result == null) {
-                                    builder.setTitle("Fail")
-                                            .setMessage("Status Fail. Please Recheck your value.")
-                                            .setPositiveButton(getResources().getString(R.string.positive_alert), new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                    finish();
-                                                }
-                                            })
-                                            .setCancelable(false)
-                                            .show();
-                                    return;
-                                }
 
                                 if (result.getStatus().equals("true")) {
 
@@ -92,15 +81,23 @@ public class MainActivity extends AppCompatActivity {
                                     TextView data_1 = (TextView) findViewById(R.id.show_data_1);
                                     TextView data_2 = (TextView) findViewById(R.id.show_data_2);
 
-                                    for (int i = 0; i < arrayChannels.size(); i++)
-                                        for (int j = 0; j < arrayChannels.get(i).length; j++) {
-                                            if (j >= 2)
-                                                break;
-                                            else if (j == 0)
-                                                data_1.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
-                                            else if (j == 1)
-                                                data_2.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
-                                        }
+                                    int showing_sensor_num = PreferenceManager.getInt(MainActivity.this, "sensor_num");
+                                    if (showing_sensor_num == 0 || showing_sensor_num == -1 || showing_sensor_num == 2) { // 센서를 몇 개 보여줄지 아직 세팅하지 않은 경우 or 2개 보여주는 경우
+                                        for (int i = 0; i < arrayChannels.size(); i++)
+                                            for (int j = 0; j < arrayChannels.get(i).length; j++) {
+                                                if (j >= 2)
+                                                    break;
+                                                else if (j == 0) {
+                                                    data_1.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
+                                                    PreferenceManager.setString(MainActivity.this, "ch1_name", arrayChannels.get(i)[j].getCh_name());
+                                                } else if (j == 1) {
+                                                    data_2.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
+                                                    PreferenceManager.setString(MainActivity.this, "ch2_name", arrayChannels.get(i)[j].getCh_name());
+                                                }
+                                            }
+                                    } else if (showing_sensor_num == 1) { // 센서를 1개 보여주기로 결정한 경우
+
+                                    }
                                 }
                             }
 
@@ -108,12 +105,7 @@ public class MainActivity extends AppCompatActivity {
                             public void onFailure(Call<GetInfo> call, Throwable t) {
                                 builder.setTitle("Fail")
                                         .setMessage("Communication Fail. Check internet.")
-                                        .setPositiveButton(getResources().getString(R.string.positive_alert), new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                finish();
-                                            }
-                                        })
+                                        .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                                         .setCancelable(false)
                                         .show();
                                 return;
@@ -131,18 +123,6 @@ public class MainActivity extends AppCompatActivity {
         }).start();
 
         device_info.setText(PreferenceManager.getString(MainActivity.this, "device_info"));
-
-        int showing_sensor_num = PreferenceManager.getInt(MainActivity.this, "sensor_num");
-
-        if(showing_sensor_num == 0 || showing_sensor_num == -1) { // 센서를 몇 개 보여줄지 아직 세팅하지 않은 경우
-
-        }
-        else if(showing_sensor_num == 1) { // 센서를 1개 보여주기로 결정한 경우
-            // TODO : 센서값을 몇 개를 볼지 그에 대한 액션을 정의. --> visual 속성을 정의
-        }
-        else if(showing_sensor_num == 2) { // 센서를 2개 보여주기로 결정한 경우
-
-        }
 
         Button setting_btn = (Button) findViewById(R.id.setting_btn);
         setting_btn.setOnClickListener(new View.OnClickListener() {

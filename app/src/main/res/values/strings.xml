@@ -17,5 +17,6 @@
     <string name="show_sensor_setting">화면 센서값 설정</string>
     <string name="device_info">디바이스 위치</string>
     <string name="device_info_enter">DEVICE INFORMATION</string>
-    <string name="setting">SETTING</string>
+    <string name="setting">SETTING DONE</string>
+    <string name="tapaculo">Tapaculo365</string>
 </resources>

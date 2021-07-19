@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -54,15 +55,22 @@ public class SettingActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int check_id) {
 
+                String[] ch_names = {PreferenceManager.getString(settingActivity, "ch1_name"),
+                        PreferenceManager.getString(settingActivity, "ch2_name")};
+
                 if(check_id == R.id.show_radio_one) {
                     id = 1;
-
-                    /*
-                    TODO : 1개를 보려면 어떤 것을 볼 지 결정하는 코드 작성
-                     */
-
-
-                    Snackbar.make(setting_layout, "1개 센서값만 보여드립니다.", Snackbar.LENGTH_LONG).show();
+                    builder.setTitle("선택")
+                            .setPositiveButton("선택", null)
+                            .setSingleChoiceItems(ch_names, 1, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    Snackbar.make(setting_layout, ch_names[i] + "값만 보여드립니다.", Snackbar.LENGTH_LONG).show();
+                                    PreferenceManager.setString(settingActivity, "ch_names", ch_names[i]);
+                                }
+                            })
+                            .setCancelable(false)
+                            .show();
                 }
                 else if(check_id == R.id.show_radio_two) {
                     id = 2;
