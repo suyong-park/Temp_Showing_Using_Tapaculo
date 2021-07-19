@@ -2,7 +2,6 @@ package com.example.temp_sensor;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,8 +9,9 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,6 +20,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setTitle("DEKIST - 측정값 확인");
 
         CONTEXT = this;
 
@@ -66,8 +70,11 @@ public class MainActivity extends AppCompatActivity {
                             public void onResponse(Call<GetInfo> call, Response<GetInfo> response) {
 
                                 GetInfo result = response.body();
+                                System.out.println("응답값 : " + response.body().toString());
 
                                 if (result.getStatus().equals("true")) {
+
+                                    System.out.println("Communication SUCCESS");
 
                                     Sensors[] sensors = result.getSensors();
                                     Channels[] channels;
@@ -82,9 +89,12 @@ public class MainActivity extends AppCompatActivity {
                                     TextView data_2 = (TextView) findViewById(R.id.show_data_2);
 
                                     int showing_sensor_num = PreferenceManager.getInt(MainActivity.this, "sensor_num");
-                                    if (showing_sensor_num == 0 || showing_sensor_num == -1 || showing_sensor_num == 2) { // 센서를 몇 개 보여줄지 아직 세팅하지 않은 경우 or 2개 보여주는 경우
+                                    if (showing_sensor_num == 0 || showing_sensor_num == -1 || showing_sensor_num == 2) {
+                                        // 센서를 몇 개 보여줄지 아직 세팅하지 않은 경우 or 2개 보여주는 경우
+                                        System.out.println("센서 선택 개수 : " + showing_sensor_num);
                                         for (int i = 0; i < arrayChannels.size(); i++)
                                             for (int j = 0; j < arrayChannels.get(i).length; j++) {
+                                                System.out.println("실제 크기 : " + arrayChannels.get(i).length);
                                                 if (j >= 2)
                                                     break;
                                                 else if (j == 0) {
@@ -96,7 +106,29 @@ public class MainActivity extends AppCompatActivity {
                                                 }
                                             }
                                     } else if (showing_sensor_num == 1) { // 센서를 1개 보여주기로 결정한 경우
+                                        System.out.println("센서 선택 개수 : " + showing_sensor_num);
 
+                                        // TODO : 데이터를 가렸다면 다음에 다시 센서 2개를 선택했을 때 다시 텍스트가 보이도록 코드 수정
+
+                                        String selected_sensor = PreferenceManager.getString(MainActivity.this, "ch_name");
+                                        Set<String> hashSet = PreferenceManager.getStringSet(MainActivity.this, "hashSet");
+
+                                        Iterator<String> iterator = hashSet.iterator();
+                                        while (iterator.hasNext()) {
+                                            if(!selected_sensor.equals(iterator.next()))
+                                                continue;
+                                            else
+                                                for (int i = 0; i < arrayChannels.size(); i++)
+                                                    for (int j = 0; j < arrayChannels.get(i).length; j++)
+                                                        if(arrayChannels.get(i)[j].getCh_name().equals(selected_sensor)) {
+                                                            if (j >= 2)
+                                                                break;
+                                                            else if (j == 0)
+                                                                data_2.setVisibility(View.GONE);
+                                                            else if (j == 1)
+                                                                data_1.setVisibility(View.GONE);
+                                                        }
+                                        }
                                     }
                                 }
                             }
@@ -123,15 +155,6 @@ public class MainActivity extends AppCompatActivity {
         }).start();
 
         device_info.setText(PreferenceManager.getString(MainActivity.this, "device_info"));
-
-        Button setting_btn = (Button) findViewById(R.id.setting_btn);
-        setting_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-                startActivity(intent);
-            }
-        });
     }
 
     @Override
@@ -186,5 +209,22 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("취소", null)
                 .show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.tab_main_btn_setting, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.setting_btn:
+                Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                startActivity(intent);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

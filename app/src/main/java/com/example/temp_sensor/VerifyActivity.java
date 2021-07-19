@@ -2,7 +2,6 @@ package com.example.temp_sensor;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,9 +14,10 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,11 +30,11 @@ public class VerifyActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.verify);
+        setContentView(R.layout.activity_verify);
 
         verifyActivity = VerifyActivity.this;
 
-        PreferenceManager.clear(VerifyActivity.this); // 테스트 목적의 코드 라인
+        //PreferenceManager.clear(VerifyActivity.this); // 테스트 목적의 코드 라인
 
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 
@@ -60,7 +60,7 @@ public class VerifyActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction() == MotionEvent.ACTION_DOWN) {
-                    downKeyboard();
+                    Request.downKeyboard(verifyActivity);
                     return true;
                 }
                 return false;
@@ -93,6 +93,10 @@ public class VerifyActivity extends AppCompatActivity {
                             .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                             .setCancelable(false)
                             .show();
+                    return;
+                }
+                if(admin_value_str.length() != 4) {
+                    Snackbar.make(view, "관리자 인증번호는 4자리입니다.", Snackbar.LENGTH_LONG).show();
                     return;
                 }
 
@@ -146,14 +150,5 @@ public class VerifyActivity extends AppCompatActivity {
                 });
             }
         });
-    }
-
-    public void downKeyboard() {
-
-        InputMethodManager inputManager = (InputMethodManager) verifyActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        View focusedView = verifyActivity.getCurrentFocus();
-
-        if (focusedView != null)
-            inputManager.hideSoftInputFromWindow(focusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 }

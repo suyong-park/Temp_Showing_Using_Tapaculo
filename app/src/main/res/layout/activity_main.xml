@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -22,7 +22,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_weight="1"
+        android:id="@+id/include_data_linear"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center">
@@ -43,12 +43,6 @@
                 android:textAlignment="center" />
         </LinearLayout>
 
-        <View
-            android:id="@+id/line"
-            android:layout_width="2dp"
-            android:layout_height="match_parent"
-            android:background="@color/black" />
-
         <LinearLayout
             android:id="@+id/second_data_layout"
             android:layout_weight="1"
@@ -64,17 +58,6 @@
                 android:textSize="80sp"
                 android:textAlignment="center" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
-
-                <Button
-                    android:id="@+id/setting_btn"
-                    style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-                    android:layout_width="57dp"
-                    android:layout_height="wrap_content"
-                    app:icon="@drawable/baseline_settings_black_48" />
-            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

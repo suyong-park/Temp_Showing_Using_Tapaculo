@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/linear_verify"
     android:orientation="vertical"
     android:focusable="true"
@@ -12,81 +14,28 @@
     <Button
         android:id="@+id/tapaculo_btn"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_margin="20dp"
+        android:textSize="30sp"
         android:text="@string/tapaculo" />
 
-    <LinearLayout
-        android:layout_weight="2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:stretchColumns="0, 1">
 
-
-        <LinearLayout
-            android:layout_weight="1"
-            android:gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
+        <TableRow>
             <TextView
-                android:layout_weight="1"
-                android:gravity="center"
+                android:layout_gravity="center"
                 android:id="@+id/api_key"
                 android:text="@string/api_key"
                 android:textSize="30sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <TextView
-                android:layout_weight="1"
-                android:gravity="center"
-                android:id="@+id/api_secret"
-                android:text="@string/api_secret"
-                android:textSize="30sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:layout_weight="1"
-                android:gravity="center"
-                android:id="@+id/MAC"
-                android:text="@string/MAC"
-                android:textSize="30sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:layout_weight="1"
-                android:gravity="center"
-                android:id="@+id/admin"
-                android:text="@string/admin"
-                android:textSize="30sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:layout_weight="1"
-                android:gravity="center"
-                android:id="@+id/refresh"
-                android:text="@string/refresh"
-                android:textSize="30sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_weight="3"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_weight="1"
                 android:gravity="center"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:hint="@string/api_key_enter"
@@ -99,11 +48,19 @@
                     android:layout_height="wrap_content" />
 
             </com.google.android.material.textfield.TextInputLayout>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_gravity="center"
+                android:id="@+id/api_secret"
+                android:text="@string/api_secret"
+                android:textSize="30sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_weight="1"
                 android:gravity="center"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -115,11 +72,19 @@
                     android:layout_height="wrap_content" />
 
             </com.google.android.material.textfield.TextInputLayout>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_gravity="center"
+                android:id="@+id/MAC"
+                android:text="@string/MAC"
+                android:textSize="30sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_weight="1"
                 android:gravity="center"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:hint="@string/MAC_enter"
@@ -131,13 +96,23 @@
                     android:layout_height="wrap_content" />
 
             </com.google.android.material.textfield.TextInputLayout>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_gravity="center"
+                android:id="@+id/admin"
+                android:text="@string/admin"
+                android:textSize="30sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_weight="1"
                 android:gravity="center"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
+                app:helperTextEnabled="true"
+                app:helperText="@string/admin_helper"
                 android:hint="@string/admin_enter"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
@@ -149,13 +124,23 @@
                     android:layout_height="wrap_content" />
 
             </com.google.android.material.textfield.TextInputLayout>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_gravity="center"
+                android:id="@+id/refresh"
+                android:text="@string/refresh"
+                android:textSize="30sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_weight="1"
                 android:gravity="center"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
+                app:helperTextEnabled="true"
+                app:helperText="@string/refresh_helper"
                 android:hint="@string/refresh_enter"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
@@ -167,26 +152,20 @@
                     android:layout_height="wrap_content" />
 
             </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
-    </LinearLayout>
+        </TableRow>
+    </TableLayout>
 
     <LinearLayout
-        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:gravity="center" >
 
-        <LinearLayout
+        <Button
+            android:id="@+id/start_btn"
+            android:layout_margin="30dp"
+            android:textSize="30sp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <Button
-                android:id="@+id/start_btn"
-                android:layout_margin="30dp"
-                android:textSize="30sp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/sensoring_btn"
-                />
-        </LinearLayout>
+            android:layout_height="80dp"
+            android:text="@string/sensoring_btn" />
     </LinearLayout>
 </LinearLayout>

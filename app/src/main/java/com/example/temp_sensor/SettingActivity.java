@@ -9,14 +9,17 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -26,7 +29,7 @@ public class SettingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.setting);
+        setContentView(R.layout.activity_setting);
 
         settingActivity = SettingActivity.this;
 
@@ -41,12 +44,22 @@ public class SettingActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction() == MotionEvent.ACTION_DOWN) {
-                    downKeyboard();
+                    Request.downKeyboard(settingActivity);
                     return true;
                 }
                 return false;
             }
         });
+
+        int default_select_sensor_num = PreferenceManager.getInt(settingActivity, "sensor_num");
+        if(default_select_sensor_num == 1) {
+            RadioButton show_one = (RadioButton) findViewById(R.id.show_radio_one);
+            show_one.setChecked(true);
+        }
+        else {
+            RadioButton show_two = (RadioButton) findViewById(R.id.show_radio_two);
+            show_two.setChecked(true);
+        }
 
         LinearLayout setting_layout = (LinearLayout) findViewById(R.id.setting_layout);
         AlertDialog.Builder builder = new MaterialAlertDialogBuilder(settingActivity);
@@ -66,7 +79,7 @@ public class SettingActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     Snackbar.make(setting_layout, ch_names[i] + "값만 보여드립니다.", Snackbar.LENGTH_LONG).show();
-                                    PreferenceManager.setString(settingActivity, "ch_names", ch_names[i]);
+                                    PreferenceManager.setString(settingActivity, "ch_name", ch_names[i]);
                                 }
                             })
                             .setCancelable(false)
@@ -85,6 +98,11 @@ public class SettingActivity extends AppCompatActivity {
                 PreferenceManager.setInt(settingActivity, "sensor_num", id);
                 PreferenceManager.setString(settingActivity, "device_info", device_info.getText().toString());
 
+                Set<String> hashSet = new HashSet<>();
+                hashSet.add(PreferenceManager.getString(settingActivity, "ch1_name"));
+                hashSet.add(PreferenceManager.getString(settingActivity, "ch2_name"));
+                PreferenceManager.setStringSet(settingActivity, "hashSet", hashSet);
+
                 builder.setTitle("설정")
                         .setMessage("설정이 완료되었습니다.")
                         .setPositiveButton("확인", new DialogInterface.OnClickListener() {
@@ -98,14 +116,5 @@ public class SettingActivity extends AppCompatActivity {
                         .show();
             }
         });
-    }
-
-    public void downKeyboard() {
-
-        InputMethodManager inputManager = (InputMethodManager) settingActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        View focusedView = settingActivity.getCurrentFocus();
-
-        if (focusedView != null)
-            inputManager.hideSoftInputFromWindow(focusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 }
