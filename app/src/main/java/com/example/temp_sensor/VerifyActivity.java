@@ -94,10 +94,12 @@ public class VerifyActivity extends AppCompatActivity {
                     Request.AlertBuild(verifyActivity, "Enter all of Information.", "Please enter your Information.")
                             .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                             .show();
+                    progressDialog.dismiss();
                     return;
                 }
                 if(admin_value_str.length() != 4) {
                     Snackbar.make(view, "관리자 인증번호는 4자리입니다.", Snackbar.LENGTH_LONG).show();
+                    progressDialog.dismiss();
                     return;
                 }
 
@@ -113,6 +115,7 @@ public class VerifyActivity extends AppCompatActivity {
                             Request.AlertBuild(verifyActivity, "Fail", "Status Fail. Please Recheck your value.")
                                     .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                                     .show();
+                            progressDialog.dismiss();
                             return;
                         }
 
@@ -138,6 +141,7 @@ public class VerifyActivity extends AppCompatActivity {
                         Request.AlertBuild(verifyActivity, "Fail", "Communication Fail. Check internet.")
                                 .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                                 .show();
+                        progressDialog.dismiss();
                         return;
                     }
                 });

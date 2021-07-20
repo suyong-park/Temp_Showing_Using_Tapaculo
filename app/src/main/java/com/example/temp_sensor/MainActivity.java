@@ -75,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
                                     finish();
                                     return;
                                 }
-                                System.out.println("응답값 : " + response.body().toString());
 
                                 if (result.getStatus().equals("true")) {
 
@@ -92,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
 
                                     TextView data_1 = (TextView) findViewById(R.id.show_data_1);
                                     TextView data_2 = (TextView) findViewById(R.id.show_data_2);
+                                    TextView data_unit_1 = (TextView) findViewById(R.id.show_data_unit_1);
+                                    TextView data_unit_2 = (TextView) findViewById(R.id.show_data_unit_2);
 
                                     LinearLayout include_data_layout = (LinearLayout) findViewById(R.id.include_data_linear);
                                     LinearLayout first_data_layout = (LinearLayout) findViewById(R.id.first_data_layout);
@@ -106,44 +107,60 @@ public class MainActivity extends AppCompatActivity {
                                                 data_1.setVisibility(View.VISIBLE);
                                                 data_2.setVisibility(View.VISIBLE);
                                             } else if (showing_sensor_num == 0) { // 1번째 센서를 보여주기로 결정한 경우
-                                                System.out.println("온도 선택");
+                                                data_unit_2.setVisibility(View.GONE);
                                                 data_2.setVisibility(View.GONE);
                                                 data_1.setVisibility(View.VISIBLE);
                                             } else if (showing_sensor_num == 1) { // 2번째 센서를 보여주기로 결정한 경우
-                                                System.out.println("습도 선택");
+                                                data_unit_1.setVisibility(View.GONE);
                                                 data_1.setVisibility(View.GONE);
                                                 data_2.setVisibility(View.VISIBLE);
                                             }
 
                                             if (j == 0) {
-                                                if(showing_sensor_num == 2 || showing_sensor_num == -1)
-                                                    data_1.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
+                                                if(showing_sensor_num == 2 || showing_sensor_num == -1) {
+                                                    data_1.setText(arrayChannels.get(i)[j].getCh_value());
+                                                    data_unit_1.setText(arrayChannels.get(i)[j].getCh_unit());
+                                                }
                                                 else {
                                                     first_data_layout.setVisibility(View.GONE);
                                                     data_1.setText(arrayChannels.get(i)[j].getCh_value());
-                                                    data_1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 610);
+                                                    data_1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 600);
                                                     data_1.setTypeface(Typeface.DEFAULT_BOLD);
+                                                    data_unit_1.setText(arrayChannels.get(i)[j].getCh_unit());
+                                                    data_unit_1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 100);
 
                                                     if (data_1.getParent() != null)
                                                         ((ViewGroup) data_1.getParent()).removeView(data_1);
-
                                                     include_data_layout.addView(data_1);
+                                                    if (data_unit_1.getParent() != null)
+                                                        ((ViewGroup) data_unit_1.getParent()).removeView(data_unit_1);
+                                                    include_data_layout.addView(data_unit_1);
+
                                                     include_data_layout.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                                                    include_data_layout.setOrientation(LinearLayout.HORIZONTAL);
                                                 }
                                             } else if (j == 1) {
-                                                if(showing_sensor_num == 2 || showing_sensor_num == -1)
-                                                    data_2.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
+                                                if(showing_sensor_num == 2 || showing_sensor_num == -1) {
+                                                    data_2.setText(arrayChannels.get(i)[j].getCh_value());
+                                                    data_unit_2.setText(arrayChannels.get(i)[j].getCh_unit());
+                                                }
                                                 else {
                                                     second_data_layout.setVisibility(View.GONE);
                                                     data_2.setText(arrayChannels.get(i)[j].getCh_value());
-                                                    data_2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 610);
+                                                    data_2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 600);
                                                     data_2.setTypeface(Typeface.DEFAULT_BOLD);
+                                                    data_unit_2.setText(arrayChannels.get(i)[j].getCh_unit());
+                                                    data_unit_2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 100);
 
                                                     if (data_2.getParent() != null)
                                                         ((ViewGroup) data_2.getParent()).removeView(data_2);
-
                                                     include_data_layout.addView(data_2);
+                                                    if (data_unit_2.getParent() != null)
+                                                        ((ViewGroup) data_unit_2.getParent()).removeView(data_unit_2);
+                                                    include_data_layout.addView(data_unit_2);
+
                                                     include_data_layout.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                                                    include_data_layout.setOrientation(LinearLayout.HORIZONTAL);
                                                 }
                                             }
                                             PreferenceManager.setString(mainActivity, "ch" + j + "_name", arrayChannels.get(i)[j].getCh_name());
@@ -154,10 +171,9 @@ public class MainActivity extends AppCompatActivity {
 
                             @Override
                             public void onFailure(Call<GetInfo> call, Throwable t) {
-                                if(!mainActivity.isFinishing())
-                                    Request.AlertBuild(mainActivity, "Communication Fail", "Communication Fail. Check internet.")
-                                            .setPositiveButton(getResources().getString(R.string.positive_alert), null)
-                                            .show();
+                                Request.AlertBuild(mainActivity, "Communication Fail", "Communication Fail. Check internet.")
+                                        .setPositiveButton(getResources().getString(R.string.positive_alert), null)
+                                        .show();
                                 finish();
                                 return;
                             }
