@@ -128,6 +128,6 @@ public class GetInfo implements Serializable{
 
     @Override
     public String toString() {
-        return "ClassPojo [device_info_update = "+device_info_update+", device_version = "+device_version+", device_mac = "+device_mac+", device_name = "+device_name+", sensors = "+sensors+", device_model = "+device_model+", device_interval = "+device_interval+", device_splrate = "+device_splrate+", device_lastupdate = "+device_lastupdate+", status = "+status+"]";
+        return "[device_info_update = "+device_info_update+", device_version = "+device_version+", device_mac = "+device_mac+", device_name = "+device_name+", sensors = "+sensors+", device_model = "+device_model+", device_interval = "+device_interval+", device_splrate = "+device_splrate+", device_lastupdate = "+device_lastupdate+", status = "+status+"]";
     }
 }

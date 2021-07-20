@@ -20,7 +20,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -41,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setTitle("DEKIST - 측정값 확인");
+        setTitle("측정값 확인");
 
         CONTEXT = this;
 
@@ -56,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new MaterialAlertDialogBuilder(MainActivity.this);
 
         device_info = (TextView) findViewById(R.id.device_location);
+        device_info.setText(PreferenceManager.getString(MainActivity.this, "device_info"));
 
         new Thread(new Runnable() {
 
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 if (result.getStatus().equals("true")) {
 
-                                    System.out.println("Communication SUCCESS");
+                                    System.out.println("통신 성공");
 
                                     Sensors[] sensors = result.getSensors();
                                     Channels[] channels;
@@ -89,47 +89,44 @@ public class MainActivity extends AppCompatActivity {
                                     TextView data_2 = (TextView) findViewById(R.id.show_data_2);
 
                                     int showing_sensor_num = PreferenceManager.getInt(MainActivity.this, "sensor_num");
-                                    if (showing_sensor_num == 0 || showing_sensor_num == -1 || showing_sensor_num == 2) {
-                                        // 센서를 몇 개 보여줄지 아직 세팅하지 않은 경우 or 2개 보여주는 경우
-                                        System.out.println("센서 선택 개수 : " + showing_sensor_num);
-                                        for (int i = 0; i < arrayChannels.size(); i++)
-                                            for (int j = 0; j < arrayChannels.get(i).length; j++) {
+                                    for (int i = 0; i < arrayChannels.size(); i++)
+                                        for (int j = 0; j < arrayChannels.get(i).length; j++) {
+                                            if (showing_sensor_num == -1 || showing_sensor_num == 2) {
+                                                // 센서를 몇 개 보여줄지 아직 세팅하지 않은 경우 or 2개 보여주는 경우
+                                                System.out.println("센서 선택 개수 : " + showing_sensor_num);
+
+                                                data_1.setVisibility(View.VISIBLE);
+                                                data_2.setVisibility(View.VISIBLE);
                                                 System.out.println("실제 크기 : " + arrayChannels.get(i).length);
                                                 if (j >= 2)
                                                     break;
                                                 else if (j == 0) {
                                                     data_1.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
                                                     PreferenceManager.setString(MainActivity.this, "ch1_name", arrayChannels.get(i)[j].getCh_name());
-                                                } else if (j == 1) {
+                                                }
+                                                else if (j == 1) {
                                                     data_2.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
                                                     PreferenceManager.setString(MainActivity.this, "ch2_name", arrayChannels.get(i)[j].getCh_name());
                                                 }
                                             }
-                                    } else if (showing_sensor_num == 1) { // 센서를 1개 보여주기로 결정한 경우
-                                        System.out.println("센서 선택 개수 : " + showing_sensor_num);
+                                            else if(showing_sensor_num == 0) { // 1번째 센서를 보여주기로 결정한 경우
+                                                System.out.println("온도 선택");
+                                                data_2.setVisibility(View.GONE);
+                                                data_1.setVisibility(View.VISIBLE);
+                                            }
+                                            else if (showing_sensor_num == 1) { // 2번째 센서를 보여주기로 결정한 경우
+                                                System.out.println("습도 선택");
+                                                data_1.setVisibility(View.GONE);
+                                                data_2.setVisibility(View.VISIBLE);
+                                            }
 
-                                        // TODO : 데이터를 가렸다면 다음에 다시 센서 2개를 선택했을 때 다시 텍스트가 보이도록 코드 수정
-
-                                        String selected_sensor = PreferenceManager.getString(MainActivity.this, "ch_name");
-                                        Set<String> hashSet = PreferenceManager.getStringSet(MainActivity.this, "hashSet");
-
-                                        Iterator<String> iterator = hashSet.iterator();
-                                        while (iterator.hasNext()) {
-                                            if(!selected_sensor.equals(iterator.next()))
-                                                continue;
-                                            else
-                                                for (int i = 0; i < arrayChannels.size(); i++)
-                                                    for (int j = 0; j < arrayChannels.get(i).length; j++)
-                                                        if(arrayChannels.get(i)[j].getCh_name().equals(selected_sensor)) {
-                                                            if (j >= 2)
-                                                                break;
-                                                            else if (j == 0)
-                                                                data_2.setVisibility(View.GONE);
-                                                            else if (j == 1)
-                                                                data_1.setVisibility(View.GONE);
-                                                        }
+                                            if (j >= 2)
+                                                break;
+                                            else if (j == 0)
+                                                data_1.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
+                                            else if (j == 1)
+                                                data_2.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
                                         }
-                                    }
                                 }
                             }
 
@@ -154,12 +151,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
 
-        device_info.setText(PreferenceManager.getString(MainActivity.this, "device_info"));
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         device_info.setText(PreferenceManager.getString(MainActivity.this, "device_info"));
     }
 

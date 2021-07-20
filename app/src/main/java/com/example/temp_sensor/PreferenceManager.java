@@ -9,7 +9,6 @@ class PreferenceManager {
 
     public static final String PREFERENCES_NAME = "preference_manager";
     private static final String DEFAULT_VALUE_STRING = "";
-    private static final Set<String> DEFAULT_VALUE_STRING_SET = null;
     private static final boolean DEFAULT_VALUE_BOOLEAN = false;
     private static final int DEFAULT_VALUE_INTEGER = -1;
 
@@ -22,14 +21,6 @@ class PreferenceManager {
         SharedPreferences prefs = getPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(key, value);
-        editor.commit();
-    }
-
-    // save String Set value
-    public static void setStringSet(Context context, String key, Set<String> value) {
-        SharedPreferences prefs = getPreferences(context);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putStringSet(key, value);
         editor.commit();
     }
 
@@ -53,13 +44,6 @@ class PreferenceManager {
     public static String getString(Context context, String key) {
         SharedPreferences prefs = getPreferences(context);
         String value = prefs.getString(key, DEFAULT_VALUE_STRING);
-        return value;
-    }
-
-    // load String Set value
-    public static Set<String> getStringSet(Context context, String key) {
-        SharedPreferences prefs = getPreferences(context);
-        Set<String> value = prefs.getStringSet(key, DEFAULT_VALUE_STRING_SET);
         return value;
     }
 

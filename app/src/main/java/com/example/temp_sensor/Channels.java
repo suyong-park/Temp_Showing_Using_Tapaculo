@@ -67,6 +67,6 @@ public class Channels implements Serializable {
 
     @Override
     public String toString() {
-        return "ClassPojo [ch_value = "+ch_value+", ch_is_reg = "+ch_is_reg+", ch_timestamp = "+ch_timestamp+", ch_name = "+ch_name+", ch_unit = "+ch_unit+"]";
+        return "[ch_value = "+ch_value+", ch_is_reg = "+ch_is_reg+", ch_timestamp = "+ch_timestamp+", ch_name = "+ch_name+", ch_unit = "+ch_unit+"]";
     }
 }

@@ -3,7 +3,6 @@ package com.example.temp_sensor;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -11,13 +10,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.textfield.TextInputLayout;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,6 +28,7 @@ public class VerifyActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify);
+        setTitle("사용자 인증");
 
         verifyActivity = VerifyActivity.this;
 
@@ -137,12 +135,7 @@ public class VerifyActivity extends AppCompatActivity {
                     public void onFailure(Call<GetInfo> call, Throwable t) {
                         builder.setTitle("Fail")
                                 .setMessage("Communication Fail. Check internet.")
-                                .setPositiveButton(getResources().getString(R.string.positive_alert), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        finish();
-                                    }
-                                })
+                                .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                                 .setCancelable(false)
                                 .show();
                         return;

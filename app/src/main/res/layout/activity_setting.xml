@@ -19,10 +19,14 @@
             android:text="@string/show_sensor_setting" />
 
         <RadioButton
-            android:id="@+id/show_radio_one"
+            android:id="@+id/show_radio_first_value"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/show_one" />
+            android:layout_height="wrap_content" />
+
+        <RadioButton
+            android:id="@+id/show_radio_second_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <RadioButton
             android:id="@+id/show_radio_two"

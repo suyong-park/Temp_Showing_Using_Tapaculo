@@ -1,14 +1,12 @@
 package com.example.temp_sensor;
 
-import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -16,20 +14,17 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.snackbar.Snackbar;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class SettingActivity extends AppCompatActivity {
 
-    int id = 0;
+    int id;
     SettingActivity settingActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
+        setTitle("설정");
 
         settingActivity = SettingActivity.this;
 
@@ -51,43 +46,40 @@ public class SettingActivity extends AppCompatActivity {
             }
         });
 
-        int default_select_sensor_num = PreferenceManager.getInt(settingActivity, "sensor_num");
-        if(default_select_sensor_num == 1) {
-            RadioButton show_one = (RadioButton) findViewById(R.id.show_radio_one);
-            show_one.setChecked(true);
-        }
-        else {
-            RadioButton show_two = (RadioButton) findViewById(R.id.show_radio_two);
-            show_two.setChecked(true);
+        RadioButton first_value = (RadioButton) findViewById(R.id.show_radio_first_value);
+        RadioButton second_value = (RadioButton) findViewById(R.id.show_radio_second_value);
+        RadioButton show_two_value = (RadioButton) findViewById(R.id.show_radio_two);
+
+        switch (PreferenceManager.getInt(settingActivity, "sensor_num")) {
+            case 0:
+                first_value.setChecked(true);
+                break;
+            case 1:
+                second_value.setChecked(true);
+                break;
+            default:
+                show_two_value.setChecked(true);
+                break;
         }
 
-        LinearLayout setting_layout = (LinearLayout) findViewById(R.id.setting_layout);
+        first_value.setText(PreferenceManager.getString(settingActivity, "ch1_name"));
+        second_value.setText(PreferenceManager.getString(settingActivity, "ch2_name"));
+
         AlertDialog.Builder builder = new MaterialAlertDialogBuilder(settingActivity);
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int check_id) {
-
-                String[] ch_names = {PreferenceManager.getString(settingActivity, "ch1_name"),
-                        PreferenceManager.getString(settingActivity, "ch2_name")};
-
-                if(check_id == R.id.show_radio_one) {
-                    id = 1;
-                    builder.setTitle("선택")
-                            .setPositiveButton("선택", null)
-                            .setSingleChoiceItems(ch_names, 1, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    Snackbar.make(setting_layout, ch_names[i] + "값만 보여드립니다.", Snackbar.LENGTH_LONG).show();
-                                    PreferenceManager.setString(settingActivity, "ch_name", ch_names[i]);
-                                }
-                            })
-                            .setCancelable(false)
-                            .show();
-                }
-                else if(check_id == R.id.show_radio_two) {
-                    id = 2;
-                    Snackbar.make(setting_layout, "2개 센서값을 보여드립니다.", Snackbar.LENGTH_LONG).show();
+                switch (check_id) {
+                    case R.id.show_radio_first_value:
+                        id = 0;
+                        break;
+                    case R.id.show_radio_second_value:
+                        id = 1;
+                        break;
+                    case R.id.show_radio_two:
+                        id = 2;
+                        break;
                 }
             }
         });
@@ -98,18 +90,15 @@ public class SettingActivity extends AppCompatActivity {
                 PreferenceManager.setInt(settingActivity, "sensor_num", id);
                 PreferenceManager.setString(settingActivity, "device_info", device_info.getText().toString());
 
-                Set<String> hashSet = new HashSet<>();
-                hashSet.add(PreferenceManager.getString(settingActivity, "ch1_name"));
-                hashSet.add(PreferenceManager.getString(settingActivity, "ch2_name"));
-                PreferenceManager.setStringSet(settingActivity, "hashSet", hashSet);
-
                 builder.setTitle("설정")
                         .setMessage("설정이 완료되었습니다.")
                         .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                ((MainActivity)MainActivity.CONTEXT).onResume();
+                                Intent intent = new Intent(settingActivity, MainActivity.class);
+                                ((MainActivity)MainActivity.CONTEXT).finish();
                                 finish();
+                                startActivity(intent);
                             }
                         })
                         .setCancelable(false)

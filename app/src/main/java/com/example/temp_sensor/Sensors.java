@@ -91,7 +91,7 @@ public class Sensors implements Serializable {
 
     @Override
     public String toString() {
-        return "ClassPojo [sensor_mac = "+sensor_mac+", channels = "+channels+", lqi = "+lqi+", last_update = "+last_update+", sensor_model = "+sensor_model+", battery = "+battery+", timestamp = "+timestamp+"]";
+        return "[sensor_mac = "+sensor_mac+", channels = "+channels+", lqi = "+lqi+", last_update = "+last_update+", sensor_model = "+sensor_model+", battery = "+battery+", timestamp = "+timestamp+"]";
     }
 }
 
