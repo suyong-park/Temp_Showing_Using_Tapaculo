@@ -1,6 +1,5 @@
 package com.example.temp_sensor;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -16,12 +15,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Channels[]> arrayChannels = new ArrayList<>();
     ArrayList<Sensors> arraySensors = new ArrayList<>();
 
+    MainActivity mainActivity;
     TextView device_info;
 
     public static Context CONTEXT;
@@ -43,19 +40,19 @@ public class MainActivity extends AppCompatActivity {
         setTitle("측정값 확인");
 
         CONTEXT = this;
+        mainActivity = this;
 
         // 센서에 따라 화면을 변동시킴
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 
-        String api_key_str = PreferenceManager.getString(MainActivity.this, "api_key_str");
-        String api_secret_str = PreferenceManager.getString(MainActivity.this, "api_secret_str");
-        String mac_str = PreferenceManager.getString(MainActivity.this, "mac_str");
+        String api_key_str = PreferenceManager.getString(mainActivity, "api_key_str");
+        String api_secret_str = PreferenceManager.getString(mainActivity, "api_secret_str");
+        String mac_str = PreferenceManager.getString(mainActivity, "mac_str");
 
         Connect_Tapaculo tapaculo = Request.getRetrofit().create(Connect_Tapaculo.class);
-        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(MainActivity.this);
 
         device_info = (TextView) findViewById(R.id.device_location);
-        device_info.setText(PreferenceManager.getString(MainActivity.this, "device_info"));
+        device_info.setText(PreferenceManager.getString(mainActivity, "device_info"));
 
         new Thread(new Runnable() {
 
@@ -88,33 +85,20 @@ public class MainActivity extends AppCompatActivity {
                                     TextView data_1 = (TextView) findViewById(R.id.show_data_1);
                                     TextView data_2 = (TextView) findViewById(R.id.show_data_2);
 
-                                    int showing_sensor_num = PreferenceManager.getInt(MainActivity.this, "sensor_num");
-                                    for (int i = 0; i < arrayChannels.size(); i++)
+                                    int showing_sensor_num = PreferenceManager.getInt(mainActivity, "sensor_num");
+                                    for (int i = 0; i < arrayChannels.size(); i++) {
+                                        System.out.println("디바이스 센서 개수 : " + arrayChannels.get(i).length);
                                         for (int j = 0; j < arrayChannels.get(i).length; j++) {
-                                            if (showing_sensor_num == -1 || showing_sensor_num == 2) {
-                                                // 센서를 몇 개 보여줄지 아직 세팅하지 않은 경우 or 2개 보여주는 경우
+                                            if (showing_sensor_num == -1 || showing_sensor_num == 2) { // 센서를 몇 개 보여줄지 아직 세팅하지 않은 경우 or 2개 보여주는 경우
                                                 System.out.println("센서 선택 개수 : " + showing_sensor_num);
-
                                                 data_1.setVisibility(View.VISIBLE);
                                                 data_2.setVisibility(View.VISIBLE);
-                                                System.out.println("실제 크기 : " + arrayChannels.get(i).length);
-                                                if (j >= 2)
-                                                    break;
-                                                else if (j == 0) {
-                                                    data_1.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
-                                                    PreferenceManager.setString(MainActivity.this, "ch1_name", arrayChannels.get(i)[j].getCh_name());
-                                                }
-                                                else if (j == 1) {
-                                                    data_2.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
-                                                    PreferenceManager.setString(MainActivity.this, "ch2_name", arrayChannels.get(i)[j].getCh_name());
-                                                }
-                                            }
-                                            else if(showing_sensor_num == 0) { // 1번째 센서를 보여주기로 결정한 경우
+                                            } else if (showing_sensor_num == 0) { // 1번째 센서를 보여주기로 결정한 경우
                                                 System.out.println("온도 선택");
                                                 data_2.setVisibility(View.GONE);
                                                 data_1.setVisibility(View.VISIBLE);
-                                            }
-                                            else if (showing_sensor_num == 1) { // 2번째 센서를 보여주기로 결정한 경우
+
+                                            } else if (showing_sensor_num == 1) { // 2번째 센서를 보여주기로 결정한 경우
                                                 System.out.println("습도 선택");
                                                 data_1.setVisibility(View.GONE);
                                                 data_2.setVisibility(View.VISIBLE);
@@ -122,26 +106,28 @@ public class MainActivity extends AppCompatActivity {
 
                                             if (j >= 2)
                                                 break;
-                                            else if (j == 0)
+                                            else if (j == 0) {
                                                 data_1.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
-                                            else if (j == 1)
+                                                PreferenceManager.setString(mainActivity, "ch1_name", arrayChannels.get(i)[j].getCh_name());
+                                            } else if (j == 1) {
                                                 data_2.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
+                                                PreferenceManager.setString(mainActivity, "ch2_name", arrayChannels.get(i)[j].getCh_name());
+                                            }
                                         }
+                                    }
                                 }
                             }
 
                             @Override
                             public void onFailure(Call<GetInfo> call, Throwable t) {
-                                builder.setTitle("Fail")
-                                        .setMessage("Communication Fail. Check internet.")
+                                Request.AlertBuild(mainActivity, "Fail", "Communication Fail. Check internet.")
                                         .setPositiveButton(getResources().getString(R.string.positive_alert), null)
-                                        .setCancelable(false)
                                         .show();
                                 return;
                             }
                         });
 
-                        int splrate = PreferenceManager.getInt(MainActivity.this, "refresh_value");
+                        int splrate = PreferenceManager.getInt(mainActivity, "refresh_value");
 
                         Thread.sleep(splrate * 1000); // splrate을 기준으로 센서값 표현하는 페이지 새로고침
                     } catch (InterruptedException e) {
@@ -151,14 +137,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
 
-        device_info.setText(PreferenceManager.getString(MainActivity.this, "device_info"));
+        device_info.setText(PreferenceManager.getString(mainActivity, "device_info"));
     }
 
     @Override
     public void onBackPressed() {
 
-        EditText admin_value = new EditText(MainActivity.this);
-        LinearLayout container = new LinearLayout(MainActivity.this);
+        EditText admin_value = new EditText(mainActivity);
+        LinearLayout container = new LinearLayout(mainActivity);
         container.setOrientation(LinearLayout.VERTICAL);
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
@@ -170,16 +156,13 @@ public class MainActivity extends AppCompatActivity {
 
         container.addView(admin_value);
 
-        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(MainActivity.this);
-        builder.setTitle("경고")
-                .setMessage("나가려면 관리자 인증번호 4자리를 입력하세요.")
+        Request.AlertBuild(mainActivity, "경고", "나가려면 관리자 인증번호 4자리를 입력하세요.")
                 .setView(container)
-                .setCancelable(false)
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
-                        int is_admin_value = PreferenceManager.getInt(MainActivity.this, "admin_value");
+                        int is_admin_value = PreferenceManager.getInt(mainActivity, "admin_value");
 
                         if(admin_value.length() != 4) {
                             Snackbar.make(findViewById(R.id.linear_main), "관리자 인증번호가 다릅니다.", Snackbar.LENGTH_LONG).show();
@@ -212,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.setting_btn:
-                Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                Intent intent = new Intent(mainActivity, SettingActivity.class);
                 startActivity(intent);
                 break;
         }

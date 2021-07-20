@@ -1,6 +1,5 @@
 package com.example.temp_sensor;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -10,10 +9,9 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -65,8 +63,6 @@ public class SettingActivity extends AppCompatActivity {
         first_value.setText(PreferenceManager.getString(settingActivity, "ch1_name"));
         second_value.setText(PreferenceManager.getString(settingActivity, "ch2_name"));
 
-        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(settingActivity);
-
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int check_id) {
@@ -90,18 +86,16 @@ public class SettingActivity extends AppCompatActivity {
                 PreferenceManager.setInt(settingActivity, "sensor_num", id);
                 PreferenceManager.setString(settingActivity, "device_info", device_info.getText().toString());
 
-                builder.setTitle("설정")
-                        .setMessage("설정이 완료되었습니다.")
-                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                Snackbar.make(view, "설정이 완료되었습니다.", Snackbar.LENGTH_LONG)
+                        .setAction(null, new View.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+                            public void onClick(View v) {
                                 Intent intent = new Intent(settingActivity, MainActivity.class);
                                 ((MainActivity)MainActivity.CONTEXT).finish();
                                 finish();
                                 startActivity(intent);
                             }
                         })
-                        .setCancelable(false)
                         .show();
             }
         });

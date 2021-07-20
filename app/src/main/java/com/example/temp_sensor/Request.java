@@ -5,6 +5,8 @@ import android.content.Context;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -24,5 +26,12 @@ public class Request {
 
         if (focusedView != null)
             inputManager.hideSoftInputFromWindow(focusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
+    static MaterialAlertDialogBuilder AlertBuild(Activity activity, String title, String message) {
+        return new MaterialAlertDialogBuilder(activity)
+                .setTitle(title)
+                .setMessage(message)
+                .setCancelable(false);
     }
 }

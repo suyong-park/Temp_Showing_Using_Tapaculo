@@ -1,9 +1,7 @@
 package com.example.temp_sensor;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
@@ -13,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import retrofit2.Call;
@@ -83,13 +80,9 @@ public class VerifyActivity extends AppCompatActivity {
                 String refresh_value_str = refresh.getText().toString();
                 String admin_value_str = admin.getText().toString();
 
-                AlertDialog.Builder builder = new MaterialAlertDialogBuilder(verifyActivity);
-
                 if(api_key_str.isEmpty() || api_secret_str.isEmpty() || mac_str.isEmpty() || admin_value_str.isEmpty() || refresh_value_str.isEmpty()) {
-                    builder.setTitle("Enter all of Information.")
-                            .setMessage("Please enter your Information")
+                    Request.AlertBuild(verifyActivity, "Enter all of Information.", "Please enter your Information.")
                             .setPositiveButton(getResources().getString(R.string.positive_alert), null)
-                            .setCancelable(false)
                             .show();
                     return;
                 }
@@ -107,10 +100,8 @@ public class VerifyActivity extends AppCompatActivity {
 
                         GetInfo result = response.body();
                         if (result == null) {
-                            builder.setTitle("Fail")
-                                    .setMessage("Status Fail. Please Recheck your value.")
+                            Request.AlertBuild(verifyActivity, "Fail", "Status Fail. Please Recheck your value.")
                                     .setPositiveButton(getResources().getString(R.string.positive_alert), null)
-                                    .setCancelable(false)
                                     .show();
                             return;
                         }
@@ -133,10 +124,8 @@ public class VerifyActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<GetInfo> call, Throwable t) {
-                        builder.setTitle("Fail")
-                                .setMessage("Communication Fail. Check internet.")
+                        Request.AlertBuild(verifyActivity, "Fail", "Communication Fail. Check internet.")
                                 .setPositiveButton(getResources().getString(R.string.positive_alert), null)
-                                .setCancelable(false)
                                 .show();
                         return;
                     }
