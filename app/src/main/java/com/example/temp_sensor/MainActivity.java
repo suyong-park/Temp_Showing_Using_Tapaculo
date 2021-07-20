@@ -8,9 +8,11 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -67,6 +69,13 @@ public class MainActivity extends AppCompatActivity {
                             public void onResponse(Call<GetInfo> call, Response<GetInfo> response) {
 
                                 GetInfo result = response.body();
+                                if (result == null) {
+                                    Request.AlertBuild(mainActivity, "통신 실패", "네트워크 상태를 확인하세요.")
+                                            .setPositiveButton(getResources().getString(R.string.positive_alert), null)
+                                            .show();
+                                    finish();
+                                    return;
+                                }
                                 System.out.println("응답값 : " + response.body().toString());
 
                                 if (result.getStatus().equals("true")) {
@@ -85,9 +94,13 @@ public class MainActivity extends AppCompatActivity {
                                     TextView data_1 = (TextView) findViewById(R.id.show_data_1);
                                     TextView data_2 = (TextView) findViewById(R.id.show_data_2);
 
-                                    int showing_sensor_num = PreferenceManager.getInt(mainActivity, "sensor_num");
+                                    LinearLayout include_data_layout = (LinearLayout) findViewById(R.id.include_data_linear);
+                                    LinearLayout first_data_layout = (LinearLayout) findViewById(R.id.first_data_layout);
+                                    LinearLayout second_data_layout = (LinearLayout) findViewById(R.id.second_data_layout);
+
+                                    int showing_sensor_num = PreferenceManager.getInt(mainActivity, "selected_total_sensor_num");
                                     for (int i = 0; i < arrayChannels.size(); i++) {
-                                        System.out.println("디바이스 센서 개수 : " + arrayChannels.get(i).length);
+                                        PreferenceManager.setInt(mainActivity, "device_sensor_num", arrayChannels.get(i).length);
                                         for (int j = 0; j < arrayChannels.get(i).length; j++) {
                                             if (showing_sensor_num == -1 || showing_sensor_num == 2) { // 센서를 몇 개 보여줄지 아직 세팅하지 않은 경우 or 2개 보여주는 경우
                                                 System.out.println("센서 선택 개수 : " + showing_sensor_num);
@@ -97,22 +110,42 @@ public class MainActivity extends AppCompatActivity {
                                                 System.out.println("온도 선택");
                                                 data_2.setVisibility(View.GONE);
                                                 data_1.setVisibility(View.VISIBLE);
-
                                             } else if (showing_sensor_num == 1) { // 2번째 센서를 보여주기로 결정한 경우
                                                 System.out.println("습도 선택");
                                                 data_1.setVisibility(View.GONE);
                                                 data_2.setVisibility(View.VISIBLE);
                                             }
 
-                                            if (j >= 2)
-                                                break;
-                                            else if (j == 0) {
-                                                data_1.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
-                                                PreferenceManager.setString(mainActivity, "ch1_name", arrayChannels.get(i)[j].getCh_name());
+                                            if (j == 0) {
+                                                if(showing_sensor_num == 2 || showing_sensor_num == -1)
+                                                    data_1.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
+                                                else {
+                                                    first_data_layout.setVisibility(View.GONE);
+                                                    data_1.setText(arrayChannels.get(i)[j].getCh_value());
+                                                    data_1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 610);
+
+                                                    if (data_1.getParent() != null)
+                                                        ((ViewGroup) data_1.getParent()).removeView(data_1);
+
+                                                    include_data_layout.addView(data_1);
+                                                    include_data_layout.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                                                }
                                             } else if (j == 1) {
-                                                data_2.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
-                                                PreferenceManager.setString(mainActivity, "ch2_name", arrayChannels.get(i)[j].getCh_name());
+                                                if(showing_sensor_num == 2 || showing_sensor_num == -1)
+                                                    data_2.setText(arrayChannels.get(i)[j].getCh_value() + arrayChannels.get(i)[j].getCh_unit());
+                                                else {
+                                                    second_data_layout.setVisibility(View.GONE);
+                                                    data_2.setText(arrayChannels.get(i)[j].getCh_value());
+                                                    data_2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 610);
+
+                                                    if (data_2.getParent() != null)
+                                                        ((ViewGroup) data_2.getParent()).removeView(data_2);
+
+                                                    include_data_layout.addView(data_2);
+                                                    include_data_layout.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                                                }
                                             }
+                                            PreferenceManager.setString(mainActivity, "ch" + j + "_name", arrayChannels.get(i)[j].getCh_name());
                                         }
                                     }
                                 }
@@ -120,9 +153,11 @@ public class MainActivity extends AppCompatActivity {
 
                             @Override
                             public void onFailure(Call<GetInfo> call, Throwable t) {
-                                Request.AlertBuild(mainActivity, "Fail", "Communication Fail. Check internet.")
-                                        .setPositiveButton(getResources().getString(R.string.positive_alert), null)
-                                        .show();
+                                if(!mainActivity.isFinishing())
+                                    Request.AlertBuild(mainActivity, "Communication Fail", "Communication Fail. Check internet.")
+                                            .setPositiveButton(getResources().getString(R.string.positive_alert), null)
+                                            .show();
+                                finish();
                                 return;
                             }
                         });
@@ -164,11 +199,7 @@ public class MainActivity extends AppCompatActivity {
 
                         int is_admin_value = PreferenceManager.getInt(mainActivity, "admin_value");
 
-                        if(admin_value.length() != 4) {
-                            Snackbar.make(findViewById(R.id.linear_main), "관리자 인증번호가 다릅니다.", Snackbar.LENGTH_LONG).show();
-                            return;
-                        }
-                        else if(is_admin_value != Integer.parseInt(admin_value.getText().toString())) {
+                        if(admin_value.length() != 4 || is_admin_value != Integer.parseInt(admin_value.getText().toString())) {
                             Snackbar.make(findViewById(R.id.linear_main), "관리자 인증번호가 다릅니다.", Snackbar.LENGTH_LONG).show();
                             return;
                         }

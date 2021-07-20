@@ -1,21 +1,22 @@
 package com.example.temp_sensor;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.snackbar.Snackbar;
+import java.util.ArrayList;
 
 public class SettingActivity extends AppCompatActivity {
 
-    int id;
     SettingActivity settingActivity;
 
     @Override
@@ -26,7 +27,6 @@ public class SettingActivity extends AppCompatActivity {
 
         settingActivity = SettingActivity.this;
 
-        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.show_group);
         EditText device_info = (EditText) findViewById(R.id.device_enter);
         Button setting_btn = (Button) findViewById(R.id.setting_finish_btn);
 
@@ -44,52 +44,60 @@ public class SettingActivity extends AppCompatActivity {
             }
         });
 
-        RadioButton first_value = (RadioButton) findViewById(R.id.show_radio_first_value);
-        RadioButton second_value = (RadioButton) findViewById(R.id.show_radio_second_value);
-        RadioButton show_two_value = (RadioButton) findViewById(R.id.show_radio_two);
+        int device_sensor_num = PreferenceManager.getInt(settingActivity, "device_sensor_num");
+        ArrayList<CheckBox> arrayBox = new ArrayList<>();
 
-        switch (PreferenceManager.getInt(settingActivity, "sensor_num")) {
-            case 0:
-                first_value.setChecked(true);
+        LinearLayout checkBoxlayer = (LinearLayout) findViewById(R.id.checkbox_linear);
+        for(int i = 0; i < device_sensor_num; i++) { // 센서 이름 체크박스 동적으로 생성
+            String ch_name = PreferenceManager.getString(settingActivity, "ch" + i + "_name");
+            if(ch_name.equals("") || ch_name.equals(null))
                 break;
-            case 1:
-                second_value.setChecked(true);
-                break;
-            default:
-                show_two_value.setChecked(true);
-                break;
+
+            CheckBox sensorBox = new CheckBox(settingActivity);
+            sensorBox.setId(i);
+            sensorBox.setText(ch_name);
+            arrayBox.add(sensorBox);
+
+            if(sensorBox.getParent() != null)
+                ((ViewGroup) sensorBox.getParent()).removeView(sensorBox);
+            checkBoxlayer.addView(sensorBox);
         }
-
-        first_value.setText(PreferenceManager.getString(settingActivity, "ch1_name"));
-        second_value.setText(PreferenceManager.getString(settingActivity, "ch2_name"));
-
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int check_id) {
-                switch (check_id) {
-                    case R.id.show_radio_first_value:
-                        id = 0;
-                        break;
-                    case R.id.show_radio_second_value:
-                        id = 1;
-                        break;
-                    case R.id.show_radio_two:
-                        id = 2;
-                        break;
-                }
-            }
-        });
 
         setting_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PreferenceManager.setInt(settingActivity, "sensor_num", id);
+
+                int count = 0;
+                for(int i = 0; i < arrayBox.size(); i++)
+                    if (arrayBox.get(i).isChecked())
+                        count++;
+
+                if(count == 0) {
+                    Request.AlertBuild(settingActivity, "경고", "화면에 띄울 센서를 선택하세요.")
+                            .setPositiveButton("획인", null)
+                            .show();
+                    return;
+                }
+
+                if(count > 2) {
+                    Request.AlertBuild(settingActivity, "경고", "센서는 최대 2개까지 선택할 수 있습니다.")
+                            .setPositiveButton("획인", null)
+                            .show();
+                    return;
+                }
+
+                for(int i = 0; i < arrayBox.size(); i++)
+                    if(arrayBox.get(i).isChecked())
+                        if(count == 1)
+                            count = i;
+
+                PreferenceManager.setInt(settingActivity, "selected_total_sensor_num", count);
                 PreferenceManager.setString(settingActivity, "device_info", device_info.getText().toString());
 
-                Snackbar.make(view, "설정이 완료되었습니다.", Snackbar.LENGTH_LONG)
-                        .setAction(null, new View.OnClickListener() {
+                Request.AlertBuild(settingActivity, "알림", "설정이 완료되었습니다.")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(View v) {
+                            public void onClick(DialogInterface dialogInterface, int i) {
                                 Intent intent = new Intent(settingActivity, MainActivity.class);
                                 ((MainActivity)MainActivity.CONTEXT).finish();
                                 finish();

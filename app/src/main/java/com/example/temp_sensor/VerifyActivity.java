@@ -103,6 +103,7 @@ public class VerifyActivity extends AppCompatActivity {
                             Request.AlertBuild(verifyActivity, "Fail", "Status Fail. Please Recheck your value.")
                                     .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                                     .show();
+                            finish();
                             return;
                         }
 
@@ -127,6 +128,7 @@ public class VerifyActivity extends AppCompatActivity {
                         Request.AlertBuild(verifyActivity, "Fail", "Communication Fail. Check internet.")
                                 .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                                 .show();
+                        finish();
                         return;
                     }
                 });
