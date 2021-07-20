@@ -11,14 +11,25 @@
     <LinearLayout
         android:id="@+id/text_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/device_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="40sp"
+            android:layout_weight="10"
             android:gravity="center"
+            android:textAlignment="center"
+            android:textSize="70sp" />
+
+        <Button
+            android:id="@+id/setting_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"
+            android:text="@string/setting_btn"
             android:textAlignment="center" />
     </LinearLayout>
 
@@ -40,7 +51,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:textSize="350sp"
+                android:textSize="400sp"
+                android:textStyle="bold"
                 android:textAlignment="center" />
         </LinearLayout>
 
@@ -55,7 +67,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:textSize="350sp"
+                android:textSize="400sp"
+                android:textStyle="bold"
                 android:textAlignment="center" />
 
         </LinearLayout>

@@ -1,7 +1,10 @@
 package com.example.temp_sensor;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
@@ -28,6 +31,7 @@ public class VerifyActivity extends AppCompatActivity {
         setTitle("사용자 인증");
 
         verifyActivity = VerifyActivity.this;
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
         //PreferenceManager.clear(VerifyActivity.this); // 테스트 목적의 코드 라인
 
@@ -74,6 +78,12 @@ public class VerifyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                ProgressDialog progressDialog = new ProgressDialog(verifyActivity);
+                progressDialog.setMessage("통신 중입니다 ...");
+                progressDialog.setCancelable(false);
+                progressDialog.setProgressStyle(android.R.style.Widget_ProgressBar_Horizontal);
+                progressDialog.show();
+
                 String api_key_str = api_key.getText().toString();
                 String api_secret_str = api_secret.getText().toString();
                 String mac_str = MAC.getText().toString();
@@ -103,7 +113,6 @@ public class VerifyActivity extends AppCompatActivity {
                             Request.AlertBuild(verifyActivity, "Fail", "Status Fail. Please Recheck your value.")
                                     .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                                     .show();
-                            finish();
                             return;
                         }
 
@@ -118,6 +127,7 @@ public class VerifyActivity extends AppCompatActivity {
                             PreferenceManager.setInt(verifyActivity, "refresh_value", refresh_value);
                             PreferenceManager.setBoolean(verifyActivity, "is_first_connect", true);
 
+                            progressDialog.dismiss();
                             Intent intent = new Intent(verifyActivity, MainActivity.class);
                             startActivity(intent);
                         }
@@ -128,7 +138,6 @@ public class VerifyActivity extends AppCompatActivity {
                         Request.AlertBuild(verifyActivity, "Fail", "Communication Fail. Check internet.")
                                 .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                                 .show();
-                        finish();
                         return;
                     }
                 });

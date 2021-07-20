@@ -6,13 +6,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.TypedValue;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setTitle("측정값 확인");
 
         CONTEXT = this;
         mainActivity = this;
@@ -123,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
                                                     first_data_layout.setVisibility(View.GONE);
                                                     data_1.setText(arrayChannels.get(i)[j].getCh_value());
                                                     data_1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 610);
+                                                    data_1.setTypeface(Typeface.DEFAULT_BOLD);
 
                                                     if (data_1.getParent() != null)
                                                         ((ViewGroup) data_1.getParent()).removeView(data_1);
@@ -137,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
                                                     second_data_layout.setVisibility(View.GONE);
                                                     data_2.setText(arrayChannels.get(i)[j].getCh_value());
                                                     data_2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 610);
+                                                    data_2.setTypeface(Typeface.DEFAULT_BOLD);
 
                                                     if (data_2.getParent() != null)
                                                         ((ViewGroup) data_2.getParent()).removeView(data_2);
@@ -173,6 +174,15 @@ public class MainActivity extends AppCompatActivity {
         }).start();
 
         device_info.setText(PreferenceManager.getString(mainActivity, "device_info"));
+
+        Button setting_btn = (Button) findViewById(R.id.setting_btn);
+        setting_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mainActivity, SettingActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -214,22 +224,5 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("취소", null)
                 .show();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.tab_main_btn_setting, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.setting_btn:
-                Intent intent = new Intent(mainActivity, SettingActivity.class);
-                startActivity(intent);
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }
