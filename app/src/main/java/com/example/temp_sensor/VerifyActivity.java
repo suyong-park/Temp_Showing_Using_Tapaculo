@@ -1,6 +1,5 @@
 package com.example.temp_sensor;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -91,15 +90,15 @@ public class VerifyActivity extends AppCompatActivity {
                 String admin_value_str = admin.getText().toString();
 
                 if(api_key_str.isEmpty() || api_secret_str.isEmpty() || mac_str.isEmpty() || admin_value_str.isEmpty() || refresh_value_str.isEmpty()) {
-                    Request.AlertBuild(verifyActivity, "Enter all of Information.", "Please enter your Information.")
+                    progressDialog.dismiss();
+                    Request.AlertBuild(verifyActivity, "경고", "모든 정보를 입력해 주셔야 합니다.")
                             .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                             .show();
-                    progressDialog.dismiss();
                     return;
                 }
                 if(admin_value_str.length() != 4) {
-                    Snackbar.make(view, "관리자 인증번호는 4자리입니다.", Snackbar.LENGTH_LONG).show();
                     progressDialog.dismiss();
+                    Snackbar.make(view, "관리자 인증번호는 4자리입니다.", Snackbar.LENGTH_LONG).show();
                     return;
                 }
 
@@ -110,16 +109,20 @@ public class VerifyActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<GetInfo> call, Response<GetInfo> response) {
 
+                        System.out.println("통신 중 ...");
                         GetInfo result = response.body();
                         if (result == null) {
-                            Request.AlertBuild(verifyActivity, "Fail", "Status Fail. Please Recheck your value.")
+                            System.out.println("통신 실패");
+                            progressDialog.dismiss();
+                            Request.AlertBuild(verifyActivity, "경고", "입력값을 제대로 입력했는지 확인하세요.")
                                     .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                                     .show();
-                            progressDialog.dismiss();
                             return;
                         }
+                        System.out.println("통신 중 ...");
 
                         if (result.getStatus().equals("true")) {
+                            System.out.println("통신 성공");
                             int refresh_value = Integer.parseInt(refresh_value_str);
                             int admin_value = Integer.parseInt(admin_value_str);
 
@@ -134,14 +137,22 @@ public class VerifyActivity extends AppCompatActivity {
                             Intent intent = new Intent(verifyActivity, MainActivity.class);
                             startActivity(intent);
                         }
+                        else { // status == false
+                            System.out.println("통신 실패");
+                            progressDialog.dismiss();
+                            Request.AlertBuild(verifyActivity, "경고", "입력값을 제대로 입력했는지 확인하세요.")
+                                    .setPositiveButton(getResources().getString(R.string.positive_alert), null)
+                                    .show();
+                            return;
+                        }
                     }
 
                     @Override
                     public void onFailure(Call<GetInfo> call, Throwable t) {
-                        Request.AlertBuild(verifyActivity, "Fail", "Communication Fail. Check internet.")
+                        progressDialog.dismiss();
+                        Request.AlertBuild(verifyActivity, "경고", "네트워크를 연결 상태를 확인하세요.")
                                 .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                                 .show();
-                        progressDialog.dismiss();
                         return;
                     }
                 });

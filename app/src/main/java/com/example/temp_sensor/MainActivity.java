@@ -2,12 +2,18 @@ package com.example.temp_sensor;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.InputType;
 import android.util.TypedValue;
 import android.view.View;
@@ -55,12 +61,28 @@ public class MainActivity extends AppCompatActivity {
         device_info = (TextView) findViewById(R.id.device_location);
         device_info.setText(PreferenceManager.getString(mainActivity, "device_info"));
 
+        ProgressDialog progressDialog = new ProgressDialog(mainActivity);
+        TextView isNetwork = (TextView) findViewById(R.id.network_state_text);
         new Thread(new Runnable() {
 
             @Override
             public void run() {
                 while(true) {
                     try {
+                        System.out.println("통신 시도...");
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(!mainActivity.isFinishing()) {
+                                    progressDialog.setMessage("통신 중입니다 ...");
+                                    progressDialog.setCancelable(false);
+                                    progressDialog.setProgressStyle(android.R.style.Widget_ProgressBar_Horizontal);
+                                    progressDialog.show();
+                                }
+                            }
+                        }, 0);
+
                         Call<GetInfo> call = tapaculo.getInfo(api_key_str, api_secret_str, mac_str);
                         call.enqueue(new Callback<GetInfo>() {
 
@@ -68,16 +90,22 @@ public class MainActivity extends AppCompatActivity {
                             public void onResponse(Call<GetInfo> call, Response<GetInfo> response) {
 
                                 GetInfo result = response.body();
-                                if (result == null) {
-                                    Request.AlertBuild(mainActivity, "통신 실패", "네트워크 상태를 확인하세요.")
-                                            .setPositiveButton(getResources().getString(R.string.positive_alert), null)
-                                            .show();
-                                    finish();
-                                    return;
+                                if (result == null || !isNetworkConnected(mainActivity)) {
+                                    progressDialog.dismiss();
+                                    try {
+                                        System.out.println("통신 실패");
+                                        System.out.println("재시도 ...");
+                                        isNetwork.setVisibility(View.VISIBLE);
+                                        isNetwork.setTextSize(TypedValue.COMPLEX_UNIT_SP, 80);
+                                        Thread.sleep(15000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
 
                                 if (result.getStatus().equals("true")) {
 
+                                    isNetwork.setVisibility(View.GONE);
                                     System.out.println("통신 성공");
 
                                     Sensors[] sensors = result.getSensors();
@@ -93,6 +121,8 @@ public class MainActivity extends AppCompatActivity {
                                     TextView data_2 = (TextView) findViewById(R.id.show_data_2);
                                     TextView data_unit_1 = (TextView) findViewById(R.id.show_data_unit_1);
                                     TextView data_unit_2 = (TextView) findViewById(R.id.show_data_unit_2);
+                                    TextView data_unit_ko_1 = (TextView) findViewById(R.id.show_data_unit_ko_1);
+                                    TextView data_unit_ko_2 = (TextView) findViewById(R.id.show_data_unit_ko_2);
 
                                     LinearLayout include_data_layout = (LinearLayout) findViewById(R.id.include_data_linear);
                                     LinearLayout first_data_layout = (LinearLayout) findViewById(R.id.first_data_layout);
@@ -103,14 +133,15 @@ public class MainActivity extends AppCompatActivity {
                                         PreferenceManager.setInt(mainActivity, "device_sensor_num", arrayChannels.get(i).length);
                                         for (int j = 0; j < arrayChannels.get(i).length; j++) {
                                             if (showing_sensor_num == -1 || showing_sensor_num == 2) { // 센서를 몇 개 보여줄지 아직 세팅하지 않은 경우 or 2개 보여주는 경우
-                                                System.out.println("센서 선택 개수 : " + showing_sensor_num);
                                                 data_1.setVisibility(View.VISIBLE);
                                                 data_2.setVisibility(View.VISIBLE);
                                             } else if (showing_sensor_num == 0) { // 1번째 센서를 보여주기로 결정한 경우
+                                                data_unit_ko_2.setVisibility(View.GONE);
                                                 data_unit_2.setVisibility(View.GONE);
                                                 data_2.setVisibility(View.GONE);
                                                 data_1.setVisibility(View.VISIBLE);
                                             } else if (showing_sensor_num == 1) { // 2번째 센서를 보여주기로 결정한 경우
+                                                data_unit_ko_1.setVisibility(View.GONE);
                                                 data_unit_1.setVisibility(View.GONE);
                                                 data_1.setVisibility(View.GONE);
                                                 data_2.setVisibility(View.VISIBLE);
@@ -118,17 +149,20 @@ public class MainActivity extends AppCompatActivity {
 
                                             if (j == 0) {
                                                 if(showing_sensor_num == 2 || showing_sensor_num == -1) {
+                                                    data_unit_ko_1.setText(arrayChannels.get(i)[j].getCh_name());
                                                     data_1.setText(arrayChannels.get(i)[j].getCh_value());
                                                     data_unit_1.setText(arrayChannels.get(i)[j].getCh_unit());
                                                 }
                                                 else {
                                                     first_data_layout.setVisibility(View.GONE);
+                                                    data_unit_ko_1.setText(arrayChannels.get(i)[j].getCh_name());
                                                     data_1.setText(arrayChannels.get(i)[j].getCh_value());
-                                                    data_1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 600);
                                                     data_1.setTypeface(Typeface.DEFAULT_BOLD);
                                                     data_unit_1.setText(arrayChannels.get(i)[j].getCh_unit());
-                                                    data_unit_1.setTextSize(TypedValue.COMPLEX_UNIT_SP, 100);
 
+                                                    if (data_unit_ko_1.getParent() != null)
+                                                        ((ViewGroup) data_unit_ko_1.getParent()).removeView(data_unit_ko_1);
+                                                    include_data_layout.addView(data_unit_ko_1);
                                                     if (data_1.getParent() != null)
                                                         ((ViewGroup) data_1.getParent()).removeView(data_1);
                                                     include_data_layout.addView(data_1);
@@ -141,17 +175,20 @@ public class MainActivity extends AppCompatActivity {
                                                 }
                                             } else if (j == 1) {
                                                 if(showing_sensor_num == 2 || showing_sensor_num == -1) {
+                                                    data_unit_ko_2.setText(arrayChannels.get(i)[j].getCh_name());
                                                     data_2.setText(arrayChannels.get(i)[j].getCh_value());
                                                     data_unit_2.setText(arrayChannels.get(i)[j].getCh_unit());
                                                 }
                                                 else {
                                                     second_data_layout.setVisibility(View.GONE);
+                                                    data_unit_ko_2.setText(arrayChannels.get(i)[j].getCh_name());
                                                     data_2.setText(arrayChannels.get(i)[j].getCh_value());
-                                                    data_2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 600);
                                                     data_2.setTypeface(Typeface.DEFAULT_BOLD);
                                                     data_unit_2.setText(arrayChannels.get(i)[j].getCh_unit());
-                                                    data_unit_2.setTextSize(TypedValue.COMPLEX_UNIT_SP, 100);
 
+                                                    if (data_unit_ko_2.getParent() != null)
+                                                        ((ViewGroup) data_unit_ko_2.getParent()).removeView(data_unit_ko_2);
+                                                    include_data_layout.addView(data_unit_ko_2);
                                                     if (data_2.getParent() != null)
                                                         ((ViewGroup) data_2.getParent()).removeView(data_2);
                                                     include_data_layout.addView(data_2);
@@ -167,15 +204,31 @@ public class MainActivity extends AppCompatActivity {
                                         }
                                     }
                                 }
+                                else {
+                                    progressDialog.dismiss();
+                                    try {
+                                        System.out.println("통신 실패");
+                                        System.out.println("재시도 ...");
+                                        Thread.sleep(15000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                progressDialog.dismiss();
                             }
 
                             @Override
                             public void onFailure(Call<GetInfo> call, Throwable t) {
-                                Request.AlertBuild(mainActivity, "Communication Fail", "Communication Fail. Check internet.")
-                                        .setPositiveButton(getResources().getString(R.string.positive_alert), null)
-                                        .show();
-                                finish();
-                                return;
+                                progressDialog.dismiss();
+                                try {
+                                    System.out.println("통신 실패");
+                                    System.out.println("재시도 ...");
+                                    isNetwork.setVisibility(View.VISIBLE);
+                                    isNetwork.setTextSize(TypedValue.COMPLEX_UNIT_SP, 80);
+                                    Thread.sleep(15000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         });
 
@@ -195,6 +248,12 @@ public class MainActivity extends AppCompatActivity {
         setting_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!isNetworkConnected(mainActivity)) {
+                    Request.AlertBuild(mainActivity, "경고", "네트워크가 끊어져 있습니다. 네트워크를 연결하고 통신될 때까지 기다려 주세요.")
+                            .setPositiveButton("확인", null)
+                            .show();
+                    return;
+                }
                 Intent intent = new Intent(mainActivity, SettingActivity.class);
                 startActivity(intent);
             }
@@ -240,5 +299,14 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("취소", null)
                 .show();
+    }
+
+    public static boolean isNetworkConnected(Activity activity) { // 네트워크 연결 상태 확인
+        ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(activity.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isConnected())
+            return true;
+        else
+            return false;
     }
 }
