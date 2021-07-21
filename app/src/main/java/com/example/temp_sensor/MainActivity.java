@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         Connect_Tapaculo tapaculo = Request.getRetrofit().create(Connect_Tapaculo.class);
 
         device_info = (TextView) findViewById(R.id.device_location);
+        System.out.println("값 알아보기(지워져야함) : " + PreferenceManager.getString(mainActivity, "device_info"));
         device_info.setText(PreferenceManager.getString(mainActivity, "device_info"));
 
         TextView isNetwork = (TextView) findViewById(R.id.network_state_text);
@@ -102,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mThread.interrupt();
         System.out.println("스레드 interrupted 여부 : " + mThread.interrupted());
 
         if(con != null && con.isShowing())
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                             return;
                         }
                         else
-                            Snackbar.make(findViewById(R.id.linear_main), "정말로 나갈까요?", Snackbar.LENGTH_LONG).setAction("네", new View.OnClickListener() {
+                            Snackbar.make(findViewById(R.id.linear_main), "설정 화면에서 저장한 정보가 사라집니다. 그래도 나갈까요?", Snackbar.LENGTH_LONG).setAction("네", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     Thread.currentThread().interrupt();
@@ -171,6 +171,7 @@ class mainThread implements Runnable {
     LinearLayout include_data_layout;
     LinearLayout first_data_layout;
 
+    int count = 0;
     Connect_Tapaculo tapaculo;
     String api_key_str, api_secret_str, mac_str;
 
@@ -195,6 +196,9 @@ class mainThread implements Runnable {
 
         while(!Thread.currentThread().isInterrupted()) {
             try {
+                count += 1;
+                if(count >= 2)
+                    count = 2;
                 System.out.println("통신 시도...");
                 Handler handler = new Handler(Looper.getMainLooper());
                 handler.postDelayed(new Runnable() {
@@ -301,15 +305,19 @@ class mainThread implements Runnable {
                                             data_1.setTypeface(Typeface.DEFAULT_BOLD);
                                             data_unit_1.setText(arrayChannels.get(i)[j].getCh_unit());
 
-                                            if (data_unit_ko_1.getParent() != null)
-                                                ((ViewGroup) data_unit_ko_1.getParent()).removeView(data_unit_ko_1);
-                                            include_data_layout.addView(data_unit_ko_1);
-                                            if (data_1.getParent() != null)
-                                                ((ViewGroup) data_1.getParent()).removeView(data_1);
-                                            include_data_layout.addView(data_1);
-                                            if (data_unit_1.getParent() != null)
-                                                ((ViewGroup) data_unit_1.getParent()).removeView(data_unit_1);
-                                            include_data_layout.addView(data_unit_1);
+                                            if(count < 2) {
+                                                if (data_unit_ko_1.getParent() != null)
+                                                    ((ViewGroup) data_unit_ko_1.getParent()).removeView(data_unit_ko_1);
+                                                include_data_layout.addView(data_unit_ko_1);
+                                                if (data_1.getParent() != null)
+                                                    ((ViewGroup) data_1.getParent()).removeView(data_1);
+                                                include_data_layout.addView(data_1);
+                                                if (data_unit_1.getParent() != null)
+                                                    ((ViewGroup) data_unit_1.getParent()).removeView(data_unit_1);
+                                                include_data_layout.addView(data_unit_1);
+                                            }
+                                            else
+                                                count = 2;
 
                                             include_data_layout.setGravity(View.TEXT_ALIGNMENT_CENTER);
                                             include_data_layout.setOrientation(LinearLayout.HORIZONTAL);
@@ -341,7 +349,6 @@ class mainThread implements Runnable {
             }
             catch (InterruptedException e) {
                 e.printStackTrace();
-                System.out.println("예외 발생");
                 return;
             }
         }
