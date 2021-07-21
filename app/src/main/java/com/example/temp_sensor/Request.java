@@ -2,10 +2,10 @@ package com.example.temp_sensor;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -28,10 +28,12 @@ public class Request {
             inputManager.hideSoftInputFromWindow(focusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
-    static MaterialAlertDialogBuilder AlertBuild(Activity activity, String title, String message) {
-        return new MaterialAlertDialogBuilder(activity)
-                .setTitle(title)
-                .setMessage(message)
-                .setCancelable(false);
+    public static boolean isNetworkConnected(Activity activity) { // 네트워크 연결 상태 확인
+        ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(activity.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isConnected())
+            return true;
+        else
+            return false;
     }
 }

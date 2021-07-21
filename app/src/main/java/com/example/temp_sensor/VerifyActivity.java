@@ -1,5 +1,6 @@
 package com.example.temp_sensor;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import retrofit2.Call;
@@ -22,6 +24,9 @@ import retrofit2.Response;
 public class VerifyActivity extends AppCompatActivity {
 
     VerifyActivity verifyActivity;
+    AlertDialog.Builder builder;
+    AlertDialog con;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +78,11 @@ public class VerifyActivity extends AppCompatActivity {
             refresh.setText(String.valueOf(PreferenceManager.getInt(verifyActivity, "refresh_value")));
         }
 
+        progressDialog = new ProgressDialog(verifyActivity);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                ProgressDialog progressDialog = new ProgressDialog(verifyActivity);
                 progressDialog.setMessage("통신 중입니다 ...");
                 progressDialog.setCancelable(false);
                 progressDialog.setProgressStyle(android.R.style.Widget_ProgressBar_Horizontal);
@@ -89,9 +94,12 @@ public class VerifyActivity extends AppCompatActivity {
                 String refresh_value_str = refresh.getText().toString();
                 String admin_value_str = admin.getText().toString();
 
+                builder = new MaterialAlertDialogBuilder(verifyActivity);
+                con = builder.create();
                 if(api_key_str.isEmpty() || api_secret_str.isEmpty() || mac_str.isEmpty() || admin_value_str.isEmpty() || refresh_value_str.isEmpty()) {
                     progressDialog.dismiss();
-                    Request.AlertBuild(verifyActivity, "경고", "모든 정보를 입력해 주셔야 합니다.")
+                    builder.setTitle("경고")
+                            .setMessage("모든 정보를 입력해 주셔야 합니다.")
                             .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                             .show();
                     return;
@@ -114,7 +122,8 @@ public class VerifyActivity extends AppCompatActivity {
                         if (result == null) {
                             System.out.println("통신 실패");
                             progressDialog.dismiss();
-                            Request.AlertBuild(verifyActivity, "경고", "입력값을 제대로 입력했는지 확인하세요.")
+                            builder.setTitle("경고")
+                                    .setMessage("입력값을 제대로 입력했는지 확인하세요.")
                                     .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                                     .show();
                             return;
@@ -140,7 +149,8 @@ public class VerifyActivity extends AppCompatActivity {
                         else { // status == false
                             System.out.println("통신 실패");
                             progressDialog.dismiss();
-                            Request.AlertBuild(verifyActivity, "경고", "입력값을 제대로 입력했는지 확인하세요.")
+                            builder.setTitle("경고")
+                                    .setMessage("압력값을 제대로 입력했는지 확인하세요.")
                                     .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                                     .show();
                             return;
@@ -150,7 +160,8 @@ public class VerifyActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<GetInfo> call, Throwable t) {
                         progressDialog.dismiss();
-                        Request.AlertBuild(verifyActivity, "경고", "네트워크를 연결 상태를 확인하세요.")
+                        builder.setTitle("경고")
+                                .setMessage("네트워크 연결 상태를 확인하세요.")
                                 .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                                 .show();
                         return;
@@ -158,5 +169,15 @@ public class VerifyActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if(con != null && con.isShowing())
+            con.dismiss();
+        if(progressDialog != null && progressDialog.isShowing())
+            progressDialog.dismiss();
     }
 }

@@ -11,13 +11,18 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 
 public class SettingActivity extends AppCompatActivity {
 
     SettingActivity settingActivity;
+    AlertDialog.Builder builder;
+    AlertDialog con;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +68,8 @@ public class SettingActivity extends AppCompatActivity {
             checkBoxlayer.addView(sensorBox);
         }
 
+        builder = new MaterialAlertDialogBuilder(settingActivity);
+        con = builder.create();
         setting_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,32 +80,49 @@ public class SettingActivity extends AppCompatActivity {
                         count++;
 
                 if(count == 0) {
-                    Request.AlertBuild(settingActivity, "경고", "화면에 띄울 센서를 선택하세요.")
-                            .setPositiveButton("획인", null)
+                    builder.setTitle("경고")
+                            .setMessage("화면에 띄울 센서를 선택하세요.")
+                            .setCancelable(false)
+                            .setPositiveButton("확인", null)
                             .show();
                     return;
                 }
 
                 if(count > 2) {
-                    Request.AlertBuild(settingActivity, "경고", "센서는 최대 2개까지 선택할 수 있습니다.")
-                            .setPositiveButton("획인", null)
+                    builder.setTitle("경고")
+                            .setMessage("센서는 최대 2개까지 선택할 수 있습니다.")
+                            .setCancelable(false)
+                            .setPositiveButton("확인", null)
                             .show();
                     return;
                 }
 
+                String temp = "", data = "";
                 for(int i = 0; i < arrayBox.size(); i++)
-                    if(arrayBox.get(i).isChecked())
-                        if(count == 1)
+                    if(arrayBox.get(i).isChecked()) {
+                        if(count == 2) {
+                            if(!temp.equals(""))
+                                data = temp + "," + arrayBox.get(i).getText().toString();
+                            temp = arrayBox.get(i).getText().toString();
+                        }
+                        if (count == 1) {
                             count = i;
+                            data = arrayBox.get(i).getText().toString();
+                        }
+                    }
 
                 PreferenceManager.setInt(settingActivity, "selected_total_sensor_num", count);
                 PreferenceManager.setString(settingActivity, "device_info", device_info.getText().toString());
 
-                Request.AlertBuild(settingActivity, "알림", "설정이 완료되었습니다.")
+                String finalData = data;
+                builder.setTitle("설정")
+                        .setMessage("설정이 완료되었습니다.")
+                        .setCancelable(false)
                         .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Intent intent = new Intent(settingActivity, MainActivity.class);
+                                PreferenceManager.setString(settingActivity, "selected_title_data", finalData);
                                 ((MainActivity)MainActivity.CONTEXT).finish();
                                 finish();
                                 startActivity(intent);
@@ -107,5 +131,13 @@ public class SettingActivity extends AppCompatActivity {
                         .show();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if(con != null && con.isShowing())
+            con.dismiss();
     }
 }
