@@ -3,16 +3,12 @@ package com.example.temp_sensor;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.InputType;
 import android.util.TypedValue;
 import android.view.View;
@@ -25,22 +21,25 @@ import android.widget.TextView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.ArrayList;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class MainActivity extends AppCompatActivity {
 
     MainActivity mainActivity;
-    TextView device_info;
     AlertDialog.Builder builder;
     AlertDialog con;
-    ProgressDialog progressDialog;
+
+    TextView device_info;
+    TextView isNetwork;
+    TextView data_1;
+    TextView data_2;
+    TextView data_unit_1;
+    TextView data_unit_2;
+    TextView data_unit_ko_1;
+    TextView data_unit_ko_2;
+
+    LinearLayout include_data_layout;
+    LinearLayout first_data_layout;
 
     public static Context CONTEXT;
-    Thread mThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,20 +61,20 @@ public class MainActivity extends AppCompatActivity {
         device_info = (TextView) findViewById(R.id.device_location);
         device_info.setText(PreferenceManager.getString(mainActivity, "device_info"));
 
-        TextView isNetwork = (TextView) findViewById(R.id.network_state_text);
+        isNetwork = (TextView) findViewById(R.id.network_state_text);
+        data_1 = (TextView) findViewById(R.id.show_data_1);
+        data_2 = (TextView) findViewById(R.id.show_data_2);
+        data_unit_1 = (TextView) findViewById(R.id.show_data_unit_1);
+        data_unit_2 = (TextView) findViewById(R.id.show_data_unit_2);
+        data_unit_ko_1 = (TextView) findViewById(R.id.show_data_unit_ko_1);
+        data_unit_ko_2 = (TextView) findViewById(R.id.show_data_unit_ko_2);
 
-        TextView data_1 = (TextView) findViewById(R.id.show_data_1);
-        TextView data_2 = (TextView) findViewById(R.id.show_data_2);
-        TextView data_unit_1 = (TextView) findViewById(R.id.show_data_unit_1);
-        TextView data_unit_2 = (TextView) findViewById(R.id.show_data_unit_2);
-        TextView data_unit_ko_1 = (TextView) findViewById(R.id.show_data_unit_ko_1);
-        TextView data_unit_ko_2 = (TextView) findViewById(R.id.show_data_unit_ko_2);
+        include_data_layout = (LinearLayout) findViewById(R.id.include_data_linear);
+        first_data_layout = (LinearLayout) findViewById(R.id.first_data_layout);
 
-        LinearLayout include_data_layout = (LinearLayout) findViewById(R.id.include_data_linear);
-        LinearLayout first_data_layout = (LinearLayout) findViewById(R.id.first_data_layout);
-
-        mThread = new Thread(new mainThread(mainActivity, api_key_str, api_secret_str, mac_str, tapaculo, isNetwork, data_1, data_2, data_unit_1, data_unit_2, data_unit_ko_1, data_unit_ko_2, first_data_layout, include_data_layout));
-        mThread.start();
+        int refresh_value = PreferenceManager.getInt(mainActivity, "refresh_value");
+        Timer timer = new Timer(Long.MAX_VALUE, refresh_value*1000, mainActivity, tapaculo, api_key_str, api_secret_str, mac_str);
+        timer.start();
 
         device_info.setText(PreferenceManager.getString(mainActivity, "device_info"));
 
@@ -99,17 +98,129 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /*
+    data_1 : 1
+    data_2 : 2
+    data_unit_1 : 3
+    data_unit_2 : 4
+    data_unit_ko_1 : 5
+    data_unit_ko_2 : 6
+    isNetwork : 7
+    first_data_layout : 1
+    include_data_layout : 2
+    */
+    public void setText(String text, int text_id) { // setText UI 담당
+        switch (text_id) {
+            case 1 :
+                data_1.setText(text);
+                break;
+            case 2 :
+                data_2.setText(text);
+                break;
+            case 3 :
+                data_unit_1.setText(text);
+                break;
+            case 4 :
+                data_unit_2.setText(text);
+                break;
+            case 5 :
+                data_unit_ko_1.setText(text);
+                break;
+            case 6 :
+                data_unit_ko_2.setText(text);
+                break;
+        }
+    }
+
+    public void setTextSize(int size) {
+        isNetwork.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
+    }
+
+    public void setVisibility(boolean is_visual, int text_id) { // 시각화 담당
+        switch (text_id) {
+            case 0 :
+                if(is_visual)
+                    first_data_layout.setVisibility(View.VISIBLE);
+                else
+                    first_data_layout.setVisibility(View.GONE);
+                break;
+            case 1 :
+                if(is_visual)
+                    data_1.setVisibility(View.VISIBLE);
+                else
+                    data_1.setVisibility(View.GONE);
+                break;
+            case 2 :
+                if(is_visual)
+                    data_2.setVisibility(View.VISIBLE);
+                else
+                    data_2.setVisibility(View.GONE);
+                break;
+            case 4 :
+                if(is_visual)
+                    data_unit_2.setVisibility(View.VISIBLE);
+                else
+                    data_unit_2.setVisibility(View.GONE);
+                break;
+            case 6 :
+                if(is_visual)
+                    data_unit_ko_2.setVisibility(View.VISIBLE);
+                else
+                    data_unit_ko_2.setVisibility(View.GONE);
+                break;
+            case 7 :
+                if(is_visual)
+                    isNetwork.setVisibility(View.VISIBLE);
+                else
+                    isNetwork.setVisibility(View.GONE);
+                break;
+        }
+
+        //first_data_layout.setVisibility(View.GONE);
+    }
+
+    public void setTypeface(int text_id) { // text bold 등의 font 속성 담당
+        data_1.setTypeface(Typeface.DEFAULT_BOLD);
+    }
+
+    public void setLayoutGravity() {
+        include_data_layout.setGravity(View.TEXT_ALIGNMENT_CENTER);
+    }
+
+    public void setLayoutOrientation() {
+        include_data_layout.setOrientation(LinearLayout.HORIZONTAL);
+    }
+
+    public void addView(int id) {
+        switch (id) {
+            case 5 :
+                if (data_unit_ko_1.getParent() != null)
+                    ((ViewGroup) data_unit_ko_1.getParent()).removeView(data_unit_ko_1);
+                include_data_layout.addView(data_unit_ko_1);
+                break;
+            case 1 :
+                if (data_1.getParent() != null)
+                    ((ViewGroup) data_1.getParent()).removeView(data_1);
+                include_data_layout.addView(data_1);
+                break;
+            case 3 :
+                if (data_unit_1.getParent() != null)
+                    ((ViewGroup) data_unit_1.getParent()).removeView(data_unit_1);
+                include_data_layout.addView(data_unit_1);
+                break;
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        /*
         mThread.interrupt();
         System.out.println("스레드 interrupted 여부 : " + mThread.interrupted());
+         */
 
         if(con != null && con.isShowing())
             con.dismiss();
-        if(progressDialog != null && progressDialog.isShowing())
-            progressDialog.dismiss();
-        System.out.println("스레드 종료 이후 확인");
     }
 
     @Override
@@ -161,6 +272,7 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 
+/*
 class mainThread implements Runnable {
 
     ArrayList<Channels[]> arrayChannels = new ArrayList<>();
@@ -255,7 +367,7 @@ class mainThread implements Runnable {
                             /*
                              * 아래 코드가 실질적으로 데이터를 setText 하는 부분
                              * 데이터 삽입에 문제가 있는지 이곳에서 확인할 것
-                             */
+                             *
                             int showing_sensor_num = PreferenceManager.getInt(activity, "selected_total_sensor_num");
                             for (int i = 0; i < arrayChannels.size(); i++) {
                                 PreferenceManager.setInt(activity, "device_sensor_num", arrayChannels.get(i).length);
@@ -356,3 +468,4 @@ class mainThread implements Runnable {
         }
     }
 }
+*/

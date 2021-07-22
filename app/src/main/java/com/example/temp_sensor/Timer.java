@@ -5,17 +5,31 @@ import android.os.CountDownTimer;
 public class Timer extends CountDownTimer {
     // 스레드 역할 대행
 
-    public Timer(long millisInFuture, long countDownInterval) {
+    String api_key_str;
+    String api_secret_str;
+    String mac_str;
+
+    Connect_Tapaculo tapaculo;
+    MainActivity activity;
+
+    public Timer(long millisInFuture, long countDownInterval, MainActivity activity, Connect_Tapaculo tapaculo, String api_key_str, String api_secret_str, String mac_str) {
         super(millisInFuture, countDownInterval);
+        this.tapaculo = tapaculo;
+        this.api_key_str = api_key_str;
+        this.api_secret_str = api_secret_str;
+        this.mac_str = mac_str;
+        this.activity = activity;
     }
 
     @Override
-    public void onTick(long millisUntilFinished) {
-
+    public void onTick(long millisUntilFinished) { // Timer가 호출됐을 때 countDownInterval 값을 주기로 반복 호출됨.
+        System.out.println("타이머 onTick 호출됨.");
+        Communication connect = new Communication(activity, tapaculo, api_key_str, api_secret_str, mac_str);
+        connect.requestHttp();
     }
 
     @Override
-    public void onFinish() {
-
+    public void onFinish() { // Timer가 종료됐을 때 호출되는 함수
+        System.out.println("타이머 종료됨");
     }
 }
