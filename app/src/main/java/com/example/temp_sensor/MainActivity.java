@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
         Connect_Tapaculo tapaculo = Request.getRetrofit().create(Connect_Tapaculo.class);
 
         device_info = (TextView) findViewById(R.id.device_location);
-        System.out.println("값 알아보기(지워져야함) : " + PreferenceManager.getString(mainActivity, "device_info"));
         device_info.setText(PreferenceManager.getString(mainActivity, "device_info"));
 
         TextView isNetwork = (TextView) findViewById(R.id.network_state_text);
@@ -103,12 +102,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mThread.interrupt();
         System.out.println("스레드 interrupted 여부 : " + mThread.interrupted());
 
         if(con != null && con.isShowing())
             con.dismiss();
         if(progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
+        System.out.println("스레드 종료 이후 확인");
     }
 
     @Override
@@ -146,6 +147,9 @@ public class MainActivity extends AppCompatActivity {
                             Snackbar.make(findViewById(R.id.linear_main), "설정 화면에서 저장한 정보가 사라집니다. 그래도 나갈까요?", Snackbar.LENGTH_LONG).setAction("네", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
+                                    PreferenceManager.removeKey(mainActivity, "selected_total_sensor_num");
+                                    PreferenceManager.removeKey(mainActivity, "device_info");
+                                    PreferenceManager.removeKey(mainActivity, "selected_title_data");
                                     Thread.currentThread().interrupt();
                                     finish();
                                 }
@@ -194,10 +198,10 @@ class mainThread implements Runnable {
 
     public void run() {
 
-        while(!Thread.currentThread().isInterrupted()) {
+        while (!Thread.currentThread().isInterrupted()) {
             try {
                 count += 1;
-                if(count >= 2)
+                if (count >= 2)
                     count = 2;
                 System.out.println("통신 시도...");
                 Handler handler = new Handler(Looper.getMainLooper());
@@ -305,7 +309,7 @@ class mainThread implements Runnable {
                                             data_1.setTypeface(Typeface.DEFAULT_BOLD);
                                             data_unit_1.setText(arrayChannels.get(i)[j].getCh_unit());
 
-                                            if(count < 2) {
+                                            if (count < 2) {
                                                 if (data_unit_ko_1.getParent() != null)
                                                     ((ViewGroup) data_unit_ko_1.getParent()).removeView(data_unit_ko_1);
                                                 include_data_layout.addView(data_unit_ko_1);
@@ -315,8 +319,7 @@ class mainThread implements Runnable {
                                                 if (data_unit_1.getParent() != null)
                                                     ((ViewGroup) data_unit_1.getParent()).removeView(data_unit_1);
                                                 include_data_layout.addView(data_unit_1);
-                                            }
-                                            else
+                                            } else
                                                 count = 2;
 
                                             include_data_layout.setGravity(View.TEXT_ALIGNMENT_CENTER);
@@ -346,8 +349,7 @@ class mainThread implements Runnable {
                 });
                 int splrate = PreferenceManager.getInt(activity, "refresh_value");
                 Thread.sleep(splrate * 1000); // splrate을 기준으로 센서값 표현하는 페이지 새로고침
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 e.printStackTrace();
                 return;
             }

@@ -1,5 +1,8 @@
 <resources>
+    <!-- App Name -->
     <string name="app_name">Sensoring Temperature</string>
+
+    <!-- VerifyActivity -->
     <string name="api_secret">api_secret</string>
     <string name="api_secret_enter">API SECRET</string>
     <string name="api_key">api_key</string>
@@ -13,13 +16,19 @@
     <string name="refresh_helper">새로고침 주기는 기기의 측정 주기보다 짧게 설정하시는 것을 권장합니다.</string>
     <string name="refresh_enter">REFRESH</string>
     <string name="sensoring_btn">SENSORING START</string>
+    <string name="tapaculo">GO TO Tapaculo365</string>
+
+    <!-- AlertDialog -->
     <string name="positive_alert">CONFIRM</string>
+
+    <!-- SettingActivity -->
     <string name="show_two">2개 센서값 보기</string>
     <string name="show_sensor_setting">화면 센서값 설정</string>
     <string name="device_info">디바이스 정보</string>
     <string name="device_info_enter">DEVICE INFORMATION</string>
     <string name="setting_btn">SETTING</string>
     <string name="setting">SETTING DONE</string>
-    <string name="tapaculo">GO TO Tapaculo365</string>
+
+    <!-- MainActivity -->
     <string name="isNetwork">네트워크 연결이 불안정합니다.</string>
 </resources>

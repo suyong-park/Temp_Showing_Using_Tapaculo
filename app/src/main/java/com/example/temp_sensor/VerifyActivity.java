@@ -53,7 +53,7 @@ public class VerifyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent_tapaculo = new Intent(Intent.ACTION_VIEW);
-                intent_tapaculo.setData(Uri.parse("https://s2.dev.tapaculo365.com/"));
+                intent_tapaculo.setData(Uri.parse("https://s2.tapaculo365.com/"));
                 startActivity(intent_tapaculo);
             }
         });
