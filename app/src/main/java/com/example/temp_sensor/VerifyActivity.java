@@ -123,14 +123,12 @@ public class VerifyActivity extends AppCompatActivity {
                             System.out.println("통신 실패");
                             progressDialog.dismiss();
                             builder.setTitle("경고")
-                                    .setMessage("입력값을 제대로 입력했는지 확인하세요.")
+                                    .setMessage("네트워크 연결 상태를 확인하세요.")
                                     .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                                     .show();
                             return;
                         }
-                        System.out.println("통신 중 ...");
-
-                        if (result.getStatus().equals("true")) {
+                        else if (result.getStatus().equals("true")) {
                             System.out.println("통신 성공");
                             int refresh_value = Integer.parseInt(refresh_value_str);
                             int admin_value = Integer.parseInt(admin_value_str);
@@ -150,7 +148,7 @@ public class VerifyActivity extends AppCompatActivity {
                             System.out.println("통신 실패");
                             progressDialog.dismiss();
                             builder.setTitle("경고")
-                                    .setMessage("압력값을 제대로 입력했는지 확인하세요.")
+                                    .setMessage("네트워크 연결 상태를 확인하세요.")
                                     .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                                     .show();
                             return;

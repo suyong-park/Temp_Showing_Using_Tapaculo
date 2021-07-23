@@ -8,6 +8,13 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/linear_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:showDelay="@integer/material_motion_duration_short_1"
+        android:indeterminate="true" />
+
     <LinearLayout
         android:id="@+id/text_title"
         android:layout_width="match_parent"
@@ -59,20 +66,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:baselineAligned="false"
             android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="ㅁㄴㅇㄹㅁㄴㄹㅁㄴㅇㄹ" />
 
             <TextView
                 android:id="@+id/show_data_unit_ko_1"
                 android:layout_width="200dp"
-                android:layout_height="300dp"
-                android:layout_gravity="center"
+                android:layout_height="500dp"
+                android:gravity="center"
                 android:layout_marginLeft="15dp"
+                android:maxLines="1"
                 android:autoSizeTextType="uniform"
                 android:textAlignment="center"
                 android:textStyle="bold" />
@@ -80,10 +82,10 @@
             <TextView
                 android:id="@+id/show_data_1"
                 android:layout_width="1500dp"
-                android:layout_height="300dp"
+                android:layout_height="500dp"
                 android:layout_gravity="center"
-                android:autoSizeMaxTextSize="100sp"
-                android:autoSizeMinTextSize="50sp"
+                android:autoSizeMaxTextSize="520sp"
+                android:autoSizeMinTextSize="420sp"
                 android:autoSizeStepGranularity="2sp"
                 android:autoSizeTextType="uniform"
                 android:textAlignment="center"
@@ -92,8 +94,8 @@
             <TextView
                 android:id="@+id/show_data_unit_1"
                 android:layout_width="200dp"
-                android:layout_height="300dp"
-                android:layout_gravity="center"
+                android:layout_height="500dp"
+                android:gravity="center"
                 android:autoSizeTextType="uniform"
                 android:textAlignment="center"
                 android:textStyle="bold" />
@@ -110,9 +112,10 @@
             <TextView
                 android:id="@+id/show_data_unit_ko_2"
                 android:layout_width="200dp"
-                android:layout_height="300dp"
-                android:layout_gravity="center"
+                android:layout_height="500dp"
+                android:gravity="center"
                 android:layout_marginLeft="15dp"
+                android:maxLines="1"
                 android:autoSizeTextType="uniform"
                 android:textAlignment="center"
                 android:textStyle="bold" />
@@ -120,10 +123,10 @@
             <TextView
                 android:id="@+id/show_data_2"
                 android:layout_width="1500dp"
-                android:layout_height="300dp"
+                android:layout_height="500dp"
                 android:layout_gravity="center"
-                android:autoSizeMaxTextSize="100sp"
-                android:autoSizeMinTextSize="50sp"
+                android:autoSizeMaxTextSize="520sp"
+                android:autoSizeMinTextSize="420sp"
                 android:autoSizeStepGranularity="2sp"
                 android:autoSizeTextType="uniform"
                 android:textAlignment="center"
@@ -132,8 +135,8 @@
             <TextView
                 android:id="@+id/show_data_unit_2"
                 android:layout_width="200dp"
-                android:layout_height="300dp"
-                android:layout_gravity="center"
+                android:layout_height="500dp"
+                android:gravity="center"
                 android:autoSizeTextType="uniform"
                 android:textAlignment="center"
                 android:textStyle="bold" />

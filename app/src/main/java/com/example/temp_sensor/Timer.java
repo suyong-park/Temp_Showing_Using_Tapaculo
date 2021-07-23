@@ -23,7 +23,6 @@ public class Timer extends CountDownTimer {
 
     @Override
     public void onTick(long millisUntilFinished) { // Timer가 호출됐을 때 countDownInterval 값을 주기로 반복 호출됨.
-        System.out.println("타이머 onTick 호출됨.");
         Communication connect = new Communication(activity, tapaculo, api_key_str, api_secret_str, mac_str);
         connect.requestHttp();
     }

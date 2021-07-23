@@ -68,6 +68,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/api_secret_enter"
+                    android:inputType="text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
@@ -92,6 +93,7 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/MAC_enter"
+                    android:inputType="text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 

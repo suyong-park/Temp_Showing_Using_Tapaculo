@@ -1,5 +1,9 @@
 package com.example.temp_sensor;
 
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -35,6 +39,7 @@ public class Communication {
     data_unit_ko_1 : 5
     data_unit_ko_2 : 6
     isNetwork : 7
+    indicator : 8
     first_data_layout : 1
     include_data_layout : 2
     */
@@ -42,6 +47,7 @@ public class Communication {
     public void requestHttp() {
 
         activity.setVisibility(false, 7);
+        activity.setProgress(activity);
 
         count += 1;
         if (count >= 2) count = 2;
@@ -50,13 +56,15 @@ public class Communication {
             @Override
             public void onResponse(Call<GetInfo> call, Response<GetInfo> response) {
                 GetInfo result = response.body();
+                System.out.println("통신 시도 ...");
                 if(result == null) {
                     activity.setVisibility(true, 7);
                     activity.setTextSize(80);
                     System.out.println("통신 실패");
                 }
                 else if (result.getStatus().equals("true")) {
-                    System.out.println("통신 성공");
+                    System.out.println("통신 성공"); // 여기 이전에 딜레이 발생시 progress dialog 넣어주기
+                    activity.hideProgress();
 
                     Sensors[] sensors = result.getSensors();
                     Channels[] channels;
@@ -86,44 +94,41 @@ public class Communication {
                                 // 최초 접속인 경우
                                 if (j == 0) {
                                     activity.setText(arrayChannels.get(i)[j].getCh_name(), 5);
-                                    activity.setText(arrayChannels.get(i)[j].getCh_value(), 1);
+                                    activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 1);
                                     activity.setText(arrayChannels.get(i)[j].getCh_unit(), 3);
                                 }
                                 if (j == 1) {
                                     activity.setText(arrayChannels.get(i)[j].getCh_name(), 6);
-                                    activity.setText(arrayChannels.get(i)[j].getCh_value(), 2);
+                                    activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 2);
                                     activity.setText(arrayChannels.get(i)[j].getCh_unit(), 4);
                                 }
                             } else if (PreferenceManager.getString(activity, "selected_title_data").contains(",")) {
                                 // 센서 2개를 선택한 경우
-                                System.out.println("센서 2개");
                                 temp = PreferenceManager.getString(activity, "selected_title_data").split(",");
                                 for (int k = 0; k < temp.length; k++)
                                     if (temp[k].equals(arrayChannels.get(i)[j].getCh_name())) { // 받아온 제목과 동일한지 확인
                                         if (k == 0) {
                                             activity.setText(arrayChannels.get(i)[j].getCh_name(), 5);
-                                            activity.setText(arrayChannels.get(i)[j].getCh_value(), 1);
+                                            activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 1);
                                             activity.setText(arrayChannels.get(i)[j].getCh_unit(), 3);
                                         }
                                         if (k == 1) {
                                             activity.setText(arrayChannels.get(i)[j].getCh_name(), 6);
-                                            activity.setText(arrayChannels.get(i)[j].getCh_value(), 2);
+                                            activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 2);
                                             activity.setText(arrayChannels.get(i)[j].getCh_unit(), 4);
                                         }
                                     }
                             } else {
                                 // 센서 1개를 선택한 경우
-                                System.out.println("센서 1개");
                                 temp[0] = PreferenceManager.getString(activity, "selected_title_data"); // 이 경우 1번째 값은 null
                                 if (temp[0].equals(arrayChannels.get(i)[j].getCh_name())) {
 
                                     activity.setVisibility(false, 0);
                                     activity.setText(arrayChannels.get(i)[j].getCh_name(), 5);
-                                    activity.setText(arrayChannels.get(i)[j].getCh_value(), 1);
-                                    activity.setTypeface(1);
+                                    activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 1);
+                                    activity.setTypeface();
                                     activity.setText(arrayChannels.get(i)[j].getCh_unit(), 3);
 
-                                    System.out.println(count);
                                     if (count < 2) {
                                         activity.addView(5);
                                         activity.addView(1);

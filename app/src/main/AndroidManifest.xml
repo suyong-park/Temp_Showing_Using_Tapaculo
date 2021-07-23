@@ -9,7 +9,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
     <!-- 위 2개의 permission은 인터넷을 통해 OpenAPI와 연결하기 위한 것. -->
     <!--
      1 : android:hardwareAccelerated="true"

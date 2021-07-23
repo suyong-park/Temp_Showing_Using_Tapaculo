@@ -115,20 +115,28 @@ public class SettingActivity extends AppCompatActivity {
                 PreferenceManager.setString(settingActivity, "device_info", device_info.getText().toString());
 
                 String finalData = data;
-                builder.setTitle("설정")
-                        .setMessage("설정이 완료되었습니다.")
-                        .setCancelable(false)
-                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Intent intent = new Intent(settingActivity, MainActivity.class);
-                                PreferenceManager.setString(settingActivity, "selected_title_data", finalData);
-                                ((MainActivity)MainActivity.CONTEXT).finish();
-                                finish();
-                                startActivity(intent);
-                            }
-                        })
-                        .show();
+                if(!Request.isNetworkConnected(settingActivity)) {
+                    builder.setTitle("경고")
+                            .setMessage("네트워크가 연결되지 않았습니다. 연결 후 다시 시도하세요.")
+                            .setPositiveButton("확인", null)
+                            .show();
+                    return;
+                }
+                else
+                    builder.setTitle("설정")
+                            .setMessage("설정이 완료되었습니다.")
+                            .setCancelable(false)
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    Intent intent = new Intent(settingActivity, MainActivity.class);
+                                    PreferenceManager.setString(settingActivity, "selected_title_data", finalData);
+                                    ((MainActivity)MainActivity.CONTEXT).finish();
+                                    finish();
+                                    startActivity(intent);
+                                }
+                            })
+                            .show();
             }
         });
     }
