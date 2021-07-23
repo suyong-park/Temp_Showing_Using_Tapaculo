@@ -43,6 +43,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:gravity="center">
 
         <TextView
@@ -51,6 +52,19 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/isNetwork" />
+
+        <TextView
+            android:id="@+id/device_data_receive_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/isDataReceive" />
+
+        <TextView
+            android:id="@+id/device_data_receive_state_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
 
     </LinearLayout>
 
@@ -84,8 +98,8 @@
                 android:layout_width="1500dp"
                 android:layout_height="500dp"
                 android:layout_gravity="center"
-                android:autoSizeMaxTextSize="520sp"
-                android:autoSizeMinTextSize="420sp"
+                android:autoSizeMaxTextSize="500sp"
+                android:autoSizeMinTextSize="300sp"
                 android:autoSizeStepGranularity="2sp"
                 android:autoSizeTextType="uniform"
                 android:textAlignment="center"
@@ -106,6 +120,7 @@
             android:id="@+id/second_data_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_weight="1"
             android:orientation="horizontal">
 
@@ -125,8 +140,8 @@
                 android:layout_width="1500dp"
                 android:layout_height="500dp"
                 android:layout_gravity="center"
-                android:autoSizeMaxTextSize="520sp"
-                android:autoSizeMinTextSize="420sp"
+                android:autoSizeMaxTextSize="500sp"
+                android:autoSizeMinTextSize="300sp"
                 android:autoSizeStepGranularity="2sp"
                 android:autoSizeTextType="uniform"
                 android:textAlignment="center"

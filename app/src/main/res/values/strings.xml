@@ -1,6 +1,6 @@
 <resources>
     <!-- App Name -->
-    <string name="app_name">Sensoring Temperature</string>
+    <string name="app_name">RadioNode Panel</string>
 
     <!-- VerifyActivity -->
     <string name="api_secret">api_secret</string>
@@ -31,4 +31,5 @@
 
     <!-- MainActivity -->
     <string name="isNetwork">네트워크 연결이 불안정합니다.</string>
+    <string name="isDataReceive">디바이스가 서버로 데이터를 전송하지 못하고 있습니다.</string>
 </resources>

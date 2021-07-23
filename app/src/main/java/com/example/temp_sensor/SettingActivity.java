@@ -3,6 +3,9 @@ package com.example.temp_sensor;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
+import android.view.ContextThemeWrapper;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +13,15 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 
@@ -51,7 +58,10 @@ public class SettingActivity extends AppCompatActivity {
 
         int device_sensor_num = PreferenceManager.getInt(settingActivity, "device_sensor_num");
         ArrayList<CheckBox> arrayBox = new ArrayList<>();
+        ArrayList<TextInputLayout> arrayInputLayout = new ArrayList<>();
+        ArrayList<TextInputEditText> arrayInputEdit = new ArrayList<>();
 
+        // 아래 부분은 CheckBox를 동적으로 생성하는 부분
         LinearLayout checkBoxlayer = (LinearLayout) findViewById(R.id.checkbox_linear);
         for(int i = 0; i < device_sensor_num; i++) { // 센서 이름 체크박스 동적으로 생성
             String ch_name = PreferenceManager.getString(settingActivity, "ch" + i + "_name");
@@ -66,6 +76,59 @@ public class SettingActivity extends AppCompatActivity {
             if(sensorBox.getParent() != null)
                 ((ViewGroup) sensorBox.getParent()).removeView(sensorBox);
             checkBoxlayer.addView(sensorBox);
+        }
+
+        // 아래 부분은 TextInputLayout 동적으로 생성하는 부분 ==> 이를 통해 사용자가 센서 이름을 동적으로 변경할 수 있음.
+        LinearLayout editTextlayer = (LinearLayout) findViewById(R.id.edit_ch_name_area);
+        for(int i = 0; i < device_sensor_num; i++) {
+            String ch_edit_name = PreferenceManager.getString(settingActivity, "ch" + i + "_name");
+            if(ch_edit_name.equals("") || ch_edit_name.equals(null))
+                break;
+
+            LinearLayout linearLayout = new LinearLayout(settingActivity);
+            TextView textView = new TextView(settingActivity);
+            TextInputLayout textInputLayout = new TextInputLayout(settingActivity);
+            textInputLayout.setBoxBackgroundColor(ContextCompat.getColor(settingActivity, android.R.color.black));
+            textInputLayout.setBoxBackgroundMode(TextInputLayout.BOX_BACKGROUND_OUTLINE);
+            TextInputEditText textInputEditText = new TextInputEditText(textInputLayout.getContext());
+
+            LinearLayout.LayoutParams edit_params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+
+            LinearLayout.LayoutParams input_params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+
+            if(textView.getParent() != null)
+                ((ViewGroup) textView.getParent()).removeView(textView);
+            linearLayout.addView(textView, edit_params);
+
+            if(textInputEditText.getParent() != null)
+                ((ViewGroup) textInputEditText.getParent()).removeView(textInputEditText);
+            textInputLayout.addView(textInputEditText, edit_params);
+
+            if(linearLayout.getParent() != null)
+                ((ViewGroup) linearLayout.getParent()).removeView(linearLayout);
+            editTextlayer.addView(linearLayout, edit_params);
+
+            if(textInputLayout.getParent() != null)
+                ((ViewGroup) textInputLayout.getParent()).removeView(textInputLayout);
+            linearLayout.addView(textInputLayout);
+
+            linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+            textView.setText(ch_edit_name);
+
+            textInputLayout.setLayoutParams(input_params);
+            textInputLayout.setHint(ch_edit_name);
+
+            textInputEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+
+            arrayInputLayout.add(textInputLayout);
+            arrayInputEdit.add(textInputEditText);
         }
 
         builder = new MaterialAlertDialogBuilder(settingActivity);

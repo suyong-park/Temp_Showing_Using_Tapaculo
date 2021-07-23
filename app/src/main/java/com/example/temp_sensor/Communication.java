@@ -1,10 +1,10 @@
 package com.example.temp_sensor;
 
-import androidx.appcompat.app.AlertDialog;
-
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,7 +39,8 @@ public class Communication {
     data_unit_ko_1 : 5
     data_unit_ko_2 : 6
     isNetwork : 7
-    indicator : 8
+    isDataReceive : 8
+    isDataReceive_Time : 9
     first_data_layout : 1
     include_data_layout : 2
     */
@@ -47,6 +48,8 @@ public class Communication {
     public void requestHttp() {
 
         activity.setVisibility(false, 7);
+        activity.setVisibility(false, 8);
+        activity.setVisibility(false, 9);
         activity.setProgress(activity);
 
         count += 1;
@@ -59,12 +62,20 @@ public class Communication {
                 System.out.println("통신 시도 ...");
                 if(result == null) {
                     activity.setVisibility(true, 7);
-                    activity.setTextSize(80);
+                    activity.setTextSize(7, 25);
                     System.out.println("통신 실패");
                 }
                 else if (result.getStatus().equals("true")) {
                     System.out.println("통신 성공"); // 여기 이전에 딜레이 발생시 progress dialog 넣어주기
                     activity.hideProgress();
+
+                    String device_last_update = result.getDevice_lastupdate();
+                    String device_interval = result.getDevice_interval();
+                    try {
+                        isDeviceConnect(device_last_update, device_interval);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                     Sensors[] sensors = result.getSensors();
                     Channels[] channels;
@@ -94,12 +105,18 @@ public class Communication {
                                 // 최초 접속인 경우
                                 if (j == 0) {
                                     activity.setText(arrayChannels.get(i)[j].getCh_name(), 5);
-                                    activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 1);
+                                    if (arrayChannels.get(i)[j].getCh_value().length() == 0)
+                                        activity.setText(arrayChannels.get(i)[j].getCh_value(), 1);
+                                    else
+                                        activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 1);
                                     activity.setText(arrayChannels.get(i)[j].getCh_unit(), 3);
                                 }
                                 if (j == 1) {
                                     activity.setText(arrayChannels.get(i)[j].getCh_name(), 6);
-                                    activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 2);
+                                    if (arrayChannels.get(i)[j].getCh_value().length() == 0)
+                                        activity.setText(arrayChannels.get(i)[j].getCh_value(), 2);
+                                    else
+                                        activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 2);
                                     activity.setText(arrayChannels.get(i)[j].getCh_unit(), 4);
                                 }
                             } else if (PreferenceManager.getString(activity, "selected_title_data").contains(",")) {
@@ -109,12 +126,18 @@ public class Communication {
                                     if (temp[k].equals(arrayChannels.get(i)[j].getCh_name())) { // 받아온 제목과 동일한지 확인
                                         if (k == 0) {
                                             activity.setText(arrayChannels.get(i)[j].getCh_name(), 5);
-                                            activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 1);
+                                            if (arrayChannels.get(i)[j].getCh_value().length() == 0)
+                                                activity.setText(arrayChannels.get(i)[j].getCh_value(), 1);
+                                            else
+                                                activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 1);
                                             activity.setText(arrayChannels.get(i)[j].getCh_unit(), 3);
                                         }
                                         if (k == 1) {
                                             activity.setText(arrayChannels.get(i)[j].getCh_name(), 6);
-                                            activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 2);
+                                            if (arrayChannels.get(i)[j].getCh_value().length() == 0)
+                                                activity.setText(arrayChannels.get(i)[j].getCh_value(), 2);
+                                            else
+                                                activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 2);
                                             activity.setText(arrayChannels.get(i)[j].getCh_unit(), 4);
                                         }
                                     }
@@ -125,7 +148,10 @@ public class Communication {
 
                                     activity.setVisibility(false, 0);
                                     activity.setText(arrayChannels.get(i)[j].getCh_name(), 5);
-                                    activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 1);
+                                    if (arrayChannels.get(i)[j].getCh_value().length() == 0)
+                                        activity.setText(arrayChannels.get(i)[j].getCh_value(), 1);
+                                    else
+                                        activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 1);
                                     activity.setTypeface();
                                     activity.setText(arrayChannels.get(i)[j].getCh_unit(), 3);
 
@@ -149,9 +175,49 @@ public class Communication {
             @Override
             public void onFailure(Call<GetInfo> call, Throwable t) {
                 activity.setVisibility(true, 7);
-                activity.setTextSize(80);
+                activity.setTextSize(7, 25);
                 System.out.println(t.getMessage());
             }
         });
+    }
+
+    public void isDeviceConnect(String device_last_update, String device_interval) throws Exception{
+
+        String localTime = null; // device_last_update는 UTC이므로 이를 Local Time으로 변경하기 위한 작업
+        TimeZone tz = TimeZone.getTimeZone("GMT+09:00");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date parseDate;
+        try {
+            parseDate = sdf.parse(device_last_update);
+            long milliseconds = parseDate.getTime();
+            int offset = tz.getOffset(milliseconds);
+            localTime = sdf.format(milliseconds + offset);
+            localTime = localTime.replace("+0000", "");
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new Exception(e);
+        }
+
+        Date past = sdf.parse(localTime);
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.setTime(past);
+        calendar.add(Calendar.MINUTE, (Integer.parseInt(device_interval) / 60) * 2); // 디바이스 전송 주기 분 단위로 변환 후
+
+        long now = System.currentTimeMillis();
+        Date current_date = sdf.parse(sdf.format(now));
+        Date device_update_date = sdf.parse(sdf.format(calendar.getTime()));
+
+        // device_last_update와 비교하여 너무 오래 update가 진행되지 않는 경우 경고문 팝업
+        if(current_date.compareTo(device_update_date) > 0) {
+            activity.setVisibility(true, 8);
+            activity.setVisibility(true, 9);
+            activity.setText("마지막 데이터 전송 시간 : " + localTime, 9);
+            activity.setTextSize(8, 25);
+            activity.setTextSize(9, 25);
+            System.out.println("디바이스에서 데이터를 전송하지 못하고 있습니다.\n마지막 데이터 전송 시간 : " + localTime);
+        }
+        else
+            System.out.println("디바이스에서 데이터를 제대로 전송 중입니다.\n마지막 데이터 전송 시간 : " + localTime);
     }
 }

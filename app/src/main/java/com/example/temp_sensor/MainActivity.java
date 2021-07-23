@@ -4,7 +4,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
     TextView device_info;
     TextView isNetwork;
+    TextView isDataReceive;
+    TextView isDataReceive_Time;
     TextView data_1;
     TextView data_2;
     TextView data_unit_1;
@@ -68,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
         device_info.setText(PreferenceManager.getString(mainActivity, "device_info"));
 
         isNetwork = (TextView) findViewById(R.id.network_state_text);
+        isDataReceive = (TextView) findViewById(R.id.device_data_receive_state);
+        isDataReceive_Time = (TextView) findViewById(R.id.device_data_receive_state_time);
         data_1 = (TextView) findViewById(R.id.show_data_1);
         data_2 = (TextView) findViewById(R.id.show_data_2);
         data_unit_1 = (TextView) findViewById(R.id.show_data_unit_1);
@@ -112,7 +115,8 @@ public class MainActivity extends AppCompatActivity {
     data_unit_ko_1 : 5
     data_unit_ko_2 : 6
     isNetwork : 7
-    indicator : 8
+    isDataReceive : 8
+    isDataReceive_Time : 9
     first_data_layout : 1
     include_data_layout : 2
     */
@@ -136,11 +140,24 @@ public class MainActivity extends AppCompatActivity {
             case 6 :
                 data_unit_ko_2.setText(text);
                 break;
+            case 9 :
+                isDataReceive_Time.setText(text);
+                break;
         }
     }
 
-    public void setTextSize(int size) {
-        isNetwork.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
+    public void setTextSize(int text_id, int size) {
+        switch (text_id) {
+            case 7 :
+                isNetwork.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
+                break;
+            case 8 :
+                isDataReceive.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
+                break;
+            case 9 :
+                isDataReceive_Time.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
+                break;
+        }
     }
 
     public void setVisibility(boolean is_visual, int text_id) { // 시각화 담당
@@ -180,6 +197,18 @@ public class MainActivity extends AppCompatActivity {
                     isNetwork.setVisibility(View.VISIBLE);
                 else
                     isNetwork.setVisibility(View.GONE);
+                break;
+            case 8 :
+                if(is_visual)
+                    isDataReceive.setVisibility(View.VISIBLE);
+                else
+                    isDataReceive.setVisibility(View.GONE);
+                break;
+            case 9 :
+                if(is_visual)
+                    isDataReceive_Time.setVisibility(View.VISIBLE);
+                else
+                    isDataReceive_Time.setVisibility(View.GONE);
                 break;
         }
     }
