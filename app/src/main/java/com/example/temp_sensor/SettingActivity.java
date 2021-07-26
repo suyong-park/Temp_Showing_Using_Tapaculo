@@ -70,6 +70,7 @@ public class SettingActivity extends AppCompatActivity {
 
             CheckBox sensorBox = new CheckBox(settingActivity);
             sensorBox.setId(i);
+            System.out.println(i + "번째 체크박스 값 : " + ch_name);
             sensorBox.setText(ch_name);
             arrayBox.add(sensorBox);
 
@@ -117,6 +118,8 @@ public class SettingActivity extends AppCompatActivity {
             if(textInputLayout.getParent() != null)
                 ((ViewGroup) textInputLayout.getParent()).removeView(textInputLayout);
             linearLayout.addView(textInputLayout);
+
+            System.out.println(i + "번째 텍스트인풋 값 : " + ch_edit_name);
 
             linearLayout.setOrientation(LinearLayout.VERTICAL);
 

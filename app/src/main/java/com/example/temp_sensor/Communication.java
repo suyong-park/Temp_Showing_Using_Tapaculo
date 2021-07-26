@@ -12,9 +12,10 @@ import retrofit2.Response;
 
 public class Communication {
 
-    ArrayList<Channels[]> arrayChannels = new ArrayList<>();
-    ArrayList<Sensors> arraySensors = new ArrayList<>();
+    ArrayList<Channels[]> arrayChannels = null;
+    ArrayList<Sensors> arraySensors = null;
 
+    String[] temp = null;
     String api_key_str;
     String api_secret_str;
     String mac_str;
@@ -80,6 +81,8 @@ public class Communication {
                     Sensors[] sensors = result.getSensors();
                     Channels[] channels;
 
+                    arrayChannels = new ArrayList<>();
+                    arraySensors = new ArrayList<>();
                     for (int i = 0; i < sensors.length; i++) {
                         channels = sensors[i].getChannels();
                         arraySensors.add(sensors[i]);
@@ -100,7 +103,6 @@ public class Communication {
                                 activity.setVisibility(true, 1);
                             }
 
-                            String[] temp = new String[2];
                             if (PreferenceManager.getString(activity, "selected_title_data") == null || PreferenceManager.getString(activity, "selected_title_data").equals("")) {
                                 // 최초 접속인 경우
                                 if (j == 0) {
@@ -121,6 +123,7 @@ public class Communication {
                                 }
                             } else if (PreferenceManager.getString(activity, "selected_title_data").contains(",")) {
                                 // 센서 2개를 선택한 경우
+                                temp = new String[2];
                                 temp = PreferenceManager.getString(activity, "selected_title_data").split(",");
                                 for (int k = 0; k < temp.length; k++)
                                     if (temp[k].equals(arrayChannels.get(i)[j].getCh_name())) { // 받아온 제목과 동일한지 확인
@@ -143,6 +146,7 @@ public class Communication {
                                     }
                             } else {
                                 // 센서 1개를 선택한 경우
+                                temp = new String[2];
                                 temp[0] = PreferenceManager.getString(activity, "selected_title_data"); // 이 경우 1번째 값은 null
                                 if (temp[0].equals(arrayChannels.get(i)[j].getCh_name())) {
 
@@ -166,6 +170,7 @@ public class Communication {
                                     activity.setLayoutOrientation();
                                 }
                             }
+                            System.out.println("ch" + j + "_name : " + arrayChannels.get(i)[j].getCh_name());
                             PreferenceManager.setString(activity, "ch" + j + "_name", arrayChannels.get(i)[j].getCh_name());
                         }
                     }
