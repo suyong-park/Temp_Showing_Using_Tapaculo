@@ -4,6 +4,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout first_data_layout;
 
     public static Context CONTEXT;
+    public boolean is_to_setting = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
                             .show();
                     return;
                 }
+                is_to_setting = true;
                 Intent intent = new Intent(mainActivity, SettingActivity.class);
                 startActivity(intent);
             }
@@ -266,7 +269,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
         EditText admin_value = new EditText(mainActivity);
         LinearLayout container = new LinearLayout(mainActivity);
         container.setOrientation(LinearLayout.VERTICAL);
@@ -314,5 +316,15 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("취소", null)
                 .show();
+    }
+
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+
+        if(!is_to_setting) {
+            ActivityManager activityManager = (ActivityManager) mainActivity.getSystemService(Context.ACTIVITY_SERVICE);
+            activityManager.moveTaskToFront(getTaskId(), 0);
+        }
     }
 }
