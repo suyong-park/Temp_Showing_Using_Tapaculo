@@ -16,6 +16,7 @@ public class Communication {
     ArrayList<Sensors> arraySensors = null;
 
     String[] temp = null;
+    String[] new_temp = null;
     String api_key_str;
     String api_secret_str;
     String mac_str;
@@ -89,7 +90,41 @@ public class Communication {
                         arrayChannels.add(channels);
                     }
 
+                    String title_data = PreferenceManager.getString(activity, "selected_title_data");
+                    boolean is_from_setting = PreferenceManager.getBoolean(activity, "is_from_setting");
                     int showing_sensor_num = PreferenceManager.getInt(activity, "selected_total_sensor_num");
+                    int tmp = 0;
+
+                    if(is_from_setting) {
+                        for (int i = 0; i < arrayChannels.size(); i++)
+                            for (int j = 0; j < arrayChannels.get(i).length; j++) {
+                                if (title_data.contains(",")) {
+                                    temp = new String[2];
+                                    temp = PreferenceManager.getString(activity, "selected_title_data").split(",");
+                                    switch (j) {
+                                        case 0 :
+                                            arrayChannels.get(i)[j].setCh_name(temp[0]);
+                                            break;
+                                        case 1 :
+                                            if(temp.length != 1)
+                                                arrayChannels.get(i)[j].setCh_name(temp[1]);
+                                            break;
+                                    }
+                                } else {
+                                    temp = new String[1];
+                                    temp[0] = PreferenceManager.getString(activity, "selected_title_data");
+                                    while(true) {
+                                        if(tmp == showing_sensor_num) {
+                                            arrayChannels.get(i)[tmp].setCh_name(temp[0]);
+                                            break;
+                                        }
+                                        tmp++;
+                                    }
+                                }
+                            }
+                        temp = null;
+                    }
+
                     for (int i = 0; i < arrayChannels.size(); i++) {
                         PreferenceManager.setInt(activity, "device_sensor_num", arrayChannels.get(i).length);
                         for (int j = 0; j < arrayChannels.get(i).length; j++) {
@@ -103,74 +138,17 @@ public class Communication {
                                 activity.setVisibility(true, 1);
                             }
 
-                            if (PreferenceManager.getString(activity, "selected_title_data") == null || PreferenceManager.getString(activity, "selected_title_data").equals("")) {
-                                // 최초 접속인 경우
-                                if (j == 0) {
-                                    activity.setText(arrayChannels.get(i)[j].getCh_name(), 5);
-                                    if (arrayChannels.get(i)[j].getCh_value().length() == 0)
-                                        activity.setText(arrayChannels.get(i)[j].getCh_value(), 1);
-                                    else
-                                        activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 1);
-                                    activity.setText(arrayChannels.get(i)[j].getCh_unit(), 3);
-                                }
-                                if (j == 1) {
-                                    activity.setText(arrayChannels.get(i)[j].getCh_name(), 6);
-                                    if (arrayChannels.get(i)[j].getCh_value().length() == 0)
-                                        activity.setText(arrayChannels.get(i)[j].getCh_value(), 2);
-                                    else
-                                        activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 2);
-                                    activity.setText(arrayChannels.get(i)[j].getCh_unit(), 4);
-                                }
-                            } else if (PreferenceManager.getString(activity, "selected_title_data").contains(",")) {
-                                // 센서 2개를 선택한 경우
+                            if (title_data == null || title_data.equals("")) // 최초 접속인 경우
+                                setText(0, i, j, 0);
+                            else if (title_data.contains(",")) { // 센서 2개를 선택한 경우
                                 temp = new String[2];
                                 temp = PreferenceManager.getString(activity, "selected_title_data").split(",");
                                 for (int k = 0; k < temp.length; k++)
-                                    if (temp[k].equals(arrayChannels.get(i)[j].getCh_name())) { // 받아온 제목과 동일한지 확인
-                                        if (k == 0) {
-                                            activity.setText(arrayChannels.get(i)[j].getCh_name(), 5);
-                                            if (arrayChannels.get(i)[j].getCh_value().length() == 0)
-                                                activity.setText(arrayChannels.get(i)[j].getCh_value(), 1);
-                                            else
-                                                activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 1);
-                                            activity.setText(arrayChannels.get(i)[j].getCh_unit(), 3);
-                                        }
-                                        if (k == 1) {
-                                            activity.setText(arrayChannels.get(i)[j].getCh_name(), 6);
-                                            if (arrayChannels.get(i)[j].getCh_value().length() == 0)
-                                                activity.setText(arrayChannels.get(i)[j].getCh_value(), 2);
-                                            else
-                                                activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 2);
-                                            activity.setText(arrayChannels.get(i)[j].getCh_unit(), 4);
-                                        }
-                                    }
-                            } else {
-                                // 센서 1개를 선택한 경우
-                                temp = new String[2];
-                                temp[0] = PreferenceManager.getString(activity, "selected_title_data"); // 이 경우 1번째 값은 null
-                                if (temp[0].equals(arrayChannels.get(i)[j].getCh_name())) {
-
-                                    activity.setVisibility(false, 0);
-                                    activity.setText(arrayChannels.get(i)[j].getCh_name(), 5);
-                                    if (arrayChannels.get(i)[j].getCh_value().length() == 0)
-                                        activity.setText(arrayChannels.get(i)[j].getCh_value(), 1);
-                                    else
-                                        activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 1);
-                                    activity.setTypeface();
-                                    activity.setText(arrayChannels.get(i)[j].getCh_unit(), 3);
-
-                                    if (count < 2) {
-                                        activity.addView(5);
-                                        activity.addView(1);
-                                        activity.addView(3);
-                                    } else
-                                        count = 2;
-
-                                    activity.setLayoutGravity();
-                                    activity.setLayoutOrientation();
-                                }
+                                    if (temp[k].equals(arrayChannels.get(i)[j].getCh_name()))  // 받아온 제목과 동일한지 확인
+                                        setText(2, i, j, k);
                             }
-                            System.out.println("ch" + j + "_name : " + arrayChannels.get(i)[j].getCh_name());
+                            else // 센서 1개를 선택한 경우
+                                setText(1, i, j, 0);
                             PreferenceManager.setString(activity, "ch" + j + "_name", arrayChannels.get(i)[j].getCh_name());
                         }
                     }
@@ -186,7 +164,7 @@ public class Communication {
         });
     }
 
-    public void isDeviceConnect(String device_last_update, String device_interval) throws Exception{
+    public void isDeviceConnect(String device_last_update, String device_interval) throws Exception {
 
         String localTime = null; // device_last_update는 UTC이므로 이를 Local Time으로 변경하기 위한 작업
         TimeZone tz = TimeZone.getTimeZone("GMT+09:00");
@@ -224,5 +202,75 @@ public class Communication {
         }
         else
             System.out.println("디바이스에서 데이터를 제대로 전송 중입니다.\n마지막 데이터 전송 시간 : " + localTime);
+    }
+
+    public void setText(int num, int i, int j, int k) {
+        switch (num) {
+            case 0 : // 최초 접속
+                switch (j) {
+                    case 0 :
+                        activity.setText(arrayChannels.get(i)[j].getCh_name(), 5);
+                        if (arrayChannels.get(i)[j].getCh_value().length() == 0)
+                            activity.setText(arrayChannels.get(i)[j].getCh_value(), 1);
+                        else
+                            activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 1);
+                        activity.setText(arrayChannels.get(i)[j].getCh_unit(), 3);
+                        break;
+                    case 1 :
+                        activity.setText(arrayChannels.get(i)[j].getCh_name(), 6);
+                        if (arrayChannels.get(i)[j].getCh_value().length() == 0)
+                            activity.setText(arrayChannels.get(i)[j].getCh_value(), 2);
+                        else
+                            activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 2);
+                        activity.setText(arrayChannels.get(i)[j].getCh_unit(), 4);
+                        break;
+                }
+                break;
+            case 1 : // 센서 1개 선택
+                temp = new String[2];
+                temp[0] = PreferenceManager.getString(activity, "selected_title_data"); // 이 경우 1번째 값은 null
+                if (temp[0].equals(arrayChannels.get(i)[j].getCh_name())) {
+
+                    activity.setVisibility(false, 0);
+                    activity.setText(arrayChannels.get(i)[j].getCh_name(), 5);
+                    if (arrayChannels.get(i)[j].getCh_value().length() == 0)
+                        activity.setText(arrayChannels.get(i)[j].getCh_value(), 1);
+                    else
+                        activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 1);
+                    activity.setTypeface();
+                    activity.setText(arrayChannels.get(i)[j].getCh_unit(), 3);
+
+                    if (count < 2) {
+                        activity.addView(5);
+                        activity.addView(1);
+                        activity.addView(3);
+                    } else
+                        count = 2;
+
+                    activity.setLayoutGravity();
+                    activity.setLayoutOrientation();
+                }
+                break;
+            case 2 : // 센서 2개 선택
+                switch (k) {
+                    case 0 :
+                        activity.setText(arrayChannels.get(i)[j].getCh_name(), 5);
+                        if (arrayChannels.get(i)[j].getCh_value().length() == 0)
+                            activity.setText(arrayChannels.get(i)[j].getCh_value(), 1);
+                        else
+                            activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 1);
+                        activity.setText(arrayChannels.get(i)[j].getCh_unit(), 3);
+                        break;
+                    case 1 :
+                        activity.setText(arrayChannels.get(i)[j].getCh_name(), 6);
+                        if (arrayChannels.get(i)[j].getCh_value().length() == 0)
+                            activity.setText(arrayChannels.get(i)[j].getCh_value(), 2);
+                        else
+                            activity.setText(arrayChannels.get(i)[j].getCh_value().substring(0, 4), 2);
+                        activity.setText(arrayChannels.get(i)[j].getCh_unit(), 4);
+                        break;
+                }
+                break;
+        }
     }
 }

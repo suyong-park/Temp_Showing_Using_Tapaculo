@@ -88,11 +88,11 @@ public class VerifyActivity extends AppCompatActivity {
                 progressDialog.setProgressStyle(android.R.style.Widget_ProgressBar_Horizontal);
                 progressDialog.show();
 
-                String api_key_str = api_key.getText().toString();
-                String api_secret_str = api_secret.getText().toString();
-                String mac_str = MAC.getText().toString();
-                String refresh_value_str = refresh.getText().toString();
-                String admin_value_str = admin.getText().toString();
+                String api_key_str = api_key.getText().toString().trim();
+                String api_secret_str = api_secret.getText().toString().trim();
+                String mac_str = MAC.getText().toString().trim();
+                String refresh_value_str = refresh.getText().toString().trim();
+                String admin_value_str = admin.getText().toString().trim();
 
                 builder = new MaterialAlertDialogBuilder(verifyActivity);
                 con = builder.create();

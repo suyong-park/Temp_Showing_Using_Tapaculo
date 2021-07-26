@@ -303,10 +303,8 @@ public class MainActivity extends AppCompatActivity {
                                 public void onClick(View v) {
                                     int device_sensor_num = PreferenceManager.getInt(mainActivity, "device_sensor_num");
                                     PreferenceManager.removeKey(mainActivity, "device_sensor_num");
-                                    for(int i = 0; i < device_sensor_num; i++) {
-                                        System.out.println("삭제되는 값 : " + PreferenceManager.getString(mainActivity, "ch" + i + "_name"));
+                                    for(int i = 0; i < device_sensor_num; i++)
                                         PreferenceManager.removeKey(mainActivity, "ch" + i + "_name");
-                                    }
                                     PreferenceManager.removeKey(mainActivity, "selected_total_sensor_num");
                                     PreferenceManager.removeKey(mainActivity, "device_info");
                                     PreferenceManager.removeKey(mainActivity, "selected_title_data");
