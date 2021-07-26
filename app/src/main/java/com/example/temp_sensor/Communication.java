@@ -16,7 +16,6 @@ public class Communication {
     ArrayList<Sensors> arraySensors = null;
 
     String[] temp = null;
-    String[] new_temp = null;
     String api_key_str;
     String api_secret_str;
     String mac_str;
@@ -91,39 +90,11 @@ public class Communication {
                     }
 
                     String title_data = PreferenceManager.getString(activity, "selected_title_data");
-                    boolean is_from_setting = PreferenceManager.getBoolean(activity, "is_from_setting");
+                    //String title_new_data = PreferenceManager.getString(activity, "selected_title_new_data");
+                    //String num_str = PreferenceManager.getString(activity, "selected_total_sensor_id");
+                    //boolean is_from_setting = PreferenceManager.getBoolean(activity, "is_from_setting");
                     int showing_sensor_num = PreferenceManager.getInt(activity, "selected_total_sensor_num");
-                    int tmp = 0;
-
-                    if(is_from_setting) {
-                        for (int i = 0; i < arrayChannels.size(); i++)
-                            for (int j = 0; j < arrayChannels.get(i).length; j++) {
-                                if (title_data.contains(",")) {
-                                    temp = new String[2];
-                                    temp = PreferenceManager.getString(activity, "selected_title_data").split(",");
-                                    switch (j) {
-                                        case 0 :
-                                            arrayChannels.get(i)[j].setCh_name(temp[0]);
-                                            break;
-                                        case 1 :
-                                            if(temp.length != 1)
-                                                arrayChannels.get(i)[j].setCh_name(temp[1]);
-                                            break;
-                                    }
-                                } else {
-                                    temp = new String[1];
-                                    temp[0] = PreferenceManager.getString(activity, "selected_title_data");
-                                    while(true) {
-                                        if(tmp == showing_sensor_num) {
-                                            arrayChannels.get(i)[tmp].setCh_name(temp[0]);
-                                            break;
-                                        }
-                                        tmp++;
-                                    }
-                                }
-                            }
-                        temp = null;
-                    }
+                    //int tmp = 0;
 
                     for (int i = 0; i < arrayChannels.size(); i++) {
                         PreferenceManager.setInt(activity, "device_sensor_num", arrayChannels.get(i).length);

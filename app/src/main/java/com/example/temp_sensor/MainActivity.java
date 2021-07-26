@@ -58,9 +58,6 @@ public class MainActivity extends AppCompatActivity {
         CONTEXT = this;
         mainActivity = this;
 
-        // 센서에 따라 화면을 변동시킴
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-
         String api_key_str = PreferenceManager.getString(mainActivity, "api_key_str");
         String api_secret_str = PreferenceManager.getString(mainActivity, "api_secret_str");
         String mac_str = PreferenceManager.getString(mainActivity, "mac_str");

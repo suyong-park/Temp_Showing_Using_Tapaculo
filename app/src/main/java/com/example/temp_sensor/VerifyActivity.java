@@ -2,11 +2,9 @@ package com.example.temp_sensor;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -20,6 +18,8 @@ import com.google.android.material.snackbar.Snackbar;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static androidx.appcompat.app.AppCompatDelegate.*;
 
 public class VerifyActivity extends AppCompatActivity {
 
@@ -35,11 +35,9 @@ public class VerifyActivity extends AppCompatActivity {
         setTitle("사용자 인증");
 
         verifyActivity = VerifyActivity.this;
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        setDefaultNightMode(MODE_NIGHT_YES);
 
         //PreferenceManager.clear(VerifyActivity.this); // 테스트 목적의 코드 라인
-
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 
         EditText api_key = (EditText) findViewById(R.id.api_key_enter);
         EditText api_secret = (EditText) findViewById(R.id.api_secret_enter);
@@ -123,7 +121,7 @@ public class VerifyActivity extends AppCompatActivity {
                             System.out.println("통신 실패");
                             progressDialog.dismiss();
                             builder.setTitle("경고")
-                                    .setMessage("네트워크 연결 상태를 확인하세요.")
+                                    .setMessage("서버 문제 혹은 네트워크 문제 혹은 계정 OpenAPI 통신 횟수 초과의 가능성이 있습니다.\n증상이 반복되면 문의 부탁드립니다.")
                                     .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                                     .show();
                             return;

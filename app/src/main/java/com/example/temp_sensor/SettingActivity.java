@@ -56,7 +56,6 @@ public class SettingActivity extends AppCompatActivity {
 
         int device_sensor_num = PreferenceManager.getInt(settingActivity, "device_sensor_num");
         ArrayList<CheckBox> arrayBox = new ArrayList<>();
-        //ArrayList<TextInputLayout> arrayInputLayout = new ArrayList<>();
         ArrayList<TextInputEditText> arrayInputEdit = new ArrayList<>();
 
         // 아래 부분은 CheckBox를 동적으로 생성하는 부분
@@ -126,7 +125,6 @@ public class SettingActivity extends AppCompatActivity {
 
             textInputEditText.setInputType(InputType.TYPE_CLASS_TEXT);
 
-            //arrayInputLayout.add(textInputLayout);
             arrayInputEdit.add(textInputEditText);
         }
 
@@ -160,10 +158,7 @@ public class SettingActivity extends AppCompatActivity {
                 }
 
                 String temp = "", data = "";
-                String new_temp = "", new_name = "";
                 for(int i = 0; i < arrayBox.size(); i++) {
-                    System.out.println(arrayInputEdit.get(i).getText().toString());
-                    System.out.println(arrayBox.get(i).getText().toString());
                     if (!arrayInputEdit.get(i).getText().toString().trim().isEmpty() && !arrayBox.get(i).isChecked()) {
                         builder.setTitle("경고")
                                 .setMessage("이름을 바꿀 센서는 체크박스에서 체크되어야 합니다.")
@@ -172,17 +167,14 @@ public class SettingActivity extends AppCompatActivity {
                         return;
                     }
                     else if (arrayBox.get(i).isChecked()) {
-                        if (count == 2) {
+                        if (count == 2) { // 2개의 체크박스를 선택
                             if (!temp.equals(""))
                                 data = temp + "," + arrayBox.get(i).getText().toString();
                             temp = arrayBox.get(i).getText().toString();
-                            if(!new_temp.equals(""))
-                                new_name = new_temp + "," + arrayInputEdit.get(i).getText().toString().trim();
-                            new_temp = arrayInputEdit.get(i).getText().toString().trim();
-                        } else if (count == 1) {
+                        }
+                        else if (count == 1) { // 1개의 체크박스를 선택
                             count = i;
                             data = arrayBox.get(i).getText().toString();
-                            new_name = arrayInputEdit.get(i).getText().toString().trim();
                         }
                     }
                 }
@@ -199,7 +191,6 @@ public class SettingActivity extends AppCompatActivity {
                     return;
                 }
                 else {
-                    String finalNew_name = new_name;
                     builder.setTitle("설정")
                             .setMessage("설정이 완료되었습니다.")
                             .setCancelable(false)
@@ -208,11 +199,6 @@ public class SettingActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialogInterface, int id) {
                                     Intent intent = new Intent(settingActivity, MainActivity.class);
                                     PreferenceManager.setString(settingActivity, "selected_title_data", finalData);
-                                    System.out.println("세팅에서 전달하는 값 확인 :" + finalNew_name);
-                                    if(!finalNew_name.isEmpty()) {
-                                        PreferenceManager.setBoolean(settingActivity, "is_from_setting", true);
-                                        PreferenceManager.setString(settingActivity, "selected_title_data", finalNew_name);
-                                    }
                                     ((MainActivity)MainActivity.CONTEXT).finish();
                                     finish();
                                     startActivity(intent);
