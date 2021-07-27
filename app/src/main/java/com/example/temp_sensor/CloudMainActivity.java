@@ -44,6 +44,7 @@ public class CloudMainActivity extends AppCompatActivity {
     TextView data_unit_2;
     TextView data_unit_ko_1;
     TextView data_unit_ko_2;
+    Button refresh_btn;
 
     LinearLayout include_data_layout;
     LinearLayout first_data_layout;
@@ -79,11 +80,13 @@ public class CloudMainActivity extends AppCompatActivity {
         data_unit_2 = (TextView) findViewById(R.id.show_data_unit_2);
         data_unit_ko_1 = (TextView) findViewById(R.id.show_data_unit_ko_1);
         data_unit_ko_2 = (TextView) findViewById(R.id.show_data_unit_ko_2);
+        refresh_btn = (Button) findViewById(R.id.refresh_btn);
 
         include_data_layout = (LinearLayout) findViewById(R.id.include_data_linear);
         first_data_layout = (LinearLayout) findViewById(R.id.first_data_layout);
 
         int refresh_value = PreferenceManager.getInt(cloudMainActivity, "refresh_value");
+
         cloudTimer = new CloudTimer(Long.MAX_VALUE, refresh_value * 60000, cloudMainActivity, tapaculo, api_key_str, api_secret_str, mac_str);
         cloudTimer.start();
 
@@ -108,6 +111,17 @@ public class CloudMainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        refresh_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = getIntent();
+                finish();
+                overridePendingTransition(0, 0);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+            }
+        });
     }
 
     /*
@@ -122,6 +136,7 @@ public class CloudMainActivity extends AppCompatActivity {
     isDataReceive_Time : 9
     isServerOn : 10
     loading : 11
+    refresh_btn : 12
     first_data_layout : 1
     include_data_layout : 2
     */
@@ -226,6 +241,12 @@ public class CloudMainActivity extends AppCompatActivity {
                     loading.setVisibility(View.VISIBLE);
                 else
                     loading.setVisibility(View.GONE);
+                break;
+            case 12 :
+                if(is_visual)
+                    refresh_btn.setVisibility(View.VISIBLE);
+                else
+                    refresh_btn.setVisibility(View.GONE);
                 break;
         }
     }

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,7 +34,7 @@ public class CloudVerifyActivity extends AppCompatActivity {
 
         cloudVerifyActivity = CloudVerifyActivity.this;
 
-        //PreferenceManager.clear(VerifyActivity.this); // 테스트 목적의 코드 라인
+        //PreferenceManager.clear(cloudVerifyActivity); // 테스트 목적의 코드 라인
 
         EditText api_key = (EditText) findViewById(R.id.api_key_enter);
         EditText api_secret = (EditText) findViewById(R.id.api_secret_enter);
@@ -126,10 +127,10 @@ public class CloudVerifyActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<GetInfo> call, Response<GetInfo> response) {
 
-                        System.out.println("통신 중 ...");
+                        System.out.println("인증 통신 중 ...");
                         GetInfo result = response.body();
                         if (result == null) {
-                            System.out.println("통신 실패");
+                            System.out.println("인증 통신 실패");
                             progressDialog.dismiss();
                             builder.setTitle("경고")
                                     .setMessage("서버 문제 혹은 계정 OpenAPI 통신 횟수 초과의 가능성이 있습니다.\n증상이 반복되면 문의 부탁드립니다.")
@@ -138,7 +139,7 @@ public class CloudVerifyActivity extends AppCompatActivity {
                             return;
                         }
                         else if (result.getStatus().equals("true")) {
-                            System.out.println("통신 성공");
+                            System.out.println("인증 통신 성공");
                             int refresh_value = Integer.parseInt(refresh_value_str);
                             int admin_value = Integer.parseInt(admin_value_str);
 
@@ -154,7 +155,7 @@ public class CloudVerifyActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                         else { // status == false
-                            System.out.println("통신 실패");
+                            System.out.println("인증 통신 실패");
                             progressDialog.dismiss();
                             builder.setTitle("경고")
                                     .setMessage("네트워크 연결 상태를 확인하세요.")
@@ -166,6 +167,7 @@ public class CloudVerifyActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<GetInfo> call, Throwable t) {
+                        System.out.println("인증 통신 실패");
                         progressDialog.dismiss();
                         builder.setTitle("경고")
                                 .setMessage("네트워크 연결 상태를 확인하세요.")
@@ -176,6 +178,22 @@ public class CloudVerifyActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        builder.setTitle("확인")
+                .setMessage("정말로 선택 화면으로 나가시겠습니까?")
+                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                })
+                .setCancelable(false)
+                .show();
     }
 
     @Override

@@ -2,6 +2,9 @@ package com.example.temp_sensor;
 
 import android.os.CountDownTimer;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class CloudTimer extends CountDownTimer {
     // 스레드 역할 대행
 

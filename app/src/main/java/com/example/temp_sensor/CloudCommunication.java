@@ -44,6 +44,7 @@ public class CloudCommunication {
     isDataReceive_Time : 9
     isServerOn : 10
     loading : 11
+    refresh_btn : 12
     first_data_layout : 1
     include_data_layout : 2
     */
@@ -55,6 +56,7 @@ public class CloudCommunication {
         activity.setVisibility(false, 9);
         activity.setVisibility(false, 10);
         activity.setVisibility(false, 11);
+        activity.setVisibility(false, 12);
         activity.setProgress(activity);
 
         count += 1;
@@ -68,12 +70,13 @@ public class CloudCommunication {
                 if(result == null) {
                     activity.setVisibility(true, 10);
                     activity.setVisibility(true, 11);
-                    activity.setTextSize(7, 25);
+                    activity.setVisibility(true, 12);
+                    activity.setTextSize(10, 25);
                     activity.setTextSize(11, 25);
                     System.out.println("통신 실패");
                 }
                 else if (result.getStatus().equals("true")) {
-                    System.out.println("통신 성공"); // 여기 이전에 딜레이 발생시 progress dialog 넣어주기
+                    System.out.println("통신 성공");
                     activity.hideProgress();
 
                     String device_last_update = result.getDevice_lastupdate();
@@ -132,8 +135,10 @@ public class CloudCommunication {
 
             @Override
             public void onFailure(Call<GetInfo> call, Throwable t) {
+                System.out.println("통신 실패");
                 activity.setVisibility(true, 7);
                 activity.setVisibility(true, 11);
+                activity.setVisibility(true, 12);
                 activity.setTextSize(7, 25);
                 activity.setTextSize(11, 25);
                 System.out.println(t.getMessage());
@@ -177,10 +182,10 @@ public class CloudCommunication {
             activity.setTextSize(8, 25);
             activity.setTextSize(9, 25);
             activity.setTextSize(9, 20);
-            System.out.println("디바이스에서 데이터를 전송하지 못하고 있습니다.\n마지막 데이터 전송 시간 : " + localTime);
+            //System.out.println("디바이스에서 데이터를 전송하지 못하고 있습니다.\n마지막 데이터 전송 시간 : " + localTime);
         }
-        else
-            System.out.println("디바이스에서 데이터를 제대로 전송 중입니다.\n마지막 데이터 전송 시간 : " + localTime);
+        //else
+            //System.out.println("디바이스에서 데이터를 제대로 전송 중입니다.\n마지막 데이터 전송 시간 : " + localTime);
     }
 
     public void isFromSetting(boolean is_from_setting, String title_data, int showing_sensor_num) {

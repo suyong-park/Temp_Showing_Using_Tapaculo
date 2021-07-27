@@ -172,5 +172,14 @@
                 android:textStyle="bold" />
 
         </LinearLayout>
+
+        <Button
+            android:id="@+id/refresh_btn"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:text="@string/refresh_btn"
+            android:textAlignment="center" />
     </LinearLayout>
 </LinearLayout>
