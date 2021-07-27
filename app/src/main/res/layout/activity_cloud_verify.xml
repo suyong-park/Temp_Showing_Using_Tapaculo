@@ -114,6 +114,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 app:helperTextEnabled="true"
+                app:errorEnabled="true"
                 app:helperText="@string/admin_helper"
                 android:hint="@string/admin_enter"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -142,6 +143,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 app:helperTextEnabled="true"
+                app:errorEnabled="true"
                 app:helperText="@string/refresh_helper"
                 android:hint="@string/refresh_enter"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">

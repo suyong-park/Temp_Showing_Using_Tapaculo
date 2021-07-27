@@ -8,7 +8,6 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.InputType;
@@ -25,16 +24,18 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 
-public class MainActivity extends AppCompatActivity {
+public class CloudMainActivity extends AppCompatActivity {
 
     LinearProgressIndicator indicator;
-    MainActivity mainActivity;
+    CloudMainActivity cloudMainActivity;
     AlertDialog.Builder builder;
     AlertDialog con;
-    Timer timer;
+    CloudTimer cloudTimer;
 
+    TextView loading;
     TextView device_info;
     TextView isNetwork;
+    TextView isServerOn;
     TextView isDataReceive;
     TextView isDataReceive_Time;
     TextView data_1;
@@ -53,21 +54,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_cloud_main);
 
         CONTEXT = this;
-        mainActivity = this;
+        cloudMainActivity = this;
 
-        String api_key_str = PreferenceManager.getString(mainActivity, "api_key_str");
-        String api_secret_str = PreferenceManager.getString(mainActivity, "api_secret_str");
-        String mac_str = PreferenceManager.getString(mainActivity, "mac_str");
+        String api_key_str = PreferenceManager.getString(cloudMainActivity, "api_key_str");
+        String api_secret_str = PreferenceManager.getString(cloudMainActivity, "api_secret_str");
+        String mac_str = PreferenceManager.getString(cloudMainActivity, "mac_str");
 
         Connect_Tapaculo tapaculo = Request.getRetrofit().create(Connect_Tapaculo.class);
 
         device_info = (TextView) findViewById(R.id.device_location);
-        device_info.setText(PreferenceManager.getString(mainActivity, "device_info"));
+        device_info.setText(PreferenceManager.getString(cloudMainActivity, "device_info"));
 
+        loading = (TextView) findViewById(R.id.loading_text);
         isNetwork = (TextView) findViewById(R.id.network_state_text);
+        isServerOn = (TextView) findViewById(R.id.server_state_text);
         isDataReceive = (TextView) findViewById(R.id.device_data_receive_state);
         isDataReceive_Time = (TextView) findViewById(R.id.device_data_receive_state_time);
         data_1 = (TextView) findViewById(R.id.show_data_1);
@@ -80,19 +83,19 @@ public class MainActivity extends AppCompatActivity {
         include_data_layout = (LinearLayout) findViewById(R.id.include_data_linear);
         first_data_layout = (LinearLayout) findViewById(R.id.first_data_layout);
 
-        int refresh_value = PreferenceManager.getInt(mainActivity, "refresh_value");
-        timer = new Timer(Long.MAX_VALUE, refresh_value * 1000, mainActivity, tapaculo, api_key_str, api_secret_str, mac_str);
-        timer.start();
+        int refresh_value = PreferenceManager.getInt(cloudMainActivity, "refresh_value");
+        cloudTimer = new CloudTimer(Long.MAX_VALUE, refresh_value * 60000, cloudMainActivity, tapaculo, api_key_str, api_secret_str, mac_str);
+        cloudTimer.start();
 
-        device_info.setText(PreferenceManager.getString(mainActivity, "device_info"));
+        device_info.setText(PreferenceManager.getString(cloudMainActivity, "device_info"));
 
-        builder = new MaterialAlertDialogBuilder(mainActivity);
+        builder = new MaterialAlertDialogBuilder(cloudMainActivity);
         con = builder.create();
         Button setting_btn = (Button) findViewById(R.id.setting_btn);
         setting_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!Request.isNetworkConnected(mainActivity)) {
+                if(!Request.isNetworkConnected(cloudMainActivity)) {
                     builder.setTitle("경고")
                             .setMessage("네트워크가 끊어져 있습니다. 네트워크를 연결하고 통신될 때까지 기다려 주세요.")
                             .setCancelable(false)
@@ -101,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 is_to_setting = true;
-                Intent intent = new Intent(mainActivity, SettingActivity.class);
+                Intent intent = new Intent(cloudMainActivity, CloudSettingActivity.class);
                 startActivity(intent);
             }
         });
@@ -117,6 +120,8 @@ public class MainActivity extends AppCompatActivity {
     isNetwork : 7
     isDataReceive : 8
     isDataReceive_Time : 9
+    isServerOn : 10
+    loading : 11
     first_data_layout : 1
     include_data_layout : 2
     */
@@ -210,6 +215,18 @@ public class MainActivity extends AppCompatActivity {
                 else
                     isDataReceive_Time.setVisibility(View.GONE);
                 break;
+            case 10 :
+                if(is_visual)
+                    isServerOn.setVisibility(View.VISIBLE);
+                else
+                    isServerOn.setVisibility(View.GONE);
+                break;
+            case 11 :
+                if(is_visual)
+                    loading.setVisibility(View.VISIBLE);
+                else
+                    loading.setVisibility(View.GONE);
+                break;
         }
     }
 
@@ -266,8 +283,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        EditText admin_value = new EditText(mainActivity);
-        LinearLayout container = new LinearLayout(mainActivity);
+        EditText admin_value = new EditText(cloudMainActivity);
+        LinearLayout container = new LinearLayout(cloudMainActivity);
         container.setOrientation(LinearLayout.VERTICAL);
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
@@ -279,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
 
         container.addView(admin_value);
 
-        builder = new MaterialAlertDialogBuilder(mainActivity);
+        builder = new MaterialAlertDialogBuilder(cloudMainActivity);
         builder.setTitle("경고")
                 .setMessage("나가려면 관리자 인증번호 4자리를 입력하세요.")
                 .setCancelable(false)
@@ -288,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
-                        int is_admin_value = PreferenceManager.getInt(mainActivity, "admin_value");
+                        int is_admin_value = PreferenceManager.getInt(cloudMainActivity, "admin_value");
 
                         if(admin_value.length() != 4 || is_admin_value != Integer.parseInt(admin_value.getText().toString())) {
                             Snackbar.make(findViewById(R.id.linear_main), "관리자 인증번호가 다릅니다.", Snackbar.LENGTH_LONG).show();
@@ -298,15 +315,17 @@ public class MainActivity extends AppCompatActivity {
                             Snackbar.make(findViewById(R.id.linear_main), "설정 화면에서 저장한 정보가 사라집니다. 그래도 나갈까요?", Snackbar.LENGTH_LONG).setAction("네", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    int device_sensor_num = PreferenceManager.getInt(mainActivity, "device_sensor_num");
-                                    PreferenceManager.removeKey(mainActivity, "device_sensor_num");
+                                    int device_sensor_num = PreferenceManager.getInt(cloudMainActivity, "device_sensor_num");
+                                    PreferenceManager.removeKey(cloudMainActivity, "device_sensor_num");
                                     for(int i = 0; i < device_sensor_num; i++)
-                                        PreferenceManager.removeKey(mainActivity, "ch" + i + "_name");
-                                    PreferenceManager.removeKey(mainActivity, "selected_total_sensor_num");
-                                    PreferenceManager.removeKey(mainActivity, "device_info");
-                                    PreferenceManager.removeKey(mainActivity, "selected_title_data");
-                                    if(timer != null)
-                                        timer.cancel();
+                                        PreferenceManager.removeKey(cloudMainActivity, "ch" + i + "_name");
+                                    PreferenceManager.removeKey(cloudMainActivity, "selected_total_sensor_num");
+                                    PreferenceManager.removeKey(cloudMainActivity, "device_info");
+                                    PreferenceManager.removeKey(cloudMainActivity, "is_from_setting");
+                                    PreferenceManager.removeKey(cloudMainActivity, "selected_total_sensor_id");
+                                    PreferenceManager.removeKey(cloudMainActivity, "selected_title_data");
+                                    if(cloudTimer != null)
+                                        cloudTimer.cancel();
                                     finish();
                                 }
                             }).show();
@@ -321,7 +340,7 @@ public class MainActivity extends AppCompatActivity {
         super.onUserLeaveHint();
 
         if(!is_to_setting) {
-            ActivityManager activityManager = (ActivityManager) mainActivity.getSystemService(Context.ACTIVITY_SERVICE);
+            ActivityManager activityManager = (ActivityManager) cloudMainActivity.getSystemService(Context.ACTIVITY_SERVICE);
             activityManager.moveTaskToFront(getTaskId(), 0);
         }
     }

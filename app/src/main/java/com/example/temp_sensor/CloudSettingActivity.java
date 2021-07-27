@@ -23,51 +23,50 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 
-public class SettingActivity extends AppCompatActivity {
+public class CloudSettingActivity extends AppCompatActivity {
 
-    SettingActivity settingActivity;
+    CloudSettingActivity cloudSettingActivity;
     AlertDialog.Builder builder;
     AlertDialog con;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setting);
+        setContentView(R.layout.activity_cloud_setting);
         setTitle("설정");
 
-        settingActivity = SettingActivity.this;
+        cloudSettingActivity = CloudSettingActivity.this;
 
         EditText device_info = (EditText) findViewById(R.id.device_enter);
         Button setting_btn = (Button) findViewById(R.id.setting_finish_btn);
 
-        device_info.setText(PreferenceManager.getString(settingActivity, "device_info"));
+        device_info.setText(PreferenceManager.getString(cloudSettingActivity, "device_info"));
 
         View view = (View) findViewById(R.id.setting_layout);
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction() == MotionEvent.ACTION_DOWN) {
-                    Request.downKeyboard(settingActivity);
+                    Request.downKeyboard(cloudSettingActivity);
                     return true;
                 }
                 return false;
             }
         });
 
-        int device_sensor_num = PreferenceManager.getInt(settingActivity, "device_sensor_num");
+        int device_sensor_num = PreferenceManager.getInt(cloudSettingActivity, "device_sensor_num");
         ArrayList<CheckBox> arrayBox = new ArrayList<>();
         ArrayList<TextInputEditText> arrayInputEdit = new ArrayList<>();
 
         // 아래 부분은 CheckBox를 동적으로 생성하는 부분
         LinearLayout checkBoxlayer = (LinearLayout) findViewById(R.id.checkbox_linear);
         for(int i = 0; i < device_sensor_num; i++) { // 센서 이름 체크박스 동적으로 생성
-            String ch_name = PreferenceManager.getString(settingActivity, "ch" + i + "_name");
+            String ch_name = PreferenceManager.getString(cloudSettingActivity, "ch" + i + "_name");
             if(ch_name.equals("") || ch_name.equals(null))
                 break;
 
-            CheckBox sensorBox = new CheckBox(settingActivity);
+            CheckBox sensorBox = new CheckBox(cloudSettingActivity);
             sensorBox.setId(i);
-            System.out.println(i + "번째 체크박스 값 : " + ch_name);
             sensorBox.setText(ch_name);
             arrayBox.add(sensorBox);
 
@@ -79,14 +78,14 @@ public class SettingActivity extends AppCompatActivity {
         // 아래 부분은 TextInputLayout 동적으로 생성하는 부분 ==> 이를 통해 사용자가 센서 이름을 동적으로 변경할 수 있음.
         LinearLayout editTextlayer = (LinearLayout) findViewById(R.id.edit_ch_name_area);
         for(int i = 0; i < device_sensor_num; i++) {
-            String ch_edit_name = PreferenceManager.getString(settingActivity, "ch" + i + "_name");
+            String ch_edit_name = PreferenceManager.getString(cloudSettingActivity, "ch" + i + "_name");
             if(ch_edit_name.equals("") || ch_edit_name.equals(null))
                 break;
 
-            LinearLayout linearLayout = new LinearLayout(settingActivity);
-            TextView textView = new TextView(settingActivity);
-            TextInputLayout textInputLayout = new TextInputLayout(settingActivity);
-            textInputLayout.setBoxBackgroundColor(ContextCompat.getColor(settingActivity, android.R.color.black));
+            LinearLayout linearLayout = new LinearLayout(cloudSettingActivity);
+            TextView textView = new TextView(cloudSettingActivity);
+            TextInputLayout textInputLayout = new TextInputLayout(cloudSettingActivity);
+            textInputLayout.setBoxBackgroundColor(ContextCompat.getColor(cloudSettingActivity, android.R.color.black));
             textInputLayout.setBoxBackgroundMode(TextInputLayout.BOX_BACKGROUND_OUTLINE);
             TextInputEditText textInputEditText = new TextInputEditText(textInputLayout.getContext());
 
@@ -128,7 +127,7 @@ public class SettingActivity extends AppCompatActivity {
             arrayInputEdit.add(textInputEditText);
         }
 
-        builder = new MaterialAlertDialogBuilder(settingActivity);
+        builder = new MaterialAlertDialogBuilder(cloudSettingActivity);
         con = builder.create();
         setting_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,6 +157,8 @@ public class SettingActivity extends AppCompatActivity {
                 }
 
                 String temp = "", data = "";
+                String new_temp = "", new_name = "";
+                String index_check_box = "";
                 for(int i = 0; i < arrayBox.size(); i++) {
                     if (!arrayInputEdit.get(i).getText().toString().trim().isEmpty() && !arrayBox.get(i).isChecked()) {
                         builder.setTitle("경고")
@@ -171,19 +172,51 @@ public class SettingActivity extends AppCompatActivity {
                             if (!temp.equals(""))
                                 data = temp + "," + arrayBox.get(i).getText().toString();
                             temp = arrayBox.get(i).getText().toString();
+                            index_check_box += String.valueOf(i);
+                            index_check_box += ",";
                         }
                         else if (count == 1) { // 1개의 체크박스를 선택
                             count = i;
                             data = arrayBox.get(i).getText().toString();
+                            index_check_box += String.valueOf(i);
                         }
                     }
                 }
 
-                PreferenceManager.setInt(settingActivity, "selected_total_sensor_num", count);
-                PreferenceManager.setString(settingActivity, "device_info", device_info.getText().toString().trim());
+                int count_tmp = 0;
+                for(int i = 0; i < arrayInputEdit.size(); i++) {
+                    if(!arrayInputEdit.get(i).getText().toString().isEmpty()) {
+                        count_tmp += 1;
+                        if(!new_temp.equals(""))
+                            new_name = new_temp + "," + arrayInputEdit.get(i).getText().toString().trim();
+                        else {
+                            new_temp = arrayInputEdit.get(i).getText().toString().trim();
+                            new_name = new_temp;
+                        }
+                    }
+                }
+
+                if(index_check_box.contains(",")) {
+                    index_check_box = index_check_box.substring(0, 3);
+                    if(index_check_box.split(",").length != count_tmp) {
+                        builder.setTitle("경고")
+                                .setMessage("센서의 이름을 바꾸려면 선택된 센서 모두 변경되어야 합니다.")
+                                .setCancelable(false)
+                                .setPositiveButton("확인", null)
+                                .show();
+                        return;
+                    }
+                }
+
+                System.out.println(index_check_box);
+                System.out.println(new_name);
+
+                PreferenceManager.setString(cloudSettingActivity, "selected_total_sensor_id", index_check_box);
+                PreferenceManager.setInt(cloudSettingActivity, "selected_total_sensor_num", count);
+                PreferenceManager.setString(cloudSettingActivity, "device_info", device_info.getText().toString().trim());
 
                 String finalData = data;
-                if(!Request.isNetworkConnected(settingActivity)) {
+                if(!Request.isNetworkConnected(cloudSettingActivity)) {
                     builder.setTitle("경고")
                             .setMessage("네트워크가 연결되지 않았습니다. 연결 후 다시 시도하세요.")
                             .setPositiveButton("확인", null)
@@ -191,15 +224,20 @@ public class SettingActivity extends AppCompatActivity {
                     return;
                 }
                 else {
+                    String finalNew_name = new_name;
                     builder.setTitle("설정")
                             .setMessage("설정이 완료되었습니다.")
                             .setCancelable(false)
                             .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int id) {
-                                    Intent intent = new Intent(settingActivity, MainActivity.class);
-                                    PreferenceManager.setString(settingActivity, "selected_title_data", finalData);
-                                    ((MainActivity)MainActivity.CONTEXT).finish();
+                                    Intent intent = new Intent(cloudSettingActivity, CloudMainActivity.class);
+                                    PreferenceManager.setString(cloudSettingActivity, "selected_title_data", finalData);
+                                    if(!finalNew_name.isEmpty()) {
+                                        PreferenceManager.setBoolean(cloudSettingActivity, "is_from_setting", true);
+                                        PreferenceManager.setString(cloudSettingActivity, "selected_title_data", finalNew_name);
+                                    }
+                                    ((CloudMainActivity) CloudMainActivity.CONTEXT).finish();
                                     finish();
                                     startActivity(intent);
                                 }

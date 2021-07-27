@@ -13,17 +13,14 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.snackbar.Snackbar;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static androidx.appcompat.app.AppCompatDelegate.*;
+public class CloudVerifyActivity extends AppCompatActivity {
 
-public class VerifyActivity extends AppCompatActivity {
-
-    VerifyActivity verifyActivity;
+    CloudVerifyActivity cloudVerifyActivity;
     AlertDialog.Builder builder;
     AlertDialog con;
     ProgressDialog progressDialog;
@@ -31,11 +28,10 @@ public class VerifyActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_verify);
+        setContentView(R.layout.activity_cloud_verify);
         setTitle("사용자 인증");
 
-        verifyActivity = VerifyActivity.this;
-        setDefaultNightMode(MODE_NIGHT_YES);
+        cloudVerifyActivity = CloudVerifyActivity.this;
 
         //PreferenceManager.clear(VerifyActivity.this); // 테스트 목적의 코드 라인
 
@@ -46,6 +42,9 @@ public class VerifyActivity extends AppCompatActivity {
         EditText refresh = (EditText) findViewById(R.id.refresh_enter);
         Button button = (Button) findViewById(R.id.start_btn);
         Button tapaculo = (Button) findViewById(R.id.tapaculo_btn);
+
+        refresh.setError(null);
+        admin.setError(null);
 
         tapaculo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,22 +60,22 @@ public class VerifyActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction() == MotionEvent.ACTION_DOWN) {
-                    Request.downKeyboard(verifyActivity);
+                    Request.downKeyboard(cloudVerifyActivity);
                     return true;
                 }
                 return false;
             }
         });
 
-        if(PreferenceManager.getBoolean(verifyActivity, "is_first_connect")) { // 최초 접속이 아닌 경우
-            api_key.setText(PreferenceManager.getString(verifyActivity, "api_key_str"));
-            api_secret.setText(PreferenceManager.getString(verifyActivity, "api_secret_str"));
-            MAC.setText(PreferenceManager.getString(verifyActivity, "mac_str"));
-            admin.setText(String.valueOf(PreferenceManager.getInt(verifyActivity, "admin_value")));
-            refresh.setText(String.valueOf(PreferenceManager.getInt(verifyActivity, "refresh_value")));
+        if(PreferenceManager.getBoolean(cloudVerifyActivity, "is_first_connect")) { // 최초 접속이 아닌 경우
+            api_key.setText(PreferenceManager.getString(cloudVerifyActivity, "api_key_str"));
+            api_secret.setText(PreferenceManager.getString(cloudVerifyActivity, "api_secret_str"));
+            MAC.setText(PreferenceManager.getString(cloudVerifyActivity, "mac_str"));
+            admin.setText(String.valueOf(PreferenceManager.getInt(cloudVerifyActivity, "admin_value")));
+            refresh.setText(String.valueOf(PreferenceManager.getInt(cloudVerifyActivity, "refresh_value")));
         }
 
-        progressDialog = new ProgressDialog(verifyActivity);
+        progressDialog = new ProgressDialog(cloudVerifyActivity);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,7 +91,16 @@ public class VerifyActivity extends AppCompatActivity {
                 String refresh_value_str = refresh.getText().toString().trim();
                 String admin_value_str = admin.getText().toString().trim();
 
-                builder = new MaterialAlertDialogBuilder(verifyActivity);
+                int refresh_temp = Integer.parseInt(refresh_value_str);
+                if(1 > refresh_temp || refresh_temp > 60) {
+                    progressDialog.dismiss();
+                    refresh.setError(getResources().getString(R.string.refresh_error));
+                    return;
+                }
+                else
+                    refresh.setError(null);
+
+                builder = new MaterialAlertDialogBuilder(cloudVerifyActivity);
                 con = builder.create();
                 if(api_key_str.isEmpty() || api_secret_str.isEmpty() || mac_str.isEmpty() || admin_value_str.isEmpty() || refresh_value_str.isEmpty()) {
                     progressDialog.dismiss();
@@ -102,11 +110,14 @@ public class VerifyActivity extends AppCompatActivity {
                             .show();
                     return;
                 }
+
                 if(admin_value_str.length() != 4) {
                     progressDialog.dismiss();
-                    Snackbar.make(view, "관리자 인증번호는 4자리입니다.", Snackbar.LENGTH_LONG).show();
+                    admin.setError(getResources().getString(R.string.admin_error));
                     return;
                 }
+                else
+                    admin.setError(null);
 
                 Connect_Tapaculo tapaculo = Request.getRetrofit().create(Connect_Tapaculo.class);
                 Call<GetInfo> call = tapaculo.getInfo(api_key_str, api_secret_str, mac_str);
@@ -121,7 +132,7 @@ public class VerifyActivity extends AppCompatActivity {
                             System.out.println("통신 실패");
                             progressDialog.dismiss();
                             builder.setTitle("경고")
-                                    .setMessage("서버 문제 혹은 네트워크 문제 혹은 계정 OpenAPI 통신 횟수 초과의 가능성이 있습니다.\n증상이 반복되면 문의 부탁드립니다.")
+                                    .setMessage("서버 문제 혹은 계정 OpenAPI 통신 횟수 초과의 가능성이 있습니다.\n증상이 반복되면 문의 부탁드립니다.")
                                     .setPositiveButton(getResources().getString(R.string.positive_alert), null)
                                     .show();
                             return;
@@ -131,15 +142,15 @@ public class VerifyActivity extends AppCompatActivity {
                             int refresh_value = Integer.parseInt(refresh_value_str);
                             int admin_value = Integer.parseInt(admin_value_str);
 
-                            PreferenceManager.setString(verifyActivity, "api_key_str", api_key_str);
-                            PreferenceManager.setString(verifyActivity, "api_secret_str", api_secret_str);
-                            PreferenceManager.setString(verifyActivity, "mac_str", mac_str);
-                            PreferenceManager.setInt(verifyActivity, "admin_value", admin_value);
-                            PreferenceManager.setInt(verifyActivity, "refresh_value", refresh_value);
-                            PreferenceManager.setBoolean(verifyActivity, "is_first_connect", true);
+                            PreferenceManager.setString(cloudVerifyActivity, "api_key_str", api_key_str);
+                            PreferenceManager.setString(cloudVerifyActivity, "api_secret_str", api_secret_str);
+                            PreferenceManager.setString(cloudVerifyActivity, "mac_str", mac_str);
+                            PreferenceManager.setInt(cloudVerifyActivity, "admin_value", admin_value);
+                            PreferenceManager.setInt(cloudVerifyActivity, "refresh_value", refresh_value);
+                            PreferenceManager.setBoolean(cloudVerifyActivity, "is_first_connect", true);
 
                             progressDialog.dismiss();
-                            Intent intent = new Intent(verifyActivity, MainActivity.class);
+                            Intent intent = new Intent(cloudVerifyActivity, CloudMainActivity.class);
                             startActivity(intent);
                         }
                         else { // status == false

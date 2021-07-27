@@ -2,7 +2,7 @@ package com.example.temp_sensor;
 
 import android.os.CountDownTimer;
 
-public class Timer extends CountDownTimer {
+public class CloudTimer extends CountDownTimer {
     // 스레드 역할 대행
 
     String api_key_str;
@@ -10,9 +10,9 @@ public class Timer extends CountDownTimer {
     String mac_str;
 
     Connect_Tapaculo tapaculo;
-    MainActivity activity;
+    CloudMainActivity activity;
 
-    public Timer(long millisInFuture, long countDownInterval, MainActivity activity, Connect_Tapaculo tapaculo, String api_key_str, String api_secret_str, String mac_str) {
+    public CloudTimer(long millisInFuture, long countDownInterval, CloudMainActivity activity, Connect_Tapaculo tapaculo, String api_key_str, String api_secret_str, String mac_str) {
         super(millisInFuture, countDownInterval);
         this.tapaculo = tapaculo;
         this.api_key_str = api_key_str;
@@ -23,7 +23,7 @@ public class Timer extends CountDownTimer {
 
     @Override
     public void onTick(long millisUntilFinished) { // Timer가 호출됐을 때 countDownInterval 값을 주기로 반복 호출됨.
-        Communication connect = new Communication(activity, tapaculo, api_key_str, api_secret_str, mac_str);
+        CloudCommunication connect = new CloudCommunication(activity, tapaculo, api_key_str, api_secret_str, mac_str);
         connect.requestHttp();
     }
 

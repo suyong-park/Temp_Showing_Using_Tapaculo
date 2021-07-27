@@ -39,19 +39,24 @@
         android:usesCleartextTraffic="true"
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/Theme.Temp_Censor">
-        <activity
-            android:name="com.example.temp_sensor.MainActivity"
-            android:theme="@style/Theme.MaterialComponents.NoActionBar">
-        </activity>
-        <activity android:name="com.example.temp_sensor.SettingActivity"></activity>
-        <activity
-            android:name="com.example.temp_sensor.VerifyActivity">
+        <activity android:name="com.example.temp_sensor.StartSelectActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.example.temp_sensor.CloudMainActivity"
+            android:theme="@style/Theme.MaterialComponents.NoActionBar">
+        </activity>
+        <activity android:name="com.example.temp_sensor.CloudSettingActivity"></activity>
+        <activity android:name="com.example.temp_sensor.CloudVerifyActivity"></activity>
+        <activity android:name="com.example.temp_sensor.SocketVerifyActivity"></activity>
+        <activity
+            android:name="com.example.temp_sensor.SocketMainActivity"
+            android:theme="@style/Theme.MaterialComponents.NoActionBar">
         </activity>
         <receiver
             android:name=".BootCompleteReceiver"

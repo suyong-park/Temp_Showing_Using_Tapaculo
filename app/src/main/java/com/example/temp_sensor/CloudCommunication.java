@@ -10,7 +10,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Communication {
+public class CloudCommunication {
 
     ArrayList<Channels[]> arrayChannels = null;
     ArrayList<Sensors> arraySensors = null;
@@ -21,10 +21,10 @@ public class Communication {
     String mac_str;
     int count = 0;
 
-    MainActivity activity;
+    CloudMainActivity activity;
     Connect_Tapaculo tapaculo;
 
-    public Communication(MainActivity activity, Connect_Tapaculo tapaculo, String api_key_str, String api_secret_str, String mac_str) {
+    public CloudCommunication(CloudMainActivity activity, Connect_Tapaculo tapaculo, String api_key_str, String api_secret_str, String mac_str) {
         this.activity = activity;
         this.tapaculo = tapaculo;
         this.api_key_str = api_key_str;
@@ -42,6 +42,8 @@ public class Communication {
     isNetwork : 7
     isDataReceive : 8
     isDataReceive_Time : 9
+    isServerOn : 10
+    loading : 11
     first_data_layout : 1
     include_data_layout : 2
     */
@@ -51,6 +53,8 @@ public class Communication {
         activity.setVisibility(false, 7);
         activity.setVisibility(false, 8);
         activity.setVisibility(false, 9);
+        activity.setVisibility(false, 10);
+        activity.setVisibility(false, 11);
         activity.setProgress(activity);
 
         count += 1;
@@ -62,8 +66,10 @@ public class Communication {
                 GetInfo result = response.body();
                 System.out.println("통신 시도 ...");
                 if(result == null) {
-                    activity.setVisibility(true, 7);
+                    activity.setVisibility(true, 10);
+                    activity.setVisibility(true, 11);
                     activity.setTextSize(7, 25);
+                    activity.setTextSize(11, 25);
                     System.out.println("통신 실패");
                 }
                 else if (result.getStatus().equals("true")) {
@@ -90,11 +96,9 @@ public class Communication {
                     }
 
                     String title_data = PreferenceManager.getString(activity, "selected_title_data");
-                    //String title_new_data = PreferenceManager.getString(activity, "selected_title_new_data");
-                    //String num_str = PreferenceManager.getString(activity, "selected_total_sensor_id");
-                    //boolean is_from_setting = PreferenceManager.getBoolean(activity, "is_from_setting");
                     int showing_sensor_num = PreferenceManager.getInt(activity, "selected_total_sensor_num");
-                    //int tmp = 0;
+                    boolean is_from_setting = PreferenceManager.getBoolean(activity, "is_from_setting");
+                    isFromSetting(is_from_setting, title_data, showing_sensor_num);
 
                     for (int i = 0; i < arrayChannels.size(); i++) {
                         PreferenceManager.setInt(activity, "device_sensor_num", arrayChannels.get(i).length);
@@ -129,7 +133,9 @@ public class Communication {
             @Override
             public void onFailure(Call<GetInfo> call, Throwable t) {
                 activity.setVisibility(true, 7);
+                activity.setVisibility(true, 11);
                 activity.setTextSize(7, 25);
+                activity.setTextSize(11, 25);
                 System.out.println(t.getMessage());
             }
         });
@@ -166,13 +172,50 @@ public class Communication {
         if(current_date.compareTo(device_update_date) > 0) {
             activity.setVisibility(true, 8);
             activity.setVisibility(true, 9);
+            activity.setVisibility(true, 11);
             activity.setText("마지막 데이터 전송 시간 : " + localTime, 9);
             activity.setTextSize(8, 25);
             activity.setTextSize(9, 25);
+            activity.setTextSize(9, 20);
             System.out.println("디바이스에서 데이터를 전송하지 못하고 있습니다.\n마지막 데이터 전송 시간 : " + localTime);
         }
         else
             System.out.println("디바이스에서 데이터를 제대로 전송 중입니다.\n마지막 데이터 전송 시간 : " + localTime);
+    }
+
+    public void isFromSetting(boolean is_from_setting, String title_data, int showing_sensor_num) {
+        if(is_from_setting) {
+            int tmp = 0;
+            for (int i = 0; i < arrayChannels.size(); i++)
+                for (int j = 0; j < arrayChannels.get(i).length; j++) {
+                    if (title_data.contains(",")) {
+                        temp = new String[2];
+                        temp = PreferenceManager.getString(activity, "selected_title_data").split(",");
+                        switch (j) {
+                            case 0 :
+                                arrayChannels.get(i)[j].setCh_name(temp[0]);
+                                break;
+                            case 1 :
+                                if(temp.length != 1)
+                                    arrayChannels.get(i)[j].setCh_name(temp[1]);
+                                break;
+                        }
+                    } else {
+                        temp = new String[1];
+                        temp[0] = PreferenceManager.getString(activity, "selected_title_data");
+                        while(true) {
+                            if(tmp == showing_sensor_num) {
+                                arrayChannels.get(i)[tmp].setCh_name(temp[0]);
+                                break;
+                            }
+                            tmp++;
+                        }
+                    }
+                }
+            temp = null;
+        }
+        else
+            return;
     }
 
     public void setText(int num, int i, int j, int k) {
