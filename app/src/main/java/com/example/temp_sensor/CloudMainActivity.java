@@ -62,7 +62,7 @@ public class CloudMainActivity extends AppCompatActivity {
 
         String api_key_str = PreferenceManager.getString(cloudMainActivity, "api_key_str");
         String api_secret_str = PreferenceManager.getString(cloudMainActivity, "api_secret_str");
-        String mac_str = PreferenceManager.getString(cloudMainActivity, "mac_str");
+        String search_str = PreferenceManager.getString(cloudMainActivity, "sensors");
 
         Connect_Tapaculo tapaculo = Request.getRetrofit().create(Connect_Tapaculo.class);
 
@@ -87,7 +87,7 @@ public class CloudMainActivity extends AppCompatActivity {
 
         int refresh_value = PreferenceManager.getInt(cloudMainActivity, "refresh_value");
 
-        cloudTimer = new CloudTimer(Long.MAX_VALUE, refresh_value * 60000, cloudMainActivity, tapaculo, api_key_str, api_secret_str, mac_str);
+        cloudTimer = new CloudTimer(Long.MAX_VALUE, refresh_value * 60000, cloudMainActivity, tapaculo, api_key_str, api_secret_str, search_str);
         cloudTimer.start();
 
         device_info.setText(PreferenceManager.getString(cloudMainActivity, "device_info"));

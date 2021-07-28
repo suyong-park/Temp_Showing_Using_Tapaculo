@@ -77,8 +77,8 @@
         <TableRow>
             <TextView
                 android:layout_gravity="center"
-                android:id="@+id/MAC"
-                android:text="@string/MAC"
+                android:id="@+id/search"
+                android:text="@string/search"
                 android:textSize="30sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -88,11 +88,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:hint="@string/MAC_enter"
+                android:hint="@string/search_enter"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/MAC_enter"
+                    android:id="@+id/search_enter"
                     android:inputType="text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />

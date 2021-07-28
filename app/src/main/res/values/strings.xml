@@ -11,8 +11,8 @@
     <string name="api_secret_enter">API SECRET</string>
     <string name="api_key">api_key</string>
     <string name="api_key_enter">API KEY</string>
-    <string name="MAC">MAC</string>
-    <string name="MAC_enter">MAC</string>
+    <string name="search">search</string>
+    <string name="search_enter">SEARCH</string>
     <string name="admin">관리자 인증번호 4자리</string>
     <string name="admin_error">관리자 인증번호는 4자리 입력하세요.</string>
     <string name="admin_helper">관리자 인증번호는 따로 적어두어 잊지 마십시오.</string>

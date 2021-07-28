@@ -2,16 +2,13 @@ package com.example.temp_sensor;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
-public class Sensors implements Serializable {
-    @SerializedName("sensor_mac")
+public class Rows_Values implements Serializable {
+    @SerializedName("sensor_id")
     @Expose
-    private String sensor_mac;
-
-    @SerializedName("channels")
-    @Expose
-    private Channels[] channels;
+    private String sensor_id;
 
     @SerializedName("lqi")
     @Expose
@@ -29,24 +26,20 @@ public class Sensors implements Serializable {
     @Expose
     private String battery;
 
+    @SerializedName("value")
+    @Expose
+    private String value;
+
     @SerializedName("timestamp")
     @Expose
     private String timestamp;
 
-    public String getSensor_mac () {
-        return sensor_mac;
+    public String getSensor_id () {
+        return sensor_id;
     }
 
-    public void setSensor_mac (String sensor_mac) {
-        this.sensor_mac = sensor_mac;
-    }
-
-    public Channels[] getChannels () {
-        return channels;
-    }
-
-    public void setChannels (Channels[] channels) {
-        this.channels = channels;
+    public void setSensor_id (String sensor_id) {
+        this.sensor_id = sensor_id;
     }
 
     public String getLqi () {
@@ -81,6 +74,14 @@ public class Sensors implements Serializable {
         this.battery = battery;
     }
 
+    public String getValue () {
+        return value;
+    }
+
+    public void setValue (String value) {
+        this.value = value;
+    }
+
     public String getTimestamp () {
         return timestamp;
     }
@@ -91,7 +92,6 @@ public class Sensors implements Serializable {
 
     @Override
     public String toString() {
-        return "[sensor_mac = "+sensor_mac+", channels = "+channels+", lqi = "+lqi+", last_update = "+last_update+", sensor_model = "+sensor_model+", battery = "+battery+", timestamp = "+timestamp+"]";
+        return "[sensor_id = "+sensor_id+", lqi = "+lqi+", last_update = "+last_update+", sensor_model = "+sensor_model+", battery = "+battery+", value = "+value+", timestamp = "+timestamp+"]";
     }
 }
-

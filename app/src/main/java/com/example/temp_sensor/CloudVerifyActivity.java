@@ -15,6 +15,8 @@ import android.widget.EditText;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.util.ArrayList;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -39,7 +41,7 @@ public class CloudVerifyActivity extends AppCompatActivity {
 
         EditText api_key = (EditText) findViewById(R.id.api_key_enter);
         EditText api_secret = (EditText) findViewById(R.id.api_secret_enter);
-        EditText MAC = (EditText) findViewById(R.id.MAC_enter);
+        EditText search = (EditText) findViewById(R.id.search_enter);
         EditText admin = (EditText) findViewById(R.id.admin_enter);
         EditText refresh = (EditText) findViewById(R.id.refresh_enter);
         Button button = (Button) findViewById(R.id.start_btn);
@@ -72,7 +74,7 @@ public class CloudVerifyActivity extends AppCompatActivity {
         if(PreferenceManager.getBoolean(cloudVerifyActivity, "is_first_connect")) { // 최초 접속이 아닌 경우
             api_key.setText(PreferenceManager.getString(cloudVerifyActivity, "api_key_str"));
             api_secret.setText(PreferenceManager.getString(cloudVerifyActivity, "api_secret_str"));
-            MAC.setText(PreferenceManager.getString(cloudVerifyActivity, "mac_str"));
+            search.setText(PreferenceManager.getString(cloudVerifyActivity, "search_str"));
             admin.setText(String.valueOf(PreferenceManager.getInt(cloudVerifyActivity, "admin_value")));
             refresh.setText(String.valueOf(PreferenceManager.getInt(cloudVerifyActivity, "refresh_value")));
         }
@@ -89,9 +91,18 @@ public class CloudVerifyActivity extends AppCompatActivity {
 
                 String api_key_str = api_key.getText().toString().trim();
                 String api_secret_str = api_secret.getText().toString().trim();
-                String mac_str = MAC.getText().toString().trim();
+                String search_str = search.getText().toString().trim();
                 String refresh_value_str = refresh.getText().toString().trim();
                 String admin_value_str = admin.getText().toString().trim();
+
+                if(api_key_str.isEmpty() || api_secret_str.isEmpty() || search_str.isEmpty() || admin_value_str.isEmpty() || refresh_value_str.isEmpty()) {
+                    progressDialog.dismiss();
+                    builder.setTitle("경고")
+                            .setMessage("모든 정보를 입력해 주셔야 합니다.")
+                            .setPositiveButton(getResources().getString(R.string.positive_alert), null)
+                            .show();
+                    return;
+                }
 
                 int refresh_temp = Integer.parseInt(refresh_value_str);
                 if(1 > refresh_temp || refresh_temp > 60) {
@@ -102,15 +113,6 @@ public class CloudVerifyActivity extends AppCompatActivity {
                 else
                     refresh.setError(null);
 
-                if(api_key_str.isEmpty() || api_secret_str.isEmpty() || mac_str.isEmpty() || admin_value_str.isEmpty() || refresh_value_str.isEmpty()) {
-                    progressDialog.dismiss();
-                    builder.setTitle("경고")
-                            .setMessage("모든 정보를 입력해 주셔야 합니다.")
-                            .setPositiveButton(getResources().getString(R.string.positive_alert), null)
-                            .show();
-                    return;
-                }
-
                 if(admin_value_str.length() != 4) {
                     progressDialog.dismiss();
                     admin.setError(getResources().getString(R.string.admin_error));
@@ -120,14 +122,14 @@ public class CloudVerifyActivity extends AppCompatActivity {
                     admin.setError(null);
 
                 Connect_Tapaculo tapaculo = Request.getRetrofit().create(Connect_Tapaculo.class);
-                Call<GetInfo> call = tapaculo.getInfo(api_key_str, api_secret_str, mac_str);
-                call.enqueue(new Callback<GetInfo>() {
+                Call<GetLst> call = tapaculo.getLst(api_key_str, api_secret_str, search_str);
+                call.enqueue(new Callback<GetLst>() {
 
                     @Override
-                    public void onResponse(Call<GetInfo> call, Response<GetInfo> response) {
+                    public void onResponse(Call<GetLst> call, Response<GetLst> response) {
 
                         System.out.println("인증 통신 중 ...");
-                        GetInfo result = response.body();
+                        GetLst result = response.body();
                         if (result == null) {
                             System.out.println("인증 통신 실패");
                             progressDialog.dismiss();
@@ -141,10 +143,26 @@ public class CloudVerifyActivity extends AppCompatActivity {
                             System.out.println("인증 통신 성공");
                             int refresh_value = Integer.parseInt(refresh_value_str);
                             int admin_value = Integer.parseInt(admin_value_str);
+                            String sensors = "";
+
+                            for(int i = 0; i < result.getRows().length; i++) {
+                                String device_mac = result.getRows()[i].getDevice_mac();
+                                String sensor_mac = result.getRows()[i].getSensor_mac();
+                                String ch_no = result.getRows()[i].getCh_no();
+
+                                sensors += device_mac + "-" + sensor_mac + "-CH" + ch_no;
+                                if(i != result.getRows().length - 1)
+                                    sensors += ",";
+                                PreferenceManager.setString(cloudVerifyActivity, "ch" + i + "_name_verify", result.getRows()[i].getCh_name());
+                            }
+                            System.out.println(sensors);
+
+                            PreferenceManager.setString(cloudVerifyActivity, "device_interval", result.getRows()[0].getDevice_interval());
+                            PreferenceManager.setString(cloudVerifyActivity, "sensors", sensors);
 
                             PreferenceManager.setString(cloudVerifyActivity, "api_key_str", api_key_str);
                             PreferenceManager.setString(cloudVerifyActivity, "api_secret_str", api_secret_str);
-                            PreferenceManager.setString(cloudVerifyActivity, "mac_str", mac_str);
+                            PreferenceManager.setString(cloudVerifyActivity, "search_str", search_str);
                             PreferenceManager.setInt(cloudVerifyActivity, "admin_value", admin_value);
                             PreferenceManager.setInt(cloudVerifyActivity, "refresh_value", refresh_value);
                             PreferenceManager.setBoolean(cloudVerifyActivity, "is_first_connect", true);
@@ -165,7 +183,7 @@ public class CloudVerifyActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<GetInfo> call, Throwable t) {
+                    public void onFailure(Call<GetLst> call, Throwable t) {
                         System.out.println("인증 통신 실패");
                         progressDialog.dismiss();
                         builder.setTitle("경고")
