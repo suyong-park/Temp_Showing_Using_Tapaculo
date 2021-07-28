@@ -37,8 +37,6 @@ public class CloudVerifyActivity extends AppCompatActivity {
         builder = new MaterialAlertDialogBuilder(cloudVerifyActivity);
         con = builder.create();
 
-        //PreferenceManager.clear(cloudVerifyActivity); // 테스트 목적의 코드 라인
-
         EditText api_key = (EditText) findViewById(R.id.api_key_enter);
         EditText api_secret = (EditText) findViewById(R.id.api_secret_enter);
         EditText MAC = (EditText) findViewById(R.id.MAC_enter);

@@ -345,8 +345,10 @@ public class CloudMainActivity extends AppCompatActivity {
                                     PreferenceManager.removeKey(cloudMainActivity, "is_from_setting");
                                     PreferenceManager.removeKey(cloudMainActivity, "selected_total_sensor_id");
                                     PreferenceManager.removeKey(cloudMainActivity, "selected_title_data");
-                                    if(cloudTimer != null)
+                                    if(cloudTimer != null) {
                                         cloudTimer.cancel();
+                                        cloudTimer.onFinish();
+                                    }
                                     finish();
                                 }
                             }).show();

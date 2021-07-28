@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 public class SocketVerifyActivity extends AppCompatActivity {
 
@@ -40,6 +41,14 @@ public class SocketVerifyActivity extends AppCompatActivity {
         socket_start_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if(ip_enter.getText().toString().isEmpty() || port_enter.getText().toString().isEmpty()) {
+                    builder.setTitle("경고")
+                            .setMessage("모든 정보를 입력해 주셔야 합니다.")
+                            .setPositiveButton("확인", null)
+                            .show();
+                    return;
+                }
 
                 PreferenceManager.setString(socketVerifyActivity, "IP", ip_enter.getText().toString());
                 PreferenceManager.setString(socketVerifyActivity, "PORT", port_enter.getText().toString());
