@@ -14,6 +14,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class SocketVerifyActivity extends AppCompatActivity {
 
+    SocketVerifyActivity socketVerifyActivity;
     AlertDialog.Builder builder;
     AlertDialog con;
 
@@ -22,14 +23,29 @@ public class SocketVerifyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_socket_verify);
 
+        socketVerifyActivity = this;
+
+        builder = new MaterialAlertDialogBuilder(socketVerifyActivity);
+        con = builder.create();
+
         EditText ip_enter = (EditText) findViewById(R.id.ip_enter);
         EditText port_enter = (EditText) findViewById(R.id.port_enter);
         Button socket_start_btn = (Button) findViewById(R.id.start_socket_btn);
 
+        if(PreferenceManager.getBoolean(socketVerifyActivity, "is_first_socket")) {
+            ip_enter.setText(PreferenceManager.getString(socketVerifyActivity, "IP"));
+            port_enter.setText(PreferenceManager.getString(socketVerifyActivity, "PORT"));
+        }
+
         socket_start_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SocketVerifyActivity.this, SocketMainActivity.class);
+
+                PreferenceManager.setString(socketVerifyActivity, "IP", ip_enter.getText().toString());
+                PreferenceManager.setString(socketVerifyActivity, "PORT", port_enter.getText().toString());
+                PreferenceManager.setBoolean(socketVerifyActivity, "is_first_socket", true);
+
+                Intent intent = new Intent(socketVerifyActivity, SocketMainActivity.class);
                 intent.putExtra("ip", ip_enter.getText().toString());
                 intent.putExtra("port", port_enter.getText().toString());
                 startActivity(intent);
@@ -39,11 +55,6 @@ public class SocketVerifyActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-
-        builder = new MaterialAlertDialogBuilder(SocketVerifyActivity.this);
-        con = builder.create();
-
         builder.setTitle("확인")
                 .setMessage("정말 선택 화면으로 나가시겠습니까?")
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
@@ -52,6 +63,7 @@ public class SocketVerifyActivity extends AppCompatActivity {
                         finish();
                     }
                 })
+                .setNegativeButton("취소", null)
                 .setCancelable(false)
                 .show();
     }
@@ -60,7 +72,9 @@ public class SocketVerifyActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        if(con != null && con.isShowing())
+        if(con != null && con.isShowing()) {
+            System.out.println("다이얼로그 종료");
             con.dismiss();
+        }
     }
 }

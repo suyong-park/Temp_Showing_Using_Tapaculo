@@ -34,6 +34,9 @@ public class CloudVerifyActivity extends AppCompatActivity {
 
         cloudVerifyActivity = CloudVerifyActivity.this;
 
+        builder = new MaterialAlertDialogBuilder(cloudVerifyActivity);
+        con = builder.create();
+
         //PreferenceManager.clear(cloudVerifyActivity); // 테스트 목적의 코드 라인
 
         EditText api_key = (EditText) findViewById(R.id.api_key_enter);
@@ -101,8 +104,6 @@ public class CloudVerifyActivity extends AppCompatActivity {
                 else
                     refresh.setError(null);
 
-                builder = new MaterialAlertDialogBuilder(cloudVerifyActivity);
-                con = builder.create();
                 if(api_key_str.isEmpty() || api_secret_str.isEmpty() || mac_str.isEmpty() || admin_value_str.isEmpty() || refresh_value_str.isEmpty()) {
                     progressDialog.dismiss();
                     builder.setTitle("경고")
@@ -182,8 +183,6 @@ public class CloudVerifyActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-
         builder.setTitle("확인")
                 .setMessage("정말로 선택 화면으로 나가시겠습니까?")
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
@@ -192,6 +191,7 @@ public class CloudVerifyActivity extends AppCompatActivity {
                         finish();
                     }
                 })
+                .setNegativeButton("취소", null)
                 .setCancelable(false)
                 .show();
     }
