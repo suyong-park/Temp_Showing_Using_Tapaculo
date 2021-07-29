@@ -6,7 +6,7 @@
     <string name="cloud">CLOUD</string>
     <string name="local">LOCAL</string>
 
-    <!-- VerifyActivity -->
+    <!-- CloudVerifyActivity -->
     <string name="api_secret">api_secret</string>
     <string name="api_secret_enter">API SECRET</string>
     <string name="api_key">api_key</string>
@@ -27,14 +27,20 @@
     <!-- AlertDialog -->
     <string name="positive_alert">CONFIRM</string>
 
-    <!-- SettingActivity -->
+    <!-- CloudSettingActivity -->
     <string name="show_two">2개 센서값 보기</string>
     <string name="show_sensor_setting">화면 센서값 설정</string>
     <string name="device_info">디바이스 정보</string>
     <string name="device_info_enter">DEVICE INFORMATION</string>
+    <string name="volume">볼륨 조절</string>
+    <string name="volume_duration">소리 지속시간</string>
+    <string name="network_on_sound">네트워크 연결음</string>
+    <string name="network_off_sound">네트워크 끊김음</string>
+    <string name="duration">지속시간</string>
     <string name="setting">SETTING DONE</string>
+    <string name="slider_desc">slider.contentDescription = contentDescription</string>
 
-    <!-- MainActivity -->
+    <!-- CloudMainActivity -->
     <string name="setting_btn">SETTING</string>
     <string name="refresh_btn">REFRESH</string>
     <string name="isNetwork">네트워크 연결이 불안정 합니다.</string>

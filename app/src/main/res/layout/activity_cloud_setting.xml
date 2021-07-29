@@ -63,6 +63,54 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1, 0">
+            <TableRow>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/network_on_sound" />
+
+            </TableRow>
+            <TableRow>
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/network_on_slider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="400dp"
+                    android:contentDescription="@string/slider_desc"
+                    android:stepSize="1"
+                    android:valueFrom="0"
+                    android:valueTo="100" />
+            </TableRow>
+            <TableRow>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/network_off_sound" />
+            </TableRow>
+            <TableRow>
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/network_off_slider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="400dp"
+                    android:stepSize="1"
+                    android:valueFrom="0"
+                    android:valueTo="100"
+                    android:contentDescription="@string/slider_desc" />
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
+
     <Button
         android:id="@+id/setting_finish_btn"
         android:layout_width="match_parent"

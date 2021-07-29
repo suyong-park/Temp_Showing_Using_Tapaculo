@@ -8,6 +8,7 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 import android.os.Build;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -44,8 +45,12 @@ class isNetworkConnect extends ConnectivityManager.NetworkCallback {
         // 네트워크 연결시 동작
 
         System.out.println("네트워크 연결됨");
-        ToneGenerator toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-        toneGen.startTone(ToneGenerator.TONE_PROP_BEEP2,1000);
+        float volume = PreferenceManager.getFloat(this.context, "network_on_volume");
+
+        ToneGenerator toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, (int) volume);
+        toneGen.startTone(ToneGenerator.TONE_PROP_BEEP2);
+
+        Toast.makeText(this.context, "네트워크가 정상적으로 연결되었습니다.", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -54,8 +59,12 @@ class isNetworkConnect extends ConnectivityManager.NetworkCallback {
         // 네트워크 끊김시 동작
 
         System.out.println("네트워크 끊김");
-        ToneGenerator toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
-        toneGen.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT,1000);
+        float volume = PreferenceManager.getFloat(this.context, "network_off_volume");
+
+        ToneGenerator toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, (int) volume);
+        toneGen.startTone(ToneGenerator.TONE_CDMA_ABBR_ALERT);
+
+        Toast.makeText(this.context, "네트워크가 끊겼습니다.", Toast.LENGTH_LONG).show();
     }
 }
 

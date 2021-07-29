@@ -350,6 +350,8 @@ public class CloudMainActivity extends AppCompatActivity {
                                     PreferenceManager.removeKey(cloudMainActivity, "device_info");
                                     PreferenceManager.removeKey(cloudMainActivity, "selected_total_sensor_id");
                                     PreferenceManager.removeKey(cloudMainActivity, "selected_total_sensor_num");
+                                    PreferenceManager.removeKey(cloudMainActivity, "network_on_volume");
+                                    PreferenceManager.removeKey(cloudMainActivity, "network_off_volume");
 
                                     if(cloudTimer != null) {
                                         cloudTimer.cancel();

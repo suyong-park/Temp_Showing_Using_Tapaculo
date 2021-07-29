@@ -13,13 +13,17 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.slider.Slider;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -37,10 +41,19 @@ public class CloudSettingActivity extends AppCompatActivity {
 
         cloudSettingActivity = CloudSettingActivity.this;
 
+        Slider network_on = (Slider) findViewById(R.id.network_on_slider);
+        Slider network_off = (Slider) findViewById(R.id.network_off_slider);
+
         EditText device_info = (EditText) findViewById(R.id.device_enter);
         Button setting_btn = (Button) findViewById(R.id.setting_finish_btn);
 
         device_info.setText(PreferenceManager.getString(cloudSettingActivity, "device_info"));
+
+        float volume_on = PreferenceManager.getFloat(cloudSettingActivity, "network_on_volume");
+        float volume_off = PreferenceManager.getFloat(cloudSettingActivity, "network_off_volume");
+
+        network_on.setValue((int) volume_on);
+        network_off.setValue((int) volume_off);
 
         View view = (View) findViewById(R.id.setting_layout);
         view.setOnTouchListener(new View.OnTouchListener() {
@@ -129,6 +142,10 @@ public class CloudSettingActivity extends AppCompatActivity {
 
         builder = new MaterialAlertDialogBuilder(cloudSettingActivity);
         con = builder.create();
+
+        network_on.addOnSliderTouchListener(onSliderTouchListener);
+        network_off.addOnSliderTouchListener(onSliderTouchListener);
+
         setting_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -210,4 +227,22 @@ public class CloudSettingActivity extends AppCompatActivity {
         if(con != null && con.isShowing())
             con.dismiss();
     }
+
+    Slider.OnSliderTouchListener onSliderTouchListener = new Slider.OnSliderTouchListener() {
+        @Override
+        public void onStartTrackingTouch(@NonNull @NotNull Slider slider) {
+        }
+
+        @Override
+        public void onStopTrackingTouch(@NonNull @NotNull Slider slider) {
+            switch (slider.getId()) {
+                case R.id.network_on_slider:
+                    PreferenceManager.setFloat(cloudSettingActivity, "network_on_volume", (int) slider.getValue());
+                    break;
+                case R.id.network_off_slider:
+                    PreferenceManager.setFloat(cloudSettingActivity, "network_off_volume", (int) slider.getValue());
+                    break;
+            }
+        }
+    };
 }

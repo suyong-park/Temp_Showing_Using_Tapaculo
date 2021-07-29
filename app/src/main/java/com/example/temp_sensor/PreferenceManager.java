@@ -11,6 +11,7 @@ class PreferenceManager {
     private static final String DEFAULT_VALUE_STRING = "";
     private static final boolean DEFAULT_VALUE_BOOLEAN = false;
     private static final int DEFAULT_VALUE_INTEGER = -1;
+    private static final float DEFAULT_VALUE_FLOAT = 70;
 
     private static SharedPreferences getPreferences(Context context) {
         return context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -40,6 +41,14 @@ class PreferenceManager {
         editor.commit();
     }
 
+    // save Float value
+    public static void setFloat(Context context, String key, float value) {
+        SharedPreferences prefs = getPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putFloat(key, value);
+        editor.commit();
+    }
+
     // load String value
     public static String getString(Context context, String key) {
         SharedPreferences prefs = getPreferences(context);
@@ -58,6 +67,13 @@ class PreferenceManager {
     public static boolean getBoolean(Context context, String key) {
         SharedPreferences prefs = getPreferences(context);
         boolean value = prefs.getBoolean(key, DEFAULT_VALUE_BOOLEAN);
+        return value;
+    }
+
+    // load Float value
+    public static float getFloat(Context context, String key) {
+        SharedPreferences prefs = getPreferences(context);
+        float value = prefs.getFloat(key, DEFAULT_VALUE_FLOAT);
         return value;
     }
 
