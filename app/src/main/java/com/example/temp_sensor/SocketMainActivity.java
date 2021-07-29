@@ -19,8 +19,6 @@ public class SocketMainActivity extends AppCompatActivity {
     SocketMainActivity socketMainActivity;
     AlertDialog.Builder builder;
     AlertDialog con;
-    Timer timer;
-    TimerTask timerTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -185,28 +185,20 @@ public class CloudSettingActivity extends AppCompatActivity {
                 PreferenceManager.setInt(cloudSettingActivity, "selected_total_sensor_num", count);
                 PreferenceManager.setString(cloudSettingActivity, "device_info", device_info.getText().toString().trim());
 
-                if(!Request.isNetworkConnected(cloudSettingActivity)) {
-                    builder.setTitle("경고")
-                            .setMessage("네트워크가 연결되지 않았습니다. 연결 후 다시 시도하세요.")
-                            .setPositiveButton("확인", null)
-                            .show();
-                    return;
-                }
-                else {
-                    builder.setTitle("설정")
-                            .setMessage("설정이 완료되었습니다.")
-                            .setCancelable(false)
-                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int id) {
-                                    Intent intent = new Intent(cloudSettingActivity, CloudMainActivity.class);
-                                    ((CloudMainActivity) CloudMainActivity.CONTEXT).finish();
-                                    finish();
-                                    startActivity(intent);
-                                }
-                            })
-                            .show();
-                }
+                builder.setTitle("설정")
+                        .setMessage("설정이 완료되었습니다.")
+                        .setCancelable(false)
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int id) {
+                                Intent intent = new Intent(cloudSettingActivity, CloudMainActivity.class);
+                                ((CloudMainActivity) CloudMainActivity.CONTEXT).finish();
+                                finish();
+                                startActivity(intent);
+                            }
+                        })
+                        .show();
+
             }
         });
     }

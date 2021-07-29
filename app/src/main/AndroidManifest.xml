@@ -2,69 +2,54 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.temp_sensor">
 
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <!-- 디바이스 재부팅시 바로 앱 실행 -->
-
-    <uses-permission android:name="android.permission.REORDER_TASKS" />
-    <!-- 홈버튼 제어 -->
-
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <!-- 디바이스 화면 꺼지지 않음 -->
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- 디바이스 재부팅시 바로 앱 실행 -->
+    <uses-permission android:name="android.permission.REORDER_TASKS" /> <!-- 홈버튼 제어 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- 디바이스 화면 꺼지지 않음 -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <!-- 위 2개의 permission은 인터넷을 통해 OpenAPI와 연결하기 위한 것. -->
-    <!--
-     1 : android:hardwareAccelerated="true"
-     2 : android:usesCleartextTraffic="true"
-     1번은 하드웨어 가속. Canvas, View 등 안드로이드에서 그리기 관련 객체를 사용하게 되는 경우 성능 향상을 위해 사용함.
-     2번 값을 true로 설정하면 모든 Http에 대해서 접근할 수 있게 됨.
-     만약 Tapaculo 사이트에 대한 접근만 허용하고 싶은 경우 /res/xml/network_security_config.xml 생성하면 됨.
-     <?xml version="1.0" encoding="utf-8"?>
-    <network-security-config>
-        <domain-config cleartextTrafficPermitted="false">
-            <domain includeSubdomains="true">https://oa.tapaculo365.com/tp365/v1/</domain>
-        </domain-config>
-    </network-security-config>
-     -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <!-- network_security_config는 API28 부터 HTTP 통신에 일반 텍스트를 지원하지 않는 버전 문제를 해결하기 위함. -->
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:hardwareAccelerated="true"
-        android:usesCleartextTraffic="true"
-        android:networkSecurityConfig="@xml/network_security_config"
-        android:theme="@style/Theme.Temp_Censor">
-        <activity android:name="com.example.temp_sensor.StartSelectActivity">
+        android:theme="@style/Theme.Temp_Censor"
+        android:usesCleartextTraffic="true">
+        <service
+            android:name=".NetworkService"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <activity android:name=".StartSelectActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.temp_sensor.CloudMainActivity"
-            android:theme="@style/Theme.MaterialComponents.NoActionBar">
-        </activity>
-        <activity android:name="com.example.temp_sensor.CloudSettingActivity"></activity>
-        <activity android:name="com.example.temp_sensor.CloudVerifyActivity"></activity>
-        <activity android:name="com.example.temp_sensor.SocketVerifyActivity"></activity>
+            android:name=".CloudMainActivity"
+            android:theme="@style/Theme.MaterialComponents.NoActionBar"></activity>
+        <activity android:name=".CloudSettingActivity" />
+        <activity android:name=".CloudVerifyActivity" />
+        <activity android:name=".SocketVerifyActivity" />
         <activity
-            android:name="com.example.temp_sensor.SocketMainActivity"
-            android:theme="@style/Theme.MaterialComponents.NoActionBar">
-        </activity>
+            android:name=".SocketMainActivity"
+            android:theme="@style/Theme.MaterialComponents.NoActionBar"></activity>
+
         <receiver
             android:name=".BootCompleteReceiver"
             android:enabled="true"
             android:exported="false"
-            android:label="BootCompleteReceiver" >
+            android:label="BootCompleteReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>

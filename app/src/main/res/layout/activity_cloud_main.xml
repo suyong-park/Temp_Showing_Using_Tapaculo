@@ -50,6 +50,7 @@
             android:id="@+id/network_state_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_gravity="center"
             android:text="@string/isNetwork" />
 
@@ -57,6 +58,7 @@
             android:id="@+id/server_state_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_gravity="center"
             android:text="@string/isServer" />
 
@@ -64,6 +66,7 @@
             android:id="@+id/device_data_receive_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_gravity="center"
             android:text="@string/isDataReceive" />
 
@@ -71,12 +74,14 @@
             android:id="@+id/device_data_receive_state_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_gravity="center" />
 
         <TextView
             android:id="@+id/loading_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_gravity="center"
             android:text="@string/Loading" />
 
@@ -178,6 +183,7 @@
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:layout_gravity="center"
+            android:visibility="gone"
             android:layout_margin="10dp"
             android:text="@string/refresh_btn"
             android:textAlignment="center" />

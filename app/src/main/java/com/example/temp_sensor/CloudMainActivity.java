@@ -49,6 +49,7 @@ public class CloudMainActivity extends AppCompatActivity {
     LinearLayout include_data_layout;
     LinearLayout first_data_layout;
 
+    NetworkService networkService;
     public static Context CONTEXT;
     public boolean is_to_setting = false;
 
@@ -59,6 +60,7 @@ public class CloudMainActivity extends AppCompatActivity {
 
         CONTEXT = this;
         cloudMainActivity = this;
+        checkNetwork();
 
         String api_key_str = PreferenceManager.getString(cloudMainActivity, "api_key_str");
         String api_secret_str = PreferenceManager.getString(cloudMainActivity, "api_secret_str");
@@ -98,14 +100,6 @@ public class CloudMainActivity extends AppCompatActivity {
         setting_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!Request.isNetworkConnected(cloudMainActivity)) {
-                    builder.setTitle("경고")
-                            .setMessage("네트워크가 끊어져 있습니다. 네트워크를 연결하고 통신될 때까지 기다려 주세요.")
-                            .setCancelable(false)
-                            .setPositiveButton("확인", null)
-                            .show();
-                    return;
-                }
                 is_to_setting = true;
                 Intent intent = new Intent(cloudMainActivity, CloudSettingActivity.class);
                 startActivity(intent);
@@ -291,6 +285,14 @@ public class CloudMainActivity extends AppCompatActivity {
                     ((ViewGroup) data_unit_ko_1.getParent()).removeView(data_unit_ko_1);
                 include_data_layout.addView(data_unit_ko_1);
                 break;
+        }
+    }
+
+    public void checkNetwork() {
+        if(networkService == null) {
+            networkService = new NetworkService();
+            Intent networkIntent = new Intent(this, NetworkService.class);
+            startService(networkIntent);
         }
     }
 

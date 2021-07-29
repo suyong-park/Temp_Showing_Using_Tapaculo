@@ -51,16 +51,6 @@ public class CloudCommunication {
 
     public void requestHttp() {
 
-        /*
-        TODO : 센서값 표시할 것, 전체적인 알고리즘 손볼 것
-         */
-
-        activity.setVisibility(false, 7);
-        activity.setVisibility(false, 8);
-        activity.setVisibility(false, 9);
-        activity.setVisibility(false, 10);
-        activity.setVisibility(false, 11);
-        activity.setVisibility(false, 12);
         activity.setProgress(activity);
 
         count += 1;
@@ -81,6 +71,13 @@ public class CloudCommunication {
                 }
                 else if (result.getStatus().equals("true")) {
                     System.out.println("통신 성공");
+
+                    activity.setVisibility(false, 7);
+                    activity.setVisibility(false, 8);
+                    activity.setVisibility(false, 9);
+                    activity.setVisibility(false, 10);
+                    activity.setVisibility(false, 11);
+                    activity.setVisibility(false, 12);
                     activity.hideProgress();
 
                     String device_last_update = result.getRows()[0].getLast_update();
@@ -234,7 +231,6 @@ public class CloudCommunication {
         if(current_date.compareTo(device_update_date) > 0) {
             activity.setVisibility(true, 8);
             activity.setVisibility(true, 9);
-            activity.setVisibility(true, 11);
             activity.setText("마지막 데이터 전송 시간 : " + localTime, 9);
             activity.setTextSize(8, 25);
             activity.setTextSize(9, 25);
