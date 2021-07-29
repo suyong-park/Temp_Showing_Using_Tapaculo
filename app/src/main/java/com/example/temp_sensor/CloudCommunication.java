@@ -14,10 +14,12 @@ public class CloudCommunication {
 
     ArrayList<Rows_Values> arrayValues = null;
 
+    String[] selected_sensor_index;
     String api_key_str;
     String api_secret_str;
     String search_str;
     int count = 0;
+    int temp = Integer.MIN_VALUE;
 
     CloudMainActivity activity;
     Connect_Tapaculo tapaculo;
@@ -92,42 +94,49 @@ public class CloudCommunication {
                     Rows_Values[] rows_values = result.getRows();
 
                     arrayValues = new ArrayList<>();
-                    for (int i = 0; i < rows_values.length; i++)
+                    for (int i = 0; i < rows_values.length; i++) {
+                        if(rows_values[i].getValue().length() != 0 && !rows_values[i].getValue().equals("") && rows_values[i].getValue() != null)
+                            rows_values[i].setValue(rows_values[i].getValue().substring(0, 4));
                         arrayValues.add(rows_values[i]);
+                    }
 
                     PreferenceManager.setInt(activity, "device_sensor_num", arrayValues.size());
                     int showing_sensor_num = PreferenceManager.getInt(activity, "selected_total_sensor_num");
-
-                    for(int i = 0; i < arrayValues.size(); i++) {
-                        if (showing_sensor_num == -1 || showing_sensor_num == 2) { // 센서를 몇 개 보여줄지 아직 세팅하지 않은 경우 or 2개 보여주는 경우
-                            activity.setVisibility(true, 1);
-                            activity.setVisibility(true, 2);
-                        } else if (showing_sensor_num == 0 || showing_sensor_num == 1) {
-                            activity.setVisibility(false, 6);
-                            activity.setVisibility(false, 4);
-                            activity.setVisibility(false, 2);
-                            activity.setVisibility(true, 1);
-                        }
-
-                        tempSetText(i);
-
-                        /*
-                        if (title_data == null || title_data.equals("")) // 최초 접속인 경우
-                            setText(0, i, 0);
-                        else if (title_data.contains(",")) { // 센서 2개를 선택한 경우
-                            temp = new String[2];
-                            temp = PreferenceManager.getString(activity, "selected_title_data").split(",");
-                            for (int k = 0; k < temp.length; k++)
-                                if (temp[k].equals(arrayValues.get(i)[j].getCh_name()))  // 받아온 제목과 동일한지 확인
-                                    setText(2, i, k);
-                        }
-                        else // 센서 1개를 선택한 경우
-                            setText(1, i, 0);
-
-
-                        PreferenceManager.setString(activity, "ch" + j + "_name", arrayValues.get(i)[j].getCh_name());
-                         */
+                    if(showing_sensor_num == 0 || showing_sensor_num == 1) {
+                        selected_sensor_index = new String[1];
+                        selected_sensor_index[0] = PreferenceManager.getString(activity, "selected_total_sensor_id");
                     }
+                    else {
+                        selected_sensor_index = new String[2];
+                        selected_sensor_index = PreferenceManager.getString(activity, "selected_total_sensor_id").split(",");
+                    }
+
+                    for(int i = 0; i < arrayValues.size(); i++)
+                        switch (showing_sensor_num) {
+                            case -1 : // 최초 접속
+                                activity.setVisibility(true, 1);
+                                activity.setVisibility(true, 2);
+                                tempSetText(i, 0);
+                                break;
+                            case 0 :
+                            case 1 : // 0과 1일 때는 센서를 1개만 선택했을 때
+                                activity.setVisibility(false, 6);
+                                activity.setVisibility(false, 4);
+                                activity.setVisibility(false, 2);
+                                activity.setVisibility(true, 1);
+
+                                if(i == Integer.parseInt(selected_sensor_index[0]))
+                                    tempSetText(i, 1);
+                                break;
+                            case 2 : // 센서를 2개 선택한 경우
+                                activity.setVisibility(true, 1);
+                                activity.setVisibility(true, 2);
+
+                                for(int j = 0; j < selected_sensor_index.length; j++)
+                                    if(i == Integer.parseInt(selected_sensor_index[j]))
+                                        tempSetText(i, 2);
+                                break;
+                        }
                 }
             }
 
@@ -142,6 +151,56 @@ public class CloudCommunication {
                 System.out.println(t.getMessage());
             }
         });
+    }
+
+    public void tempSetText(int i, int sensor_select_num) {
+        switch (sensor_select_num) {
+            case 2 : // 센서를 2개 선택한 경우
+                if(temp < i) {
+                    activity.setText(PreferenceManager.getString(activity, "ch" + i + "_name"), 5);
+                    activity.setText(arrayValues.get(i).getValue(), 1);
+                    activity.setText(PreferenceManager.getString(activity, "ch" + i + "_unit"), 3);
+                }
+                else {
+                    activity.setText(PreferenceManager.getString(activity, "ch" + i + "_name"), 6);
+                    activity.setText(arrayValues.get(i).getValue(), 2);
+                    activity.setText(PreferenceManager.getString(activity, "ch" + i + "_unit"), 4);
+                }
+
+                temp = Integer.MAX_VALUE;
+                break;
+            case 0 : // 최초 접속인 경우
+                switch (i) {
+                    case 0 :
+                        activity.setText(PreferenceManager.getString(activity, "ch" + i + "_name"), 5);
+                        activity.setText(arrayValues.get(i).getValue(), 1);
+                        activity.setText(PreferenceManager.getString(activity, "ch" + i + "_unit"), 3);
+                        break;
+                    case 1 :
+                        activity.setText(PreferenceManager.getString(activity, "ch" + i + "_name"), 6);
+                        activity.setText(arrayValues.get(i).getValue(), 2);
+                        activity.setText(PreferenceManager.getString(activity, "ch" + i + "_unit"), 4);
+                        break;
+                }
+                break;
+            case 1 : // 센서를 1개 선택한 경우
+                activity.setVisibility(false, 0);
+                activity.setText(PreferenceManager.getString(activity, "ch" + i + "_name"), 5);
+                activity.setText(arrayValues.get(i).getValue(), 1);
+                activity.setTypeface();
+                activity.setText(PreferenceManager.getString(activity, "ch" + i + "_unit"), 3);
+
+                if (count < 2) {
+                    activity.addView(5);
+                    activity.addView(1);
+                    activity.addView(3);
+                } else
+                    count = 2;
+
+                activity.setLayoutGravity();
+                activity.setLayoutOrientation();
+                break;
+        }
     }
 
     public void isDeviceConnect(String device_last_update, String device_interval) throws Exception {
@@ -180,92 +239,9 @@ public class CloudCommunication {
             activity.setTextSize(8, 25);
             activity.setTextSize(9, 25);
             activity.setTextSize(9, 20);
-            //System.out.println("디바이스에서 데이터를 전송하지 못하고 있습니다.\n마지막 데이터 전송 시간 : " + localTime);
+            System.out.println("디바이스에서 데이터를 전송하지 못하고 있습니다.\n마지막 데이터 전송 시간 : " + localTime);
         }
-        //else
-            //System.out.println("디바이스에서 데이터를 제대로 전송 중입니다.\n마지막 데이터 전송 시간 : " + localTime);
+        else
+            System.out.println("디바이스에서 데이터를 제대로 전송 중입니다.\n마지막 데이터 전송 시간 : " + localTime);
     }
-
-    public void tempSetText(int i) {
-        switch (i) {
-            case 0 :
-                activity.setText(PreferenceManager.getString(activity, "ch" + i + "_name_verify"), 1);
-                break;
-            case 1 :
-                activity.setText(PreferenceManager.getString(activity, "ch" + i + "_name_verify"), 2);
-                break;
-        }
-    }
-
-    /*
-    public void setText(int num, int i, int j) {
-        switch (num) {
-            case 0 : // 최초 접속
-                switch (j) {
-                    case 0 :
-                        activity.setText(arrayValues.get(i).getCh_name(), 5);
-                        if (arrayValues.get(i)[j].getCh_value().length() == 0)
-                            activity.setText(arrayValues.get(i)[j].getCh_value(), 1);
-                        else
-                            activity.setText(arrayValues.get(i)[j].getCh_value().substring(0, 4), 1);
-                        activity.setText(arrayValues.get(i)[j].getCh_unit(), 3);
-                        break;
-                    case 1 :
-                        activity.setText(arrayValues.get(i)[j].getCh_name(), 6);
-                        if (arrayValues.get(i)[j].getCh_value().length() == 0)
-                            activity.setText(arrayValues.get(i)[j].getCh_value(), 2);
-                        else
-                            activity.setText(arrayValues.get(i)[j].getCh_value().substring(0, 4), 2);
-                        activity.setText(arrayValues.get(i)[j].getCh_unit(), 4);
-                        break;
-                }
-                break;
-            case 1 : // 센서 1개 선택
-                temp = new String[2];
-                temp[0] = PreferenceManager.getString(activity, "selected_title_data"); // 이 경우 1번째 값은 null
-                if (temp[0].equals(arrayValues.get(i)[j].getCh_name())) {
-
-                    activity.setVisibility(false, 0);
-                    activity.setText(arrayValues.get(i)[j].getCh_name(), 5);
-                    if (arrayValues.get(i)[j].getCh_value().length() == 0)
-                        activity.setText(arrayValues.get(i)[j].getCh_value(), 1);
-                    else
-                        activity.setText(arrayValues.get(i)[j].getCh_value().substring(0, 4), 1);
-                    activity.setTypeface();
-                    activity.setText(arrayValues.get(i)[j].getCh_unit(), 3);
-
-                    if (count < 2) {
-                        activity.addView(5);
-                        activity.addView(1);
-                        activity.addView(3);
-                    } else
-                        count = 2;
-
-                    activity.setLayoutGravity();
-                    activity.setLayoutOrientation();
-                }
-                break;
-            case 2 : // 센서 2개 선택
-                switch (k) {
-                    case 0 :
-                        activity.setText(arrayValues.get(i)[j].getCh_name(), 5);
-                        if (arrayValues.get(i)[j].getCh_value().length() == 0)
-                            activity.setText(arrayValues.get(i)[j].getCh_value(), 1);
-                        else
-                            activity.setText(arrayValues.get(i)[j].getCh_value().substring(0, 4), 1);
-                        activity.setText(arrayValues.get(i)[j].getCh_unit(), 3);
-                        break;
-                    case 1 :
-                        activity.setText(arrayValues.get(i)[j].getCh_name(), 6);
-                        if (arrayValues.get(i)[j].getCh_value().length() == 0)
-                            activity.setText(arrayValues.get(i)[j].getCh_value(), 2);
-                        else
-                            activity.setText(arrayValues.get(i)[j].getCh_value().substring(0, 4), 2);
-                        activity.setText(arrayValues.get(i)[j].getCh_unit(), 4);
-                        break;
-                }
-                break;
-        }
-    }
-     */
 }

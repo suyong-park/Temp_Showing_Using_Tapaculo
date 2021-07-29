@@ -156,8 +156,6 @@ public class CloudSettingActivity extends AppCompatActivity {
                     return;
                 }
 
-                String temp = "", data = "";
-                String new_temp = "", new_name = "";
                 String index_check_box = "";
                 for(int i = 0; i < arrayBox.size(); i++) {
                     if (!arrayInputEdit.get(i).getText().toString().trim().isEmpty() && !arrayBox.get(i).isChecked()) {
@@ -169,53 +167,24 @@ public class CloudSettingActivity extends AppCompatActivity {
                     }
                     else if (arrayBox.get(i).isChecked()) {
                         if (count == 2) { // 2개의 체크박스를 선택
-                            if (!temp.equals(""))
-                                data = temp + "," + arrayBox.get(i).getText().toString();
-                            temp = arrayBox.get(i).getText().toString();
                             index_check_box += String.valueOf(i);
                             index_check_box += ",";
                         }
-                        else if (count == 1) { // 1개의 체크박스를 선택
-                            count = i;
-                            data = arrayBox.get(i).getText().toString();
+                        else if (count == 1) // 1개의 체크박스를 선택
                             index_check_box += String.valueOf(i);
-                        }
                     }
                 }
-
-                int count_tmp = 0;
-                for(int i = 0; i < arrayInputEdit.size(); i++) {
-                    if(!arrayInputEdit.get(i).getText().toString().isEmpty()) {
-                        count_tmp += 1;
-                        if(!new_temp.equals(""))
-                            new_name = new_temp + "," + arrayInputEdit.get(i).getText().toString().trim();
-                        else {
-                            new_temp = arrayInputEdit.get(i).getText().toString().trim();
-                            new_name = new_temp;
-                        }
-                    }
-                }
-
-                if(index_check_box.contains(",")) {
+                if(index_check_box.contains(","))
                     index_check_box = index_check_box.substring(0, 3);
-                    if(index_check_box.split(",").length != count_tmp) {
-                        builder.setTitle("경고")
-                                .setMessage("센서의 이름을 바꾸려면 선택된 센서 모두 변경되어야 합니다.")
-                                .setCancelable(false)
-                                .setPositiveButton("확인", null)
-                                .show();
-                        return;
-                    }
-                }
 
-                System.out.println(index_check_box);
-                System.out.println(new_name);
+                for(int i = 0; i < arrayInputEdit.size(); i++)
+                    if(!arrayInputEdit.get(i).getText().toString().trim().isEmpty())
+                        PreferenceManager.setString(cloudSettingActivity, "ch" + i + "_name", arrayInputEdit.get(i).getText().toString().trim());
 
                 PreferenceManager.setString(cloudSettingActivity, "selected_total_sensor_id", index_check_box);
                 PreferenceManager.setInt(cloudSettingActivity, "selected_total_sensor_num", count);
                 PreferenceManager.setString(cloudSettingActivity, "device_info", device_info.getText().toString().trim());
 
-                String finalData = data;
                 if(!Request.isNetworkConnected(cloudSettingActivity)) {
                     builder.setTitle("경고")
                             .setMessage("네트워크가 연결되지 않았습니다. 연결 후 다시 시도하세요.")
@@ -224,7 +193,6 @@ public class CloudSettingActivity extends AppCompatActivity {
                     return;
                 }
                 else {
-                    String finalNew_name = new_name;
                     builder.setTitle("설정")
                             .setMessage("설정이 완료되었습니다.")
                             .setCancelable(false)
@@ -232,11 +200,6 @@ public class CloudSettingActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int id) {
                                     Intent intent = new Intent(cloudSettingActivity, CloudMainActivity.class);
-                                    PreferenceManager.setString(cloudSettingActivity, "selected_title_data", finalData);
-                                    if(!finalNew_name.isEmpty()) {
-                                        PreferenceManager.setBoolean(cloudSettingActivity, "is_from_setting", true);
-                                        PreferenceManager.setString(cloudSettingActivity, "selected_title_data", finalNew_name);
-                                    }
                                     ((CloudMainActivity) CloudMainActivity.CONTEXT).finish();
                                     finish();
                                     startActivity(intent);

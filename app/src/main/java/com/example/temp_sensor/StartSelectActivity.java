@@ -19,7 +19,7 @@ public class StartSelectActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_startselect);
 
-        //PreferenceManager.clear(this); // 테스트 목적의 코드 라인
+        PreferenceManager.clear(this); // 테스트 목적의 코드 라인
 
         Button cloud_btn = (Button) findViewById(R.id.cloud);
         Button local_btn = (Button) findViewById(R.id.local);

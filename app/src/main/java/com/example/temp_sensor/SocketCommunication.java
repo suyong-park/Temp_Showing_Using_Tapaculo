@@ -25,10 +25,8 @@ class SocketCommunication extends Thread {
             String OutData = "ATDC\r\n";
             char ascii_char;
             int ascii;
-            int count = 0;
 
             while(true) {
-                count += 1;
 
                 ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
                 outputStream.writeObject(OutData);
@@ -37,20 +35,7 @@ class SocketCommunication extends Thread {
                 InputStream inputStream = socket.getInputStream();
                 ascii = inputStream.read();
 
-                /*
                 if(ascii == 13) {
-                    try {
-                        if(socket != null)
-                            socket.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                 */
-
-                if(count > 105) {
-
                     try {
                         if(socket != null)
                             socket.close();

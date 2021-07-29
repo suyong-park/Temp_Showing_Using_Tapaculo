@@ -153,9 +153,9 @@ public class CloudVerifyActivity extends AppCompatActivity {
                                 sensors += device_mac + "-" + sensor_mac + "-CH" + ch_no;
                                 if(i != result.getRows().length - 1)
                                     sensors += ",";
-                                PreferenceManager.setString(cloudVerifyActivity, "ch" + i + "_name_verify", result.getRows()[i].getCh_name());
+                                PreferenceManager.setString(cloudVerifyActivity, "ch" + i + "_name", result.getRows()[i].getCh_name());
+                                PreferenceManager.setString(cloudVerifyActivity, "ch" + i + "_unit", result.getRows()[i].getCh_unit());
                             }
-                            System.out.println(sensors);
 
                             PreferenceManager.setString(cloudVerifyActivity, "device_interval", result.getRows()[0].getDevice_interval());
                             PreferenceManager.setString(cloudVerifyActivity, "sensors", sensors);

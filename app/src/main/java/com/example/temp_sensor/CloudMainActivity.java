@@ -338,13 +338,17 @@ public class CloudMainActivity extends AppCompatActivity {
                                 public void onClick(View v) {
                                     int device_sensor_num = PreferenceManager.getInt(cloudMainActivity, "device_sensor_num");
                                     PreferenceManager.removeKey(cloudMainActivity, "device_sensor_num");
-                                    for(int i = 0; i < device_sensor_num; i++)
+                                    for(int i = 0; i < device_sensor_num; i++) {
                                         PreferenceManager.removeKey(cloudMainActivity, "ch" + i + "_name");
-                                    PreferenceManager.removeKey(cloudMainActivity, "selected_total_sensor_num");
+                                        PreferenceManager.removeKey(cloudMainActivity, "ch" + i + "_unit");
+                                    }
+                                    PreferenceManager.removeKey(cloudMainActivity, "device_interval");
+                                    PreferenceManager.removeKey(cloudMainActivity, "sensors");
+                                    PreferenceManager.removeKey(cloudMainActivity, "device_sensor_num");
                                     PreferenceManager.removeKey(cloudMainActivity, "device_info");
-                                    PreferenceManager.removeKey(cloudMainActivity, "is_from_setting");
                                     PreferenceManager.removeKey(cloudMainActivity, "selected_total_sensor_id");
-                                    PreferenceManager.removeKey(cloudMainActivity, "selected_title_data");
+                                    PreferenceManager.removeKey(cloudMainActivity, "selected_total_sensor_num");
+
                                     if(cloudTimer != null) {
                                         cloudTimer.cancel();
                                         cloudTimer.onFinish();
@@ -359,7 +363,7 @@ public class CloudMainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onUserLeaveHint() {
+    protected void onUserLeaveHint() { // 홈버튼 눌렀을 때
         super.onUserLeaveHint();
 
         if(!is_to_setting) {

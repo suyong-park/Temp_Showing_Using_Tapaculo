@@ -98,8 +98,8 @@
 
             <TextView
                 android:id="@+id/show_data_unit_ko_1"
-                android:layout_width="100dp"
-                android:layout_height="200dp"
+                android:layout_width="200dp"
+                android:layout_height="500dp"
                 android:layout_marginLeft="15dp"
                 android:autoSizeTextType="uniform"
                 android:gravity="center"
@@ -109,7 +109,7 @@
 
             <TextView
                 android:id="@+id/show_data_1"
-                android:layout_width="500dp"
+                android:layout_width="1500dp"
                 android:layout_height="500dp"
                 android:layout_gravity="center"
                 android:autoSizeMaxTextSize="500sp"
@@ -122,8 +122,8 @@
 
             <TextView
                 android:id="@+id/show_data_unit_1"
-                android:layout_width="100dp"
-                android:layout_height="200dp"
+                android:layout_width="200dp"
+                android:layout_height="500dp"
                 android:autoSizeTextType="uniform"
                 android:gravity="center"
                 android:textAlignment="center"
@@ -140,8 +140,8 @@
 
             <TextView
                 android:id="@+id/show_data_unit_ko_2"
-                android:layout_width="100dp"
-                android:layout_height="200dp"
+                android:layout_width="200dp"
+                android:layout_height="500dp"
                 android:layout_marginLeft="15dp"
                 android:autoSizeTextType="uniform"
                 android:gravity="center"
@@ -151,7 +151,7 @@
 
             <TextView
                 android:id="@+id/show_data_2"
-                android:layout_width="500dp"
+                android:layout_width="1500dp"
                 android:layout_height="500dp"
                 android:layout_gravity="center"
                 android:autoSizeMaxTextSize="500sp"
@@ -164,8 +164,8 @@
 
             <TextView
                 android:id="@+id/show_data_unit_2"
-                android:layout_width="100dp"
-                android:layout_height="200dp"
+                android:layout_width="200dp"
+                android:layout_height="500dp"
                 android:autoSizeTextType="uniform"
                 android:gravity="center"
                 android:textAlignment="center"
