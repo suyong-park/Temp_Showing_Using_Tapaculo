@@ -28,7 +28,7 @@ public class NetworkService extends Service {
                 isNetworkConnect.register();
             }
 
-        return START_STICKY; // 시스템에 의해 종료되어도 재생성됨
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
