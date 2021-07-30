@@ -15,8 +15,6 @@ import android.widget.EditText;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.util.ArrayList;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -168,7 +166,7 @@ public class CloudVerifyActivity extends AppCompatActivity {
                             PreferenceManager.setBoolean(cloudVerifyActivity, "is_first_connect", true);
 
                             progressDialog.dismiss();
-                            Intent intent = new Intent(cloudVerifyActivity, MainActivity.class);
+                            Intent intent = new Intent(cloudVerifyActivity, CloudMainActivity.class);
                             startActivity(intent);
                         }
                         else { // status == false

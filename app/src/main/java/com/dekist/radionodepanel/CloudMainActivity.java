@@ -24,10 +24,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 
-public class MainActivity extends AppCompatActivity {
+public class CloudMainActivity extends AppCompatActivity {
 
     LinearProgressIndicator indicator;
-    MainActivity cloudMainActivity;
+    CloudMainActivity cloudMainActivity;
     AlertDialog.Builder builder;
     AlertDialog con;
     CloudTimer cloudTimer;
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_cloud_main);
 
         CONTEXT = this;
         cloudMainActivity = this;
@@ -337,6 +337,11 @@ public class MainActivity extends AppCompatActivity {
                                     PreferenceManager.removeKey(cloudMainActivity, "network_on_volume");
                                     PreferenceManager.removeKey(cloudMainActivity, "network_off_volume");
 
+                                    try {
+
+                                    } catch (Exception e) {
+
+                                    }
                                     if(cloudTimer != null) {
                                         cloudTimer.cancel();
                                         cloudTimer.onFinish();

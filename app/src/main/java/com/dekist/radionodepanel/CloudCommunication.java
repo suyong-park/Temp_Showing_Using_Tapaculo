@@ -21,10 +21,10 @@ public class CloudCommunication {
     int count = 0;
     int temp = Integer.MIN_VALUE;
 
-    MainActivity activity;
+    CloudMainActivity activity;
     Connect_Tapaculo tapaculo;
 
-    public CloudCommunication(MainActivity activity, Connect_Tapaculo tapaculo, String api_key_str, String api_secret_str, String search_str) {
+    public CloudCommunication(CloudMainActivity activity, Connect_Tapaculo tapaculo, String api_key_str, String api_secret_str, String search_str) {
         this.activity = activity;
         this.tapaculo = tapaculo;
         this.api_key_str = api_key_str;

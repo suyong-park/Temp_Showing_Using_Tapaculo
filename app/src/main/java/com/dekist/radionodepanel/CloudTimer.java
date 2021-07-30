@@ -2,9 +2,6 @@ package com.dekist.radionodepanel;
 
 import android.os.CountDownTimer;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 public class CloudTimer extends CountDownTimer {
     // 스레드 역할 대행
 
@@ -13,9 +10,9 @@ public class CloudTimer extends CountDownTimer {
     String mac_str;
 
     Connect_Tapaculo tapaculo;
-    MainActivity activity;
+    CloudMainActivity activity;
 
-    public CloudTimer(long millisInFuture, long countDownInterval, MainActivity activity, Connect_Tapaculo tapaculo, String api_key_str, String api_secret_str, String mac_str) {
+    public CloudTimer(long millisInFuture, long countDownInterval, CloudMainActivity activity, Connect_Tapaculo tapaculo, String api_key_str, String api_secret_str, String mac_str) {
         super(millisInFuture, countDownInterval);
         this.tapaculo = tapaculo;
         this.api_key_str = api_key_str;
