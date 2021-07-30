@@ -1,4 +1,4 @@
-package com.example.temp_sensor;
+package com.dekist.radionodepanel;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

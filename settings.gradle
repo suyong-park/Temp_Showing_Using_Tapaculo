@@ -1,2 +1,2 @@
-rootProject.name = "Temp_Sensor"
+rootProject.name = "RadioNodePanel"
 include ':app'

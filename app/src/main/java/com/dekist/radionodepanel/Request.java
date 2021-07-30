@@ -1,4 +1,4 @@
-package com.example.temp_sensor;
+package com.dekist.radionodepanel;
 
 import android.app.Activity;
 import android.content.Context;

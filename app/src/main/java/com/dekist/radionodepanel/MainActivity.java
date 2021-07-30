@@ -1,4 +1,4 @@
-package com.example.temp_sensor;
+package com.dekist.radionodepanel;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,10 +24,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 
-public class CloudMainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     LinearProgressIndicator indicator;
-    CloudMainActivity cloudMainActivity;
+    MainActivity cloudMainActivity;
     AlertDialog.Builder builder;
     AlertDialog con;
     CloudTimer cloudTimer;
@@ -56,7 +56,7 @@ public class CloudMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cloud_main);
+        setContentView(R.layout.activity_main);
 
         CONTEXT = this;
         cloudMainActivity = this;
@@ -118,22 +118,6 @@ public class CloudMainActivity extends AppCompatActivity {
         });
     }
 
-    /*
-    data_1 : 1
-    data_2 : 2
-    data_unit_1 : 3
-    data_unit_2 : 4
-    data_unit_ko_1 : 5
-    data_unit_ko_2 : 6
-    isNetwork : 7
-    isDataReceive : 8
-    isDataReceive_Time : 9
-    isServerOn : 10
-    loading : 11
-    refresh_btn : 12
-    first_data_layout : 1
-    include_data_layout : 2
-    */
     public void setText(String text, int text_id) { // setText UI 담당
         switch (text_id) {
             case 1 :
@@ -288,20 +272,20 @@ public class CloudMainActivity extends AppCompatActivity {
         }
     }
 
-    public void checkNetwork() {
-        if(networkService == null) {
-            networkService = new NetworkService();
-            Intent networkIntent = new Intent(this, NetworkService.class);
-            startService(networkIntent);
-        }
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
         if(con != null && con.isShowing())
             con.dismiss();
+    }
+
+    public void checkNetwork() {
+        if(networkService == null) {
+            networkService = new NetworkService();
+            Intent networkIntent = new Intent(this, NetworkService.class);
+            startService(networkIntent);
+        }
     }
 
     @Override

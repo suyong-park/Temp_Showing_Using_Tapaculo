@@ -1,4 +1,4 @@
-package com.example.temp_sensor;
+package com.dekist.radionodepanel;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -208,8 +208,8 @@ public class CloudSettingActivity extends AppCompatActivity {
                         .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int id) {
-                                Intent intent = new Intent(cloudSettingActivity, CloudMainActivity.class);
-                                ((CloudMainActivity) CloudMainActivity.CONTEXT).finish();
+                                Intent intent = new Intent(cloudSettingActivity, MainActivity.class);
+                                ((MainActivity) MainActivity.CONTEXT).finish();
                                 finish();
                                 startActivity(intent);
                             }

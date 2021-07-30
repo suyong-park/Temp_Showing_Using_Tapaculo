@@ -1,46 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.temp_sensor">
+    package="com.dekist.radionodepanel">
 
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- 디바이스 재부팅시 바로 앱 실행 -->
-    <uses-permission android:name="android.permission.REORDER_TASKS" /> <!-- 홈버튼 제어 -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- 디바이스 화면 꺼지지 않음 -->
+    <uses-permission android:name="android.permission.REORDER_TASKS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- 디바이스 화면 꺼지지 않음 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- 디바이스 재부팅시 바로 앱 실행 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
-        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Temp_Censor"
-        android:usesCleartextTraffic="true">
+        android:theme="@style/Theme.RadioNodePanel">
         <service
             android:name=".NetworkService"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false">
+        </service>
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/Theme.MaterialComponents.NoActionBar">
+        </activity>
+        <activity android:name=".CloudVerifyActivity"/>
+        <activity android:name=".CloudSettingActivity"/>
 
         <activity android:name=".StartSelectActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".CloudMainActivity"
-            android:theme="@style/Theme.MaterialComponents.NoActionBar"></activity>
-        <activity android:name=".CloudSettingActivity" />
-        <activity android:name=".CloudVerifyActivity" />
-        <activity android:name=".SocketVerifyActivity" />
-        <activity
-            android:name=".SocketMainActivity"
-            android:theme="@style/Theme.MaterialComponents.NoActionBar"></activity>
 
         <receiver
             android:name=".BootCompleteReceiver"
@@ -54,5 +51,4 @@
             </intent-filter>
         </receiver>
     </application>
-
 </manifest>

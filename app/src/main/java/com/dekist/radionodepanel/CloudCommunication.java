@@ -1,4 +1,4 @@
-package com.example.temp_sensor;
+package com.dekist.radionodepanel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,10 +21,10 @@ public class CloudCommunication {
     int count = 0;
     int temp = Integer.MIN_VALUE;
 
-    CloudMainActivity activity;
+    MainActivity activity;
     Connect_Tapaculo tapaculo;
 
-    public CloudCommunication(CloudMainActivity activity, Connect_Tapaculo tapaculo, String api_key_str, String api_secret_str, String search_str) {
+    public CloudCommunication(MainActivity activity, Connect_Tapaculo tapaculo, String api_key_str, String api_secret_str, String search_str) {
         this.activity = activity;
         this.tapaculo = tapaculo;
         this.api_key_str = api_key_str;
@@ -113,7 +113,7 @@ public class CloudCommunication {
                             case -1 : // 최초 접속
                                 activity.setVisibility(true, 1);
                                 activity.setVisibility(true, 2);
-                                tempSetText(i, 0);
+                                setText(i, 0);
                                 break;
                             case 0 :
                             case 1 : // 0과 1일 때는 센서를 1개만 선택했을 때
@@ -123,7 +123,7 @@ public class CloudCommunication {
                                 activity.setVisibility(true, 1);
 
                                 if(i == Integer.parseInt(selected_sensor_index[0]))
-                                    tempSetText(i, 1);
+                                    setText(i, 1);
                                 break;
                             case 2 : // 센서를 2개 선택한 경우
                                 activity.setVisibility(true, 1);
@@ -131,7 +131,7 @@ public class CloudCommunication {
 
                                 for(int j = 0; j < selected_sensor_index.length; j++)
                                     if(i == Integer.parseInt(selected_sensor_index[j]))
-                                        tempSetText(i, 2);
+                                        setText(i, 2);
                                 break;
                         }
                 }
@@ -150,7 +150,7 @@ public class CloudCommunication {
         });
     }
 
-    public void tempSetText(int i, int sensor_select_num) {
+    public void setText(int i, int sensor_select_num) {
         switch (sensor_select_num) {
             case 2 : // 센서를 2개 선택한 경우
                 if(temp < i) {

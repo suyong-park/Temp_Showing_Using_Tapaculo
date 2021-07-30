@@ -1,4 +1,4 @@
-package com.example.temp_sensor;
+package com.dekist.radionodepanel;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -168,7 +168,7 @@ public class CloudVerifyActivity extends AppCompatActivity {
                             PreferenceManager.setBoolean(cloudVerifyActivity, "is_first_connect", true);
 
                             progressDialog.dismiss();
-                            Intent intent = new Intent(cloudVerifyActivity, CloudMainActivity.class);
+                            Intent intent = new Intent(cloudVerifyActivity, MainActivity.class);
                             startActivity(intent);
                         }
                         else { // status == false

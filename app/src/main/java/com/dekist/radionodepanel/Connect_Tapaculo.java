@@ -1,4 +1,4 @@
-package com.example.temp_sensor;
+package com.dekist.radionodepanel;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -27,3 +27,4 @@ public interface Connect_Tapaculo {
             @Field("sensors") String sensors
     );
 }
+

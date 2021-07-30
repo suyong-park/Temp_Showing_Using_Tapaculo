@@ -1,5 +1,4 @@
 <resources>
-    <!-- App Name -->
     <string name="app_name">RadioNode Panel</string>
 
     <!-- StartSelectActivity -->
